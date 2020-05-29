@@ -8,12 +8,14 @@
 </template>
 <script>
 export default {
-  props: ["chartsname"]
-};
+  props: ['chartsname']
+}
 </script>
 <style scoped>
 .chartsname {
-  padding: 10px;
+  height: 40px;
+  padding-top: 10px;
+  padding-bottom: 10px;
   display: flex;
   /* font-size: small; */
 }
@@ -21,7 +23,7 @@ export default {
   margin-left: 10px;
   margin-right: 10px;
   width: 5px;
-  height: 18px;
+  height: 20px;
   background-color: #60c0c1;
 }
 </style>

@@ -13,24 +13,31 @@
       <div class="dashboardchart">
         <devicedistribution />
       </div>
+      <div class="dashboardchart">
+        <usercount />
+      </div>
+      <div class="dashboardchart">
+        <deviceuseanalysis2 />
+      </div>
       <div class="dashboardchartbig">
         <deviceuseanalysis1 />
       </div>
       <div class="dashboardchartbig">
-        <deviceuseanalysis2 />
+        <deviceuseanalysis3 />
       </div>
+      <div class="dashboardchartbig indextable"></div>
     </div>
   </div>
 </template>
 
 <script>
- 
 import devicedistribution from '../components/Charts/devicedistribution'
 import userdistribution from '../components/Charts/userdistribution'
 import usercount from '../components/Charts/usercount'
 import usernumberchartline from '../components/Charts/usernumberchartline'
 import deviceuseanalysis1 from '../components/Charts/deviceuseanalysis/charts1'
 import deviceuseanalysis2 from '../components/Charts/deviceuseanalysis/charts2'
+import deviceuseanalysis3 from '../components/Charts/deviceuseanalysis/charts3'
 export default {
   name: 'Dashboard',
   components: {
@@ -39,9 +46,9 @@ export default {
     usercount,
     usernumberchartline,
     deviceuseanalysis1,
-    deviceuseanalysis2
-  },
- 
+    deviceuseanalysis2,
+    deviceuseanalysis3
+  }
 }
 </script>
 
@@ -53,10 +60,13 @@ export default {
 }
 .dashboardchart {
   width: 40vw;
-  padding: 10px;
+  padding: 1vw;
 }
 .dashboardchartbig {
-  width: 80vw;
+  width: 81vw;
+}
+.indextable {
+  background-color: #fff;
 }
 .dashboard {
   &-container {

@@ -104,7 +104,21 @@ export const constantRoutes = [
         meta: { title: '修改生成配置' }
       }
     ]
+  },
+  {
+    path: '/test',
+    component: Layout,
+    hidden: true,
+    children: [
+      {
+        path: '',
+        component: () => import('@/views/test'),
+  
+      
+      }
+    ]
   }
+
 ]
 
 export default new Router({

@@ -3,30 +3,13 @@
     <chartsname chartsname="每小时内用水次数占总用水次数的比例" />
     <div class="chartsbgbox">
       <div id="deviceuseanalysis3" />
-      <el-table
-        height="250"
-        :data="tableData"
-        style="width: 100%"
-      >
-        <el-table-column
-          prop="date"
-          label="时间"
-        />
-        <el-table-column
-          prop="name"
-          label="次数"
-        />
-        <el-table-column
-          prop="address"
-          label="用水占比"
-        />
-      </el-table>
+      <div></div>
     </div>
   </div>
 </template>
 <script>
-import echarts from "echarts";
-import chartsname from "@/components/chartsname";
+import echarts from 'echarts'
+import chartsname from '@/components/chartsname'
 
 export default {
   components: {
@@ -36,81 +19,81 @@ export default {
     return {
       tableData: [
         {
-          date: "0-100",
-          name: "50",
-          address: "20%"
+          date: '0-100',
+          name: '50',
+          address: '20%'
         },
         {
-          date: "0-100",
-          name: "50",
-          address: "20%"
+          date: '0-100',
+          name: '50',
+          address: '20%'
         },
         {
-          date: "0-100",
-          name: "50",
-          address: "20%"
+          date: '0-100',
+          name: '50',
+          address: '20%'
         },
         {
-          date: "0-100",
-          name: "50",
-          address: "20%"
+          date: '0-100',
+          name: '50',
+          address: '20%'
         },
         {
-          date: "0-100",
-          name: "50",
-          address: "20%"
+          date: '0-100',
+          name: '50',
+          address: '20%'
         },
         {
-          date: "0-100",
-          name: "50",
-          address: "20%"
+          date: '0-100',
+          name: '50',
+          address: '20%'
         },
         {
-          date: "0-100",
-          name: "50",
-          address: "20%"
+          date: '0-100',
+          name: '50',
+          address: '20%'
         }
       ]
-    };
+    }
   },
   mounted() {
     this.$nextTick(() => {
-      var myChart = echarts.init(document.getElementById("deviceuseanalysis3"));
+      var myChart = echarts.init(document.getElementById('deviceuseanalysis3'))
 
       var option = {
-        color: ["#80adf8"],
+        color: ['#80adf8'],
         tooltip: {
-          trigger: "axis"
+          trigger: 'axis'
         },
 
         xAxis: [
           {
-            type: "category",
+            type: 'category',
             data: [
-              "0-100",
-              "101-200",
-              "201-300",
-              "301-400",
-              "401-500",
-              "501-600",
-              "6000-700",
-              "701-800",
-              "801-900",
-              "901-1000",
-              "1100-1200",
-              "1200-1300",
-              "0-100",
-              "101-200",
-              "201-300",
-              "301-400",
-              "401-500",
-              "501-600",
-              "0-100",
-              "101-200",
-              "201-300",
-              "301-400",
-              "401-500",
-              "501-600"
+              '0-100',
+              '101-200',
+              '201-300',
+              '301-400',
+              '401-500',
+              '501-600',
+              '6000-700',
+              '701-800',
+              '801-900',
+              '901-1000',
+              '1100-1200',
+              '1200-1300',
+              '0-100',
+              '101-200',
+              '201-300',
+              '301-400',
+              '401-500',
+              '501-600',
+              '0-100',
+              '101-200',
+              '201-300',
+              '301-400',
+              '401-500',
+              '501-600'
             ]
           }
         ],
@@ -118,57 +101,60 @@ export default {
           {
             min: 0,
             max: 100,
-            type: "value",
+            type: 'value',
             interval: 25,
             axisLabel: {
-              formatter: "{value} %"
+              formatter: '{value} %'
             }
           }
         ],
         series: [
           {
-            name: "数据",
-            type: "bar",
-
+            color: '#3484fc',
+            name: '数据',
+            type: 'bar',
+            barWidth: 10,
+            itemStyle: { barBorderRadius: 5 },
             data: [
-              1,
-              5,
-              3,
+              19,
+              15,
+              13,
               10,
               15,
-              4,
-              6,
-              7,
-              3,
-              4,
+              14,
+              16,
+              27,
+              15,
+              13,
               10,
               15,
-              4,
-              6,
-              7,
-              3,
-              4,
+              14,
+              16,
+              27,
+              15,
+              14,
+              16,
+              27,
+
               10,
               15,
-              3,
-              6,
-              5,
-              3,
-              4
+
+              13,
+              14,
+              10
             ]
           }
         ]
-      };
+      }
 
-      myChart.setOption(option);
-    });
+      myChart.setOption(option)
+    })
   }
-};
+}
 </script>
 <style scoped>
 #deviceuseanalysis3 {
-  width: 60vw;
-  height: 15vw;
+  width: 100%;
 }
 
 .chartsbgbox {
@@ -176,5 +162,6 @@ export default {
   justify-content: center;
   flex-wrap: wrap;
   background-color: #fff;
+  height: 300px;
 }
 </style>

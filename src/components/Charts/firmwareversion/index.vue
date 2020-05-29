@@ -1,8 +1,8 @@
 <template>
   <div>
-    <chartsname chartsname="用户单次时长占所有用水次数的百分比" />
+    <chartsname chartsname="固件版本图" />
     <div class="chartsbgbox">
-      <div id="deviceuseanalysis2" />
+      <div id="firmwareversion" />
     </div>
   </div>
 </template>
@@ -19,12 +19,12 @@ export default {
   },
   mounted() {
     this.$nextTick(() => {
-      var myChart = echarts.init(document.getElementById('deviceuseanalysis2'))
+      var myChart = echarts.init(document.getElementById('firmwareversion'))
       var data = [
-        { value: 335, name: '0-30分钟' },
-        { value: 310, name: '30-60分钟' },
-        { value: 234, name: '60-90分钟' },
-        { value: 135, name: '90分钟以上' }
+        { value: 400, name: '固件版本1' },
+        { value: 150, name: '固件版本2' },
+        { value: 100, name: '固件版本3' },
+        { value: 250, name: '固件版本4' }
       ]
       var option = {
         tooltip: {
@@ -32,27 +32,23 @@ export default {
           formatter: '{a} <br/>{b} : {c} ({d}%)'
         },
         legend: {
-          type: 'scroll',
-          orient: 'vertical',
-          left: 20,
-
-          bottom: 20,
+          left: 'center',
+          bottom: '10',
           data: data.value,
 
           selected: data.name
         },
         series: [
           {
-            name: '姓名',
+            name: '数据',
             type: 'pie',
-            radius: ['50%', '70%'],
-
+            radius: [30, 110],
+            roseType: 'area',
             data,
-            emphasis: {
-              itemStyle: {
-                shadowBlur: 10,
-                shadowOffsetX: 0,
-                shadowColor: 'rgba(0, 0, 0, 0.5)'
+            label: {
+              normal: {
+                formatter: '{c}台 {d}%  ',
+ 
               }
             }
           }
@@ -65,14 +61,15 @@ export default {
 }
 </script>
 <style scoped>
-#deviceuseanalysis2 {
-  width: 100%;
+#firmwareversion {
+  width: 800px;
+  height: 300px;
 }
+
 .chartsbgbox {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
   background-color: #fff;
-  height: 300px;
 }
 </style>

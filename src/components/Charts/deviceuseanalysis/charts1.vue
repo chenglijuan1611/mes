@@ -3,30 +3,12 @@
     <chartsname chartsname="用户平均每日用水量" />
     <div class="chartsbgbox">
       <div id="deviceuseanalysis1" />
-      <el-table
-        height="250"
-        :data="tableData"
-        style="width: 100%"
-      >
-        <el-table-column
-          prop="date"
-          label="日均用水量(升)"
-        />
-        <el-table-column
-          prop="name"
-          label="用户数量"
-        />
-        <el-table-column
-          prop="address"
-          label="数量占比"
-        />
-      </el-table>
     </div>
   </div>
 </template>
 <script>
-import echarts from "echarts";
-import chartsname from "@/components/chartsname";
+import echarts from 'echarts'
+import chartsname from '@/components/chartsname'
 
 export default {
   components: {
@@ -34,141 +16,137 @@ export default {
   },
   data() {
     return {
-      tableData: [
-        {
-          date: "0-100",
-          name: "50",
-          address: "20%"
-        },
-        {
-          date: "0-100",
-          name: "50",
-          address: "20%"
-        },
-        {
-          date: "0-100",
-          name: "50",
-          address: "20%"
-        },
-        {
-          date: "0-100",
-          name: "50",
-          address: "20%"
-        },
-        {
-          date: "0-100",
-          name: "50",
-          address: "20%"
-        },
-        {
-          date: "0-100",
-          name: "50",
-          address: "20%"
-        },
-        {
-          date: "0-100",
-          name: "50",
-          address: "20%"
-        }
+      xAxisdata: [
+        '0-100',
+        '101-200',
+        '201-300',
+        '301-400',
+        '401-500',
+        '501-600',
+        '6000-700',
+        '701-800',
+        '801-900',
+        '901-1000',
+        '1100-1200',
+        '1200-1300',
+        '0-100',
+        '101-200',
+        '201-300',
+        '301-400',
+        '401-500',
+        '501-600',
+        '0-100',
+        '101-200',
+        '201-300',
+        '301-400',
+        '401-500',
+        '501-600'
+      ],
+      seriesdata: [
+        11,
+        15,
+        13,
+        10,
+        15,
+        14,
+        16,
+        17,
+        13,
+        14,
+        10,
+        15,
+        14,
+        16,
+        17,
+        13,
+        4,
+        10,
+        15,
+        3,
+        6,
+        5,
+        3,
+        4
+      ],
+      tabledata: [
+        { num: '0-100', a: '20' },
+        { num: '0-100', a: '20' },
+        { num: '0-100', a: '20' },
+        { num: '0-100', a: '20' },
+        { num: '0-100', a: '20' },
+        { num: '0-100', a: '20' },
+        { num: '0-100', a: '20' },
+        { num: '0-100', a: '20' },
+        { num: '0-100', a: '20' },
+        { num: '0-100', a: '20' },
+        { num: '0-100', a: '20' },
+        { num: '0-100', a: '20' },
+        { num: '0-100', a: '20' },
+        { num: '0-100', a: '20' },
+        { num: '0-100', a: '20' },
+        { num: '0-100', a: '20' },
+        { num: '0-100', a: '20' },
+        { num: '0-100', a: '20' },
+        { num: '0-100', a: '20' }
       ]
-    };
+    }
   },
   mounted() {
     this.$nextTick(() => {
-      var myChart = echarts.init(document.getElementById("deviceuseanalysis1"));
+      var myChart = echarts.init(document.getElementById('deviceuseanalysis1'))
 
       var option = {
-        color: ["#80adf8"],
+        color: ['#80adf8'],
         tooltip: {
-          trigger: "axis"
+          trigger: 'axis'
         },
 
         xAxis: [
           {
-            type: "category",
-            data: [
-              "0-100",
-              "101-200",
-              "201-300",
-              "301-400",
-              "401-500",
-              "501-600",
-              "6000-700",
-              "701-800",
-              "801-900",
-              "901-1000",
-              "1100-1200",
-              "1200-1300",
-              "0-100",
-              "101-200",
-              "201-300",
-              "301-400",
-              "401-500",
-              "501-600",
-              "0-100",
-              "101-200",
-              "201-300",
-              "301-400",
-              "401-500",
-              "501-600"
-            ]
+            type: 'category',
+            data: this.xAxisdata
           }
         ],
         yAxis: [
           {
             min: 0,
             max: 100,
-            type: "value",
+            type: 'value',
             interval: 25,
             axisLabel: {
-              formatter: "{value} %"
+              formatter: '{value} %'
             }
           }
         ],
         series: [
           {
-            name: "数据",
-            type: "bar",
-
-            data: [
-              1,
-              5,
-              3,
-              10,
-              15,
-              4,
-              6,
-              7,
-              3,
-              4,
-              10,
-              15,
-              4,
-              6,
-              7,
-              3,
-              4,
-              10,
-              15,
-              3,
-              6,
-              5,
-              3,
-              4
-            ]
+            name: '数据',
+            type: 'bar',
+            barWidth: 20,
+            itemStyle: {
+              normal: {
+                color: function(params) {
+                  var colorList = ['#80adf8', '#f75778']
+                  if (params.dataIndex % 2 == 1) {
+                    return colorList[1]
+                  }
+                   return colorList[0]
+                }
+              }
+            },
+            data: this.seriesdata
           }
         ]
-      };
+      }
 
-      myChart.setOption(option);
-    });
+      myChart.setOption(option)
+    })
   }
-};
+}
 </script>
 <style scoped>
 #deviceuseanalysis1 {
-  width: 60vw;
-  height: 15vw;
+  width: 100%;
 }
 
 .chartsbgbox {
@@ -176,5 +154,6 @@ export default {
   justify-content: center;
   flex-wrap: wrap;
   background-color: #fff;
+  height: 300px;
 }
 </style>
