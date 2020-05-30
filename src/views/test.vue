@@ -1,9 +1,14 @@
- <template>
+<template>
   <div>
-    <el-table :data="tableData" style="width: 100%">
-      <el-table-column prop="date" label="日期" width="180"></el-table-column>
-      <el-table-column prop="name" label="姓名" width="180"></el-table-column>
-      <el-table-column prop="address" label="地址"></el-table-column>
-    </el-table>
+    <xytable :xdata="data1" :ydata="data2"></xytable>
   </div>
 </template>
+
+<script>
+import xytable from '../components/Charts/xytable'
+export default {
+  components: {
+    xytable
+  }
+}
+</script>

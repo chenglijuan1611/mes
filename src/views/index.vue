@@ -22,10 +22,15 @@
       <div class="dashboardchartbig">
         <deviceuseanalysis1 />
       </div>
+      <div class="dashboardchartbig indextable">
+        <xytable style="width:90%;margin:0 5%"></xytable>
+      </div>
       <div class="dashboardchartbig">
         <deviceuseanalysis3 />
       </div>
-      <div class="dashboardchartbig indextable"></div>
+      <div class="dashboardchartbig indextable">
+        <xytable style="width:90%;margin:0 5%"></xytable>
+      </div>
     </div>
   </div>
 </template>
@@ -38,6 +43,8 @@ import usernumberchartline from '../components/Charts/usernumberchartline'
 import deviceuseanalysis1 from '../components/Charts/deviceuseanalysis/charts1'
 import deviceuseanalysis2 from '../components/Charts/deviceuseanalysis/charts2'
 import deviceuseanalysis3 from '../components/Charts/deviceuseanalysis/charts3'
+import xytable from '../components/Charts/xytable'
+
 export default {
   name: 'Dashboard',
   components: {
@@ -47,7 +54,8 @@ export default {
     usernumberchartline,
     deviceuseanalysis1,
     deviceuseanalysis2,
-    deviceuseanalysis3
+    deviceuseanalysis3,
+    xytable
   }
 }
 </script>
@@ -67,6 +75,7 @@ export default {
 }
 .indextable {
   background-color: #fff;
+  height: 200px;
 }
 .dashboard {
   &-container {
