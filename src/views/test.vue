@@ -1,11 +1,11 @@
 <template>
   <div>
-    <xytable :xdata="data1" :ydata="data2"></xytable>
+    <xytable></xytable>
   </div>
 </template>
 
 <script>
-import xytable from '../components/Charts/xytable'
+import xytable from '../components/Charts/eltable'
 export default {
   components: {
     xytable

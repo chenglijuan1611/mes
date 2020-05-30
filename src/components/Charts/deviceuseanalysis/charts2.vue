@@ -41,6 +41,29 @@ export default {
 
           selected: data.name
         },
+        title: [
+          {
+            text: '300',
+            left: 'center',
+            top: '40%',
+            textStyle: {
+              color: '#323232',
+              fontSize:36,
+              align: 'center'
+            }
+          },
+          {
+            text: '销售总量',
+            left: 'center',
+            top: '55%',
+            textStyle: {
+              color: '#b2b2b2',
+              fontSize:  15,
+              align: 'center'
+            }
+          }
+        ],
+
         series: [
           {
             name: '姓名',

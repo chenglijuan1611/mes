@@ -14,7 +14,7 @@
         <devicedistribution />
       </div>
       <div class="dashboardchart">
-        <usercount />
+        <deviceslist />
       </div>
       <div class="dashboardchart">
         <deviceuseanalysis2 />
@@ -23,13 +23,15 @@
         <deviceuseanalysis1 />
       </div>
       <div class="dashboardchartbig indextable">
-        <xytable style="width:90%;margin:0 5%"></xytable>
+        <div style="width:50px;height:200px"></div>
+        <xytable style="flex-sk"></xytable>
+        <div style="width:50px;height:200px"></div>
       </div>
       <div class="dashboardchartbig">
         <deviceuseanalysis3 />
       </div>
       <div class="dashboardchartbig indextable">
-        <xytable style="width:90%;margin:0 5%"></xytable>
+        <xytable></xytable>
       </div>
     </div>
   </div>
@@ -39,6 +41,7 @@
 import devicedistribution from '../components/Charts/devicedistribution'
 import userdistribution from '../components/Charts/userdistribution'
 import usercount from '../components/Charts/usercount'
+import deviceslist from '../components/Charts/deviceslist'
 import usernumberchartline from '../components/Charts/usernumberchartline'
 import deviceuseanalysis1 from '../components/Charts/deviceuseanalysis/charts1'
 import deviceuseanalysis2 from '../components/Charts/deviceuseanalysis/charts2'
@@ -51,6 +54,7 @@ export default {
     devicedistribution,
     userdistribution,
     usercount,
+    deviceslist,
     usernumberchartline,
     deviceuseanalysis1,
     deviceuseanalysis2,
@@ -71,11 +75,13 @@ export default {
   padding: 1vw;
 }
 .dashboardchartbig {
-  width: 81vw;
+  width: 80vw;
 }
 .indextable {
   background-color: #fff;
   height: 200px;
+  display: flex;
+  // overflow: hidden;
 }
 .dashboard {
   &-container {
