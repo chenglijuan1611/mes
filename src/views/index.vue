@@ -22,17 +22,11 @@
       <div class="dashboardchartbig">
         <deviceuseanalysis1 />
       </div>
-      <div class="dashboardchartbig indextable">
-        <div style="width:50px;height:200px"></div>
-        <xytable style="flex-sk"></xytable>
-        <div style="width:50px;height:200px"></div>
-      </div>
+ 
       <div class="dashboardchartbig">
         <deviceuseanalysis3 />
       </div>
-      <div class="dashboardchartbig indextable">
-        <xytable></xytable>
-      </div>
+ 
     </div>
   </div>
 </template>
@@ -79,7 +73,7 @@ export default {
 }
 .indextable {
   background-color: #fff;
-  height: 200px;
+  height: 160px;
   display: flex;
   // overflow: hidden;
 }

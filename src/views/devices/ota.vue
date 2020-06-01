@@ -33,8 +33,11 @@
       </div>
       <div class="rightsection">
         <!-- 固件版本图 -->
-        <firmwareversion></firmwareversion>
+        <div style="width:700px">
+          <firmwareversion></firmwareversion>
+        </div>
         <!-- 固件版本图 -->
+
         <!-- 设备ota 列表 -->
         <div>
           <chartsname chartsname="设备OTA列表" />
@@ -55,19 +58,42 @@
               ref="multipleTable"
               :data="tableData"
               tooltip-effect="dark"
-              style="width: 100%"
               @selection-change="handleSelectionChange"
             >
-              <el-table-column type="selection" width="55"></el-table-column>
-              <el-table-column label="序号" width="55">
+              <el-table-column type="selection" width="60"></el-table-column>
+              <el-table-column label="序号" width="80">
                 <template slot-scope="scope">{{ scope.row.date }}</template>
               </el-table-column>
               <el-table-column prop="type" label="设备类型" width="100"></el-table-column>
               <el-table-column prop="address" label="mac地址" width="150" show-overflow-tooltip></el-table-column>
-              <el-table-column prop="name" label="设备名称" width="100"></el-table-column>
+              <el-table-column prop="name" label="设备名称" width="150"></el-table-column>
               <el-table-column prop="status" label="设备状态" width="80"></el-table-column>
-              <el-table-column prop="updatestatus" label="升级状态" width="120"></el-table-column>
-              <el-table-column label="操作" width="120">推送 暂停 删除</el-table-column>
+              <el-table-column prop="updatestatus" label="升级状态" width="150"></el-table-column>
+              <el-table-column label="操作" width="220">
+                <template slot-scope="scope">
+                  <el-button
+                    icon="el-icon-s-promotion"
+                    @click="handleClick(scope.row)"
+                    type="text"
+                    size="small"
+                    style="color:#5397fc"
+                  >推送</el-button>
+                  <el-button
+                    icon="el-icon-video-pause"
+                    @click="handleClick(scope.row)"
+                    type="text"
+                    size="small"
+                    style="color:#f89616"
+                  >暂停</el-button>
+                  <el-button
+                    icon="el-icon-delete"
+                    @click="handleClick(scope.row)"
+                    type="text"
+                    size="small"
+                    style="color:#fe787a"
+                  >删除</el-button>
+                </template>
+              </el-table-column>
             </el-table>
           </div>
         </div>
@@ -180,7 +206,7 @@ export default {
           date: '1',
           type: 'ABCDEFG',
           address: '1231231231231231',
-          name: '设备名称1',
+          name: 'EFLKSKSLFJFJ',
           status: '在线',
           updatestatus: '当前是最新版本'
         },
@@ -243,6 +269,7 @@ export default {
   display: flex;
 }
 .otalist {
+  width: 1000px;
   height: 90px;
   background-color: #fff;
   display: flex;

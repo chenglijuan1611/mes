@@ -11,8 +11,11 @@
           range-separator="至"
           start-placeholder="开始日期"
           end-placeholder="结束日期"
+          size="mini"
+         
         />
         <el-button
+          size="mini"
           style="margin-left:1vw;background-color:#15b9bb"
           type="primary"
           icon="el-icon-search"
@@ -23,9 +26,9 @@
   </div>
 </template>
 <script>
-import echarts from "echarts";
-import "echarts/map/js/china";
-import chartsname from "@/components/chartsname";
+import echarts from 'echarts'
+import 'echarts/map/js/china'
+import chartsname from '@/components/chartsname'
 
 export default {
   components: {
@@ -33,29 +36,29 @@ export default {
   },
   mounted() {
     this.$nextTick(() => {
-      var myChart = echarts.init(document.getElementById("newuserline"));
+      var myChart = echarts.init(document.getElementById('newuserline'))
 
       // 指定图表的配置项和数据
       var option = {
         xAxis: {
-          type: "category",
+          type: 'category',
           data: [
-            "4-15",
-            "4-16",
-            "4-17",
-            "4-18",
-            "4-19",
-            "4-20",
-            "4-21",
-            "4-22",
-            "4-23",
-            "4-24",
-            "4-25"
+            '4-15',
+            '4-16',
+            '4-17',
+            '4-18',
+            '4-19',
+            '4-20',
+            '4-21',
+            '4-22',
+            '4-23',
+            '4-24',
+            '4-25'
           ]
         },
         yAxis: {
-          name: "数量",
-          type: "value"
+          name: '数量',
+          type: 'value'
         },
         series: [
           {
@@ -74,16 +77,16 @@ export default {
               1330,
               1320
             ],
-            type: "line"
+            type: 'line'
           }
         ]
-      };
+      }
 
       // 使用刚指定的配置项和数据显示图表。
-      myChart.setOption(option);
-    });
+      myChart.setOption(option)
+    })
   }
-};
+}
 </script>
 <style scoped>
 #newuserline {

@@ -3,20 +3,16 @@
     <chartsname chartsname="用户平均每日用水量" />
     <div class="chartsbgbox">
       <div id="deviceuseanalysis1" />
-
-      <xytable style="margin:0 30px"></xytable>
     </div>
   </div>
 </template>
 <script>
 import echarts from 'echarts'
 import chartsname from '@/components/chartsname'
-import xytable from '@/components/Charts/xytable'
 
 export default {
   components: {
-    chartsname,
-    xytable
+    chartsname
   },
   data() {
     return {
@@ -151,14 +147,13 @@ export default {
 <style scoped>
 #deviceuseanalysis1 {
   width: 100%;
-  height: 60%;
 }
+
 .chartsbgbox {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
   background-color: #fff;
-  height: 500px;
-  align-items: flex-start;
+  height: 300px;
 }
 </style>

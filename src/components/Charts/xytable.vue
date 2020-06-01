@@ -1,6 +1,6 @@
 <template>
-  <el-table height="120"  size="mini" border :data="ydata">
-    <el-table-column  v-for="(a,b) in xdata" :key="a" :label="a">
+  <el-table fit="true" header-cell-class-name="xxx" size="mini" border :data="ydata">
+    <el-table-column width="50" v-for="(a,b) in xdata" :key="a" :label="a">
       <template slot-scope="scope">{{scope.row[b]}}</template>
     </el-table-column>
   </el-table>
@@ -8,6 +8,9 @@
 
 <script>
 export default {
+  data() {
+    return {}
+  },
   props: {
     xdata: {
       default: [
@@ -44,5 +47,5 @@ export default {
   }
 }
 </script>
-<style scoped>
+<style  >
 </style>
