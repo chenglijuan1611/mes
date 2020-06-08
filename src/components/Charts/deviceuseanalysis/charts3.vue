@@ -3,14 +3,14 @@
     <chartsname chartsname="每小时内用水次数占总用水次数的比例" />
     <div class="chartsbgbox">
       <div id="deviceuseanalysis3" />
-      <xytable style="margin:0 30px"></xytable>
+      <xytable style="width:90%"></xytable>
     </div>
   </div>
 </template>
 <script>
 import echarts from 'echarts'
 import chartsname from '@/components/chartsname'
-import xytable from '@/components/Charts/xytable'
+import xytable from '@/components/Charts/xytabletest'
 
 export default {
   components: {
@@ -165,7 +165,7 @@ export default {
   justify-content: center;
   flex-wrap: wrap;
   background-color: #fff;
-  height: 500px;
+  height: 430px;
   align-items: flex-start;
 }
 </style>

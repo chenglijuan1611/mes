@@ -54,7 +54,7 @@ export default {
   }
 }
 </script>
-<style>
+<style scoped>
 table {
   font-size: 12px;
   color: #686868;

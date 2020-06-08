@@ -22,11 +22,10 @@
       <div class="dashboardchartbig">
         <deviceuseanalysis1 />
       </div>
- 
+
       <div class="dashboardchartbig">
         <deviceuseanalysis3 />
       </div>
- 
     </div>
   </div>
 </template>
@@ -65,18 +64,13 @@ export default {
   flex-wrap: wrap;
 }
 .dashboardchart {
-  width: 40vw;
-  padding: 1vw;
+  width: 41vw;
+  padding-right: 1vw;
 }
 .dashboardchartbig {
-  width: 80vw;
+  width: 81vw;
 }
-.indextable {
-  background-color: #fff;
-  height: 160px;
-  display: flex;
-  // overflow: hidden;
-}
+
 .dashboard {
   &-container {
     margin: 30px;

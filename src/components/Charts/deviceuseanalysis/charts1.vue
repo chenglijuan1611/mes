@@ -158,7 +158,7 @@ export default {
   justify-content: center;
   flex-wrap: wrap;
   background-color: #fff;
-  height: 500px;
+  height: 430px;
   align-items: flex-start;
 }
 </style>
