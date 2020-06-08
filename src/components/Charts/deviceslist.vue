@@ -3,12 +3,12 @@
     <chartsname chartsname="设备列表" />
     <div class="chartsbgbox">
       <div style="padding:2vw 0">
-        <el-form class="elinput" size="mini" inline="true">
+        <el-form class="elinput" size="mini" :inline="true">
           <el-form-item label="设备型号">
             <el-select v-model="form.region" placeholder="请选择产品型号">
-              <el-option label="ETF2300 PF12"></el-option>
-              <el-option label="ETF2300 PF18"></el-option>
-              <el-option label="ETF2300 PF16"></el-option>
+              <el-option value label="ETF2300 PF12"></el-option>
+              <el-option value label="ETF2300 PF18"></el-option>
+              <el-option value label="ETF2300 PF16"></el-option>
             </el-select>
           </el-form-item>
           <el-button size="mini" icon="el-icon-search" type="primary">查询</el-button>

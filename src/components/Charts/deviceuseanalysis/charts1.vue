@@ -4,14 +4,14 @@
     <div class="chartsbgbox">
       <div id="deviceuseanalysis1" />
 
-      <xytable style="margin:0 30px"></xytable>
+      <xytable style="width:90%"></xytable>
     </div>
   </div>
 </template>
 <script>
 import echarts from 'echarts'
 import chartsname from '@/components/chartsname'
-import xytable from '@/components/Charts/xytable'
+import xytable from '@/components/Charts/xytabletest'
 
 export default {
   components: {

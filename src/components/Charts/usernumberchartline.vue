@@ -12,7 +12,6 @@
           start-placeholder="开始日期"
           end-placeholder="结束日期"
           size="mini"
-         
         />
         <el-button
           size="mini"
@@ -33,6 +32,11 @@ import chartsname from '@/components/chartsname'
 export default {
   components: {
     chartsname
+  },
+  data() {
+    return {
+      value1: ''
+    }
   },
   mounted() {
     this.$nextTick(() => {

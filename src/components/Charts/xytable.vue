@@ -1,5 +1,5 @@
 <template>
-  <el-table fit="true" header-cell-class-name="xxx" size="mini" border :data="ydata">
+  <el-table :fit="true" header-cell-class-name="xxx" size="mini" border :data="ydata">
     <el-table-column width="50" v-for="(a,b) in xdata" :key="a" :label="a">
       <template slot-scope="scope">{{scope.row[b]}}</template>
     </el-table-column>
@@ -13,7 +13,7 @@ export default {
   },
   props: {
     xdata: {
-      default: [
+      default: () => [
         '时间 ',
         '00.00',
         '01.00',
@@ -42,10 +42,10 @@ export default {
       ]
     },
     ydata: {
-      default: [['次数'], ['日期']]
+      default: () => [['次数'], ['日期']]
     }
   }
 }
 </script>
-<style  >
+<style>
 </style>

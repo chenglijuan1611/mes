@@ -96,6 +96,17 @@
               </el-table-column>
             </el-table>
           </div>
+          <!-- 分页 -->
+          <div class="pagination">
+            <el-pagination
+              pager-count="4"
+              background
+              class="elpagination"
+              layout="prev, pager, next"
+              :total="100"
+            >sss</el-pagination>&nbsp; &nbsp;&nbsp;
+            <span>共有80条信息，共有6页，当前第1页</span>
+          </div>
         </div>
       </div>
     </div>
@@ -275,6 +286,11 @@ export default {
   display: flex;
   align-items: center;
 }
-.otalistform {
+.pagination {
+  background-color: #fff;
+  height: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>

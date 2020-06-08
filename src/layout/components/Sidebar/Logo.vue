@@ -26,7 +26,8 @@ export default {
   },
   data() {
     return {
-     logo: logoImg
+     logo: logoImg,
+     title:'ECO WATER'
     }
   }
 }
