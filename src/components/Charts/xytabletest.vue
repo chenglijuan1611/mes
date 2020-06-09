@@ -56,12 +56,12 @@ export default {
 </script>
 <style scoped>
 table {
-  font-size: 12px;
+  font-size: 0.6vw;
   color: #686868;
   border-collapse: collapse;
 }
 td {
-  padding: 5px;
+  padding: 0.5vw;
   border: solid 1px #c5c5c5;
 }
 </style>
