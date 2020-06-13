@@ -39,3 +39,4 @@ body .el-table colgroup.gutter {
   background-color: #3484fc;
 }
 </style>
+

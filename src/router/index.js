@@ -112,9 +112,7 @@ export const constantRoutes = [
     children: [
       {
         path: '',
-        component: () => import('@/views/test'),
-  
-      
+        component: () => import('@/views/test2'),
       }
     ]
   }
