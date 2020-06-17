@@ -1,6 +1,11 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" :inline="true" label-width="68px">
+    <el-form
+      :model="queryParams"
+      ref="queryForm"
+      :inline="true"
+      label-width="68px"
+    >
       <el-form-item label="问题标题" prop="problemTitle">
         <el-input
           v-model="queryParams.problemTitle"
@@ -10,7 +15,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="解决方案" prop="problemSolution">
+      <!-- <el-form-item label="解决方案" prop="problemSolution">
         <el-input
           v-model="queryParams.problemSolution"
           placeholder="请输入解决方案"
@@ -18,7 +23,7 @@
           size="small"
           @keyup.enter.native="handleQuery"
         />
-      </el-form-item>
+      </el-form-item>-->
       <el-form-item label="设备型号" prop="modelCode">
         <el-input
           v-model="queryParams.modelCode"
@@ -38,12 +43,15 @@
         />
       </el-form-item>
       <el-form-item label="创建时间" prop="gmtCreatetime">
-        <el-date-picker clearable size="small" style="width: 200px"
+        <el-date-picker
+          clearable
+          size="small"
+          style="width: 200px"
           v-model="queryParams.gmtCreatetime"
           type="date"
           value-format="yyyy-MM-dd"
-          placeholder="选择创建时间">
-        </el-date-picker>
+          placeholder="选择创建时间"
+        ></el-date-picker>
       </el-form-item>
       <el-form-item label="修改人" prop="modifyUser">
         <el-input
@@ -55,16 +63,27 @@
         />
       </el-form-item>
       <el-form-item label="修改时间" prop="gmtModifytime">
-        <el-date-picker clearable size="small" style="width: 200px"
+        <el-date-picker
+          clearable
+          size="small"
+          style="width: 200px"
           v-model="queryParams.gmtModifytime"
           type="date"
           value-format="yyyy-MM-dd"
-          placeholder="选择修改时间">
-        </el-date-picker>
+          placeholder="选择修改时间"
+        ></el-date-picker>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+        <el-button
+          type="primary"
+          icon="el-icon-search"
+          size="mini"
+          @click="handleQuery"
+          >搜索</el-button
+        >
+        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery"
+          >重置</el-button
+        >
       </el-form-item>
     </el-form>
 
@@ -76,7 +95,8 @@
           size="mini"
           @click="handleAdd"
           v-hasPermi="['system:problem:add']"
-        >新增</el-button>
+          >新增</el-button
+        >
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -86,7 +106,8 @@
           :disabled="single"
           @click="handleUpdate"
           v-hasPermi="['system:problem:edit']"
-        >修改</el-button>
+          >修改</el-button
+        >
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -96,7 +117,8 @@
           :disabled="multiple"
           @click="handleDelete"
           v-hasPermi="['system:problem:remove']"
-        >删除</el-button>
+          >删除</el-button
+        >
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -105,29 +127,52 @@
           size="mini"
           @click="handleExport"
           v-hasPermi="['system:problem:export']"
-        >导出</el-button>
+          >导出</el-button
+        >
       </el-col>
     </el-row>
 
-    <el-table v-loading="loading" :data="problemList" @selection-change="handleSelectionChange">
+    <el-table
+      v-loading="loading"
+      :data="problemList"
+      @selection-change="handleSelectionChange"
+    >
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="常见问题的id" align="center" prop="comproblemId" />
+      <el-table-column
+        label="常见问题的id"
+        align="center"
+        prop="comproblemId"
+      />
       <el-table-column label="问题标题" align="center" prop="problemTitle" />
-      <el-table-column label="解决方案" align="center" prop="problemSolution" />
+      <!-- <el-table-column label="解决方案" align="center" prop="problemSolution" /> -->
       <el-table-column label="设备型号" align="center" prop="modelCode" />
       <el-table-column label="创建人" align="center" prop="createUser" />
-      <el-table-column label="创建时间" align="center" prop="gmtCreatetime" width="180">
+      <el-table-column
+        label="创建时间"
+        align="center"
+        prop="gmtCreatetime"
+        width="180"
+      >
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.gmtCreatetime) }}</span>
         </template>
       </el-table-column>
       <el-table-column label="修改人" align="center" prop="modifyUser" />
-      <el-table-column label="修改时间" align="center" prop="gmtModifytime" width="180">
+      <el-table-column
+        label="修改时间"
+        align="center"
+        prop="gmtModifytime"
+        width="180"
+      >
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.gmtModifytime) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column
+        label="操作"
+        align="center"
+        class-name="small-padding fixed-width"
+      >
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -135,20 +180,30 @@
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['system:problem:edit']"
-          >修改</el-button>
+            >修改</el-button
+          >
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
             v-hasPermi="['system:problem:remove']"
-          >删除</el-button>
+            >删除</el-button
+          >
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-delete"
+            @click="detail(scope.row)"
+            v-hasPermi="['system:problem:remove']"
+            >详情</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
-      v-show="total>0"
+      v-show="total > 0"
       :total="total"
       :page.sync="queryParams.pageNum"
       :limit.sync="queryParams.pageSize"
@@ -156,13 +211,21 @@
     />
 
     <!-- 添加或修改常见问题对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" :close-on-click-modal="false">
+    <el-dialog
+      :title="title"
+      :visible.sync="open"
+      width="500px"
+      :close-on-click-modal="false"
+    >
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="问题标题" prop="problemTitle">
           <el-input v-model="form.problemTitle" placeholder="请输入问题标题" />
         </el-form-item>
         <el-form-item label="解决方案" prop="problemSolution">
-          <el-input v-model="form.problemSolution" placeholder="请输入解决方案" />
+          <el-input
+            v-model="form.problemSolution"
+            placeholder="请输入解决方案"
+          />
         </el-form-item>
         <el-form-item label="设备型号" prop="modelCode">
           <el-input v-model="form.modelCode" placeholder="请输入设备型号" />
@@ -171,23 +234,29 @@
           <el-input v-model="form.createUser" placeholder="请输入创建人" />
         </el-form-item>
         <el-form-item label="创建时间" prop="gmtCreatetime">
-          <el-date-picker clearable size="small" style="width: 200px"
+          <el-date-picker
+            clearable
+            size="small"
+            style="width: 200px"
             v-model="form.gmtCreatetime"
             type="date"
             value-format="yyyy-MM-dd"
-            placeholder="选择创建时间">
-          </el-date-picker>
+            placeholder="选择创建时间"
+          ></el-date-picker>
         </el-form-item>
         <el-form-item label="修改人" prop="modifyUser">
           <el-input v-model="form.modifyUser" placeholder="请输入修改人" />
         </el-form-item>
         <el-form-item label="修改时间" prop="gmtModifytime">
-          <el-date-picker clearable size="small" style="width: 200px"
+          <el-date-picker
+            clearable
+            size="small"
+            style="width: 200px"
             v-model="form.gmtModifytime"
             type="date"
             value-format="yyyy-MM-dd"
-            placeholder="选择修改时间">
-          </el-date-picker>
+            placeholder="选择修改时间"
+          ></el-date-picker>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -199,7 +268,14 @@
 </template>
 
 <script>
-import { listProblem, getProblem, delProblem, addProblem, updateProblem, exportProblem } from "@/api/system/problem";
+import {
+  listProblem,
+  getProblem,
+  delProblem,
+  addProblem,
+  updateProblem,
+  exportProblem
+} from "@/api/system/problem";
 
 export default {
   name: "Problem",
@@ -290,9 +366,9 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.comproblemId)
-      this.single = selection.length!=1
-      this.multiple = !selection.length
+      this.ids = selection.map(item => item.comproblemId);
+      this.single = selection.length != 1;
+      this.multiple = !selection.length;
     },
     /** 新增按钮操作 */
     handleAdd() {
@@ -303,7 +379,7 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const comproblemId = row.comproblemId || this.ids
+      const comproblemId = row.comproblemId || this.ids;
       getProblem(comproblemId).then(response => {
         this.form = response.data;
         this.open = true;
@@ -341,29 +417,46 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const comproblemIds = row.comproblemId || this.ids;
-      this.$confirm('是否确认删除常见问题编号为"' + comproblemIds + '"的数据项?', "警告", {
+      this.$confirm(
+        '是否确认删除常见问题编号为"' + comproblemIds + '"的数据项?',
+        "警告",
+        {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning"
-        }).then(function() {
+        }
+      )
+        .then(function() {
           return delProblem(comproblemIds);
-        }).then(() => {
+        })
+        .then(() => {
           this.getList();
           this.msgSuccess("删除成功");
-        }).catch(function() {});
+        })
+        .catch(function() {});
     },
     /** 导出按钮操作 */
     handleExport() {
       const queryParams = this.queryParams;
-      this.$confirm('是否确认导出所有常见问题数据项?', "警告", {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning"
-        }).then(function() {
+      this.$confirm("是否确认导出所有常见问题数据项?", "警告", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(function() {
           return exportProblem(queryParams);
-        }).then(response => {
+        })
+        .then(response => {
           this.download(response.msg);
-        }).catch(function() {});
+        })
+        .catch(function() {});
+    },
+    detail(a) {
+      this.$alert(a.problemSolution || "未查询到", "解决方案", {
+        confirmButtonText: "确定"
+      });
+
+      console.log(a);
     }
   }
 };
