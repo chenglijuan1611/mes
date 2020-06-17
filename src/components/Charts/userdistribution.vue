@@ -3,8 +3,8 @@
     <chartsname chartsname="用户分布图" />
     <div class="chartsbgbox">
       <div id="userdistribution" />
-      <i class="el-icon-circle-plus-outline iconar"></i>
-      <i class="el-icon-remove-outline iconar"></i>
+      <i style="opacity:0.5" class="el-icon-circle-plus-outline iconar"></i>
+      <i style="opacity:0.5" class="el-icon-remove-outline iconar"></i>
     </div>
   </div>
 </template>
@@ -55,7 +55,11 @@ export default {
       ]
       // 指定图表的配置项和数据
       var option = {
-        tooltip: {},
+        tooltip: {
+          formatter: function(a) {
+            return `${a.data.name} :${a.data.value}`
+          }
+        },
         geo: {
           map: 'china',
           itemStyle: {
@@ -96,6 +100,7 @@ export default {
     })
   }
 }
+
 </script>
 <style scoped>
 #userdistribution {

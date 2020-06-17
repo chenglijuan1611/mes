@@ -21,25 +21,17 @@ export default {
     this.$nextTick(() => {
       var myChart = echarts.init(document.getElementById('deviceuseanalysis2'))
       var data = [
-        { value: 335, name: '0-30分钟' },
-        { value: 310, name: '30-60分钟' },
-        { value: 234, name: '60-90分钟' },
-        { value: 135, name: '90分钟以上' }
+        { value: 90, name: '0-30分钟' },
+        { value: 60, name: '30-60分钟' },
+        { value: 114, name: '60-90分钟' },
+        { value: 36, name: '90分钟以上' }
       ]
       var option = {
         tooltip: {
-          trigger: 'item',
           formatter: '{a} <br/>{b} : {c} ({d}%)'
         },
         legend: {
-          type: 'scroll',
-          orient: 'vertical',
-          left: 20,
-
-          bottom: 20,
-          data: data.value,
-
-          selected: data.name
+          bottom: 10
         },
         title: [
           {
@@ -48,7 +40,7 @@ export default {
             top: '40%',
             textStyle: {
               color: '#323232',
-              fontSize:36,
+              fontSize: 36,
               align: 'center'
             }
           },
@@ -58,7 +50,7 @@ export default {
             top: '55%',
             textStyle: {
               color: '#b2b2b2',
-              fontSize:  15,
+              fontSize: 15,
               align: 'center'
             }
           }
@@ -68,9 +60,12 @@ export default {
           {
             name: '姓名',
             type: 'pie',
-            radius: ['50%', '70%'],
-
+            radius: ['45%', '60%'],
             data,
+            label: {
+              formatter: '{d}%'
+            },
+            // 高亮区域样式
             emphasis: {
               itemStyle: {
                 shadowBlur: 10,

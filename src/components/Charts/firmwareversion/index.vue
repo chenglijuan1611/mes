@@ -23,8 +23,8 @@ export default {
       var data = [
         { value: 400, name: '固件版本1' },
         { value: 150, name: '固件版本2' },
-        { value: 100, name: '固件版本3' },
-        { value: 250, name: '固件版本4' }
+        { value: 250, name: '固件版本3' },
+        { value: 200, name: '固件版本4' }
       ]
       var option = {
         tooltip: {
@@ -33,23 +33,17 @@ export default {
         },
         legend: {
           left: 'center',
-          bottom: '10',
-          data: data.value,
-
-          selected: data.name
+          bottom: '10'
         },
         series: [
           {
             name: '数据',
             type: 'pie',
-            radius: [30, 110],
+            radius: [20, 100],
             roseType: 'area',
             data,
             label: {
-              normal: {
-                formatter: '{c}台 {d}%  ',
- 
-              }
+              formatter: '{c}台  {d}%'
             }
           }
         ]
