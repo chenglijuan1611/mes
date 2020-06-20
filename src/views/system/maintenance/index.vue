@@ -38,7 +38,8 @@
       </el-form-item>
       <el-form-item label="处理状态" prop="dealStatus">
         <el-select v-model="queryParams.dealStatus" placeholder="请选择处理状态" clearable size="small">
-          <el-option label="请选择字典生成" value="" />
+          <el-option label="已处理" value="1" />
+          <el-option label="未处理" value="0" />
         </el-select>
       </el-form-item>
       <el-form-item label="处理时间" prop="dealTime">
@@ -181,7 +182,8 @@
         </el-form-item>
         <el-form-item label="处理状态">
           <el-radio-group v-model="form.dealStatus">
-            <el-radio label="1">请选择字典生成</el-radio>
+            <el-radio label="1">已处理</el-radio>
+            <el-radio label="0">未处理</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="处理时间" prop="dealTime">
