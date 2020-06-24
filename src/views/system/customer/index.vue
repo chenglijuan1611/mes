@@ -1,47 +1,81 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" :inline="true" label-width="68px">
-      <el-form-item label="mac地址" prop="mac">
+      <el-form-item label="客户账号" prop="customer">
         <el-input
-          v-model="queryParams.mac"
-          placeholder="请输入设备mac地址"
+          v-model="queryParams.customer"
+          placeholder="请输入客户账号"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="告警编码" prop="faultCode">
+      <el-form-item label="性别" prop="sex">
+        <el-select v-model="queryParams.sex" placeholder="请选择性别" clearable size="small">
+          <el-option label="男" value="男" />
+          <el-option label="女" value="女" />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="设备名称" prop="name">
         <el-input
-          v-model="queryParams.faultCode"
-          placeholder="请输入告警编码"
+          v-model="queryParams.name"
+          placeholder="请输入设备名称"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="处理状态" prop="state">
+      <el-form-item label="手机号" prop="phone">
         <el-input
-          v-model="queryParams.state"
-          placeholder="请输入处理状态"
+          v-model="queryParams.phone"
+          placeholder="请输入手机号"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="告警时间" prop="gmtCreatetime">
+     
+      <el-form-item label="省" prop="province">
+        <el-input
+          v-model="queryParams.province"
+          placeholder="请输入省"
+          clearable
+          size="small"
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="市" prop="city">
+        <el-input
+          v-model="queryParams.city"
+          placeholder="请输入市"
+          clearable
+          size="small"
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="区" prop="district">
+        <el-input
+          v-model="queryParams.district"
+          placeholder="请输入区"
+          clearable
+          size="small"
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="创建时间" prop="gmtCreatetime">
         <el-date-picker clearable size="small" style="width: 200px"
           v-model="queryParams.gmtCreatetime"
           type="date"
           value-format="yyyy-MM-dd"
-          placeholder="选择告警时间">
+          placeholder="选择创建时间">
         </el-date-picker>
       </el-form-item>
-      <el-form-item label="处理时间" prop="gmtModifytime">
+      <el-form-item label="修改时间" prop="gmtModifytime">
         <el-date-picker clearable size="small" style="width: 200px"
           v-model="queryParams.gmtModifytime"
           type="date"
           value-format="yyyy-MM-dd"
-          placeholder="选择处理时间">
+          placeholder="选择修改时间">
         </el-date-picker>
       </el-form-item>
       <el-form-item>
@@ -51,14 +85,13 @@
     </el-form>
 
     <el-row :gutter="10" class="mb8">
-      <!-- <el-col :span="1.5"> -->
-        <!--
+      <el-col :span="1.5">
         <el-button
           type="primary"
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['system:faultMessage:add']"
+          v-hasPermi="['system:customer:add']"
         >新增</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -68,7 +101,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['system:faultMessage:edit']"
+          v-hasPermi="['system:customer:edit']"
         >修改</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -78,40 +111,45 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['system:faultMessage:remove']"
+          v-hasPermi="['system:customer:remove']"
         >删除</el-button>
       </el-col>
-      -->
-
       <el-col :span="1.5">
         <el-button
           type="warning"
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['system:faultMessage:export']"
+          v-hasPermi="['system:customer:export']"
         >导出</el-button>
       </el-col>
     </el-row>
 
-    <el-table v-loading="loading" :data="faultMessageList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="customerList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="告警id" align="center" prop="faultMessageId" />
-      <el-table-column label="设备mac地址" align="center" prop="mac" />
-      <el-table-column label="告警编码" align="center" prop="faultCode" />
-      <el-table-column label="处理状态" align="center" prop="state" />
-      <el-table-column label="告警名称" align="center" prop="faultName" />
-      <el-table-column label="设备型号" align="center" prop="deviceModel" />
-      <el-table-column label="告警时间" align="center" prop="gmtCreatetime" width="180">
+      <el-table-column label="客户账号" align="center" prop="customer" />
+      <el-table-column label="性别" align="center" prop="sex" />
+      <el-table-column label="设备名称" align="center" prop="name" />
+      <el-table-column label="手机号" align="center" prop="phone" />
+      <el-table-column label="是否是维修" align="center" prop="isRepair" />
+      <!-- <el-table-column label="省" align="center" prop="province" />
+      <el-table-column label="市" align="center" prop="city" />
+      <el-table-column label="区" align="center" prop="district" />
+      <el-table-column label="详细地址" align="center" prop="address" />
+      <el-table-column label="头像" align="center" prop="avatar" /> -->
+      <el-table-column label="是否是测试" align="center" prop="isTest" />
+      <el-table-column label="创建时间" align="center" prop="gmtCreatetime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.gmtCreatetime) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="处理时间" align="center" prop="gmtModifytime" width="180">
+      <el-table-column label="修改时间" align="center" prop="gmtModifytime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.gmtModifytime) }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="openid" align="center" prop="openid" />
+      <el-table-column label="是否登录" align="center" prop="isLogin" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -119,17 +157,15 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['system:faultMessage:edit']"
+            v-hasPermi="['system:customer:edit']"
           >修改</el-button>
-          <!--
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['system:faultMessage:remove']"
+            v-hasPermi="['system:customer:remove']"
           >删除</el-button>
-          -->
         </template>
       </el-table-column>
     </el-table>
@@ -142,17 +178,44 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改告警详情信息对话框 -->
+    <!-- 添加或修改客户信息对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" :close-on-click-modal="false">
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="设备的mac地址" prop="mac">
-          <el-input v-model="form.mac" placeholder="请输入设备的mac地址" />
+        <el-form-item label="性别">
+          <el-select v-model="form.sex" placeholder="请选择性别">
+            <el-option label="男" value="男" />
+            <el-option label="女" value="女" />
+          </el-select>
         </el-form-item>
-        <el-form-item label="告警编码" prop="faultCode">
-          <el-input v-model="form.faultCode" placeholder="请输入告警编码" />
+        <el-form-item label="设备名称" prop="name">
+          <el-input v-model="form.name" placeholder="请输入设备名称" />
         </el-form-item>
-        <el-form-item label="告警是否已处理" prop="state">
-          <el-input v-model="form.state" placeholder="请输入告警是否已处理" />
+        <el-form-item label="手机号" prop="phone">
+          <el-input v-model="form.phone" placeholder="请输入手机号" />
+        </el-form-item>
+        <el-form-item label="是否是维修" prop="isRepair">
+          <el-input v-model="form.isRepair" placeholder="请输入是否是维修" />
+        </el-form-item>
+        <el-form-item label="密码" prop="password">
+          <el-input v-model="form.password" placeholder="请输入密码" />
+        </el-form-item>
+        <el-form-item label="省" prop="province">
+          <el-input v-model="form.province" placeholder="请输入省" />
+        </el-form-item>
+        <el-form-item label="市" prop="city">
+          <el-input v-model="form.city" placeholder="请输入市" />
+        </el-form-item>
+        <el-form-item label="区" prop="district">
+          <el-input v-model="form.district" placeholder="请输入区" />
+        </el-form-item>
+        <el-form-item label="详细地址" prop="address">
+          <el-input v-model="form.address" placeholder="请输入详细地址" />
+        </el-form-item>
+        <el-form-item label="头像" prop="avatar">
+          <el-input v-model="form.avatar" placeholder="请输入头像" />
+        </el-form-item>
+        <el-form-item label="是否是测试" prop="isTest">
+          <el-input v-model="form.isTest" placeholder="请输入是否是测试" />
         </el-form-item>
         <el-form-item label="创建时间" prop="gmtCreatetime">
           <el-date-picker clearable size="small" style="width: 200px"
@@ -170,6 +233,12 @@
             placeholder="选择修改时间">
           </el-date-picker>
         </el-form-item>
+        <el-form-item label="openid" prop="openid">
+          <el-input v-model="form.openid" placeholder="请输入openid" />
+        </el-form-item>
+        <el-form-item label="是否登录" prop="isLogin">
+          <el-input v-model="form.isLogin" placeholder="请输入是否登录" />
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
@@ -180,10 +249,10 @@
 </template>
 
 <script>
-import { listFaultMessage, getFaultMessage, delFaultMessage, addFaultMessage, updateFaultMessage, exportFaultMessage } from "@/api/system/faultMessage";
+import { listCustomer, getCustomer, delCustomer, addCustomer, updateCustomer, exportCustomer } from "@/api/system/customer";
 
 export default {
-  name: "FaultMessage",
+  name: "Customer",
   data() {
     return {
       // 遮罩层
@@ -196,8 +265,8 @@ export default {
       multiple: true,
       // 总条数
       total: 0,
-      // 告警详情信息表格数据
-      faultMessageList: [],
+      // 客户信息表格数据
+      customerList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -206,11 +275,21 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        mac: undefined,
-        faultCode: undefined,
-        state: undefined,
+        customer: undefined,
+        sex: undefined,
+        name: undefined,
+        phone: undefined,
+        isRepair: undefined,
+        province: undefined,
+        city: undefined,
+        district: undefined,
+        address: undefined,
+        avatar: undefined,
+        isTest: undefined,
         gmtCreatetime: undefined,
-        gmtModifytime: undefined
+        gmtModifytime: undefined,
+        openid: undefined,
+        isLogin: undefined
       },
       // 表单参数
       form: {},
@@ -223,11 +302,11 @@ export default {
     this.getList();
   },
   methods: {
-    /** 查询告警详情信息列表 */
+    /** 查询客户信息列表 */
     getList() {
       this.loading = true;
-      listFaultMessage(this.queryParams).then(response => {
-        this.faultMessageList = response.rows;
+      listCustomer(this.queryParams).then(response => {
+        this.customerList = response.rows;
         this.total = response.total;
         this.loading = false;
       });
@@ -240,12 +319,22 @@ export default {
     // 表单重置
     reset() {
       this.form = {
-        faultMessageId: undefined,
-        mac: undefined,
-        faultCode: undefined,
-        state: undefined,
+        customer: undefined,
+        sex: undefined,
+        name: undefined,
+        phone: undefined,
+        isRepair: undefined,
+        password: undefined,
+        province: undefined,
+        city: undefined,
+        district: undefined,
+        address: undefined,
+        avatar: undefined,
+        isTest: undefined,
         gmtCreatetime: undefined,
-        gmtModifytime: undefined
+        gmtModifytime: undefined,
+        openid: undefined,
+        isLogin: undefined
       };
       this.resetForm("form");
     },
@@ -261,7 +350,7 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.faultMessageId)
+      this.ids = selection.map(item => item.customer)
       this.single = selection.length!=1
       this.multiple = !selection.length
     },
@@ -269,24 +358,24 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
-      this.title = "添加告警详情信息";
+      this.title = "添加客户信息";
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const faultMessageId = row.faultMessageId || this.ids
-      getFaultMessage(faultMessageId).then(response => {
+      const customer = row.customer || this.ids
+      getCustomer(customer).then(response => {
         this.form = response.data;
         this.open = true;
-        this.title = "修改告警详情信息";
+        this.title = "修改客户信息";
       });
     },
     /** 提交按钮 */
     submitForm: function() {
       this.$refs["form"].validate(valid => {
         if (valid) {
-          if (this.form.faultMessageId != undefined) {
-            updateFaultMessage(this.form).then(response => {
+          if (this.form.customer != undefined) {
+            updateCustomer(this.form).then(response => {
               if (response.code === 200) {
                 this.msgSuccess("修改成功");
                 this.open = false;
@@ -296,7 +385,7 @@ export default {
               }
             });
           } else {
-            addFaultMessage(this.form).then(response => {
+            addCustomer(this.form).then(response => {
               if (response.code === 200) {
                 this.msgSuccess("新增成功");
                 this.open = false;
@@ -311,13 +400,13 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      const faultMessageIds = row.faultMessageId || this.ids;
-      this.$confirm('是否确认删除告警详情信息编号为"' + faultMessageIds + '"的数据项?', "警告", {
+      const customers = row.customer || this.ids;
+      this.$confirm('是否确认删除客户信息编号为"' + customers + '"的数据项?', "警告", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning"
         }).then(function() {
-          return delFaultMessage(faultMessageIds);
+          return delCustomer(customers);
         }).then(() => {
           this.getList();
           this.msgSuccess("删除成功");
@@ -326,12 +415,12 @@ export default {
     /** 导出按钮操作 */
     handleExport() {
       const queryParams = this.queryParams;
-      this.$confirm('是否确认导出所有告警详情信息数据项?', "警告", {
+      this.$confirm('是否确认导出所有客户信息数据项?', "警告", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning"
         }).then(function() {
-          return exportFaultMessage(queryParams);
+          return exportCustomer(queryParams);
         }).then(response => {
           this.download(response.msg);
         }).catch(function() {});

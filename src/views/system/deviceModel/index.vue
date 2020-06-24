@@ -12,9 +12,9 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="产品型号" prop="model">
+      <el-form-item label="产品型号" prop="modelName">
         <el-input
-          v-model="queryParams.model"
+          v-model="queryParams.modelName"
           placeholder="请输入产品型号"
           clearable
           size="small"
@@ -119,7 +119,7 @@
       :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
     >
       
-      <el-table-column label="产品型号中文" align="center" prop="model" />
+      <el-table-column label="产品型号中文" align="center" prop="modelName" />
       <el-table-column label="设备图片" align="center" prop="picUrl" />
       <el-table-column label="所属公司/经销商" align="center" prop="companyCode" />
       <el-table-column label="产品型号编码" align="center" prop="modelCode" />
@@ -146,7 +146,22 @@
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['system:deviceModel:edit']"
+          >上传图片</el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-edit"
+            @click="handleUpdate(scope.row)"
+            v-hasPermi="['system:deviceModel:edit']"
+          >上传固件</el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-edit"
+            @click="handleUpdate(scope.row)"
+            v-hasPermi="['system:deviceModel:edit']"
           >修改</el-button>
+          
           <el-button
             size="mini"
             type="text"
@@ -164,8 +179,8 @@
         <el-form-item label="上级设备分类" prop="parentId">
           <treeselect v-model="form.parentId" :options="deviceModelOptions" :normalizer="normalizer" placeholder="请选择上级设备分类" />
         </el-form-item>
-        <el-form-item label="产品型号" prop="model">
-          <el-input v-model="form.model" placeholder="请输入产品型号" />
+        <el-form-item label="产品型号" prop="modelName">
+          <el-input v-model="form.modelName" placeholder="请输入产品型号" />
         </el-form-item>
         <el-form-item label="设备图片" prop="picUrl">
           <el-input v-model="form.picUrl" placeholder="请输入设备图片" />
@@ -242,7 +257,7 @@ export default {
         parentId: undefined,
         ancestors: undefined,
         category: undefined,
-        model: undefined,
+        modelName: undefined,
         picUrl: undefined,
         companyCode: undefined,
         modelCode: undefined,
@@ -305,7 +320,7 @@ export default {
         parentId: undefined,
         ancestors: undefined,
         category: undefined,
-        model: undefined,
+        modelName: undefined,
         picUrl: undefined,
         companyCode: undefined,
         modelCode: undefined,
