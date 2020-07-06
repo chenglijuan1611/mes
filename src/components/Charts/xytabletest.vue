@@ -1,10 +1,10 @@
 <template>
   <table style="table-layout:fixed">
-    <tr v-for="(y,index) in ydata">
+    <tr v-for="(y,index) in ydata" :key="index+'A'">
       <td>{{y}}</td>
-      <td v-for="item in xdata[index]">{{item}}</td>
+      <td v-for="(item,index) in xdata[index]" :key="index+'B'">{{item}}</td>
       <template v-if="xdata[index].length<xdata[0].length">
-        <td v-for="i in xdata[0].length-xdata[index].length"></td>
+        <td v-for="(i,index) in xdata[0].length-xdata[index].length" :key="index+'C'"></td>
       </template>
     </tr>
   </table>
@@ -49,7 +49,7 @@ export default {
       ]
     },
     ydata: {
-      default: () => ['时间', '次数', '日期']
+      default: () => ['A', 'B', 'C']
     }
   }
 }
@@ -61,7 +61,7 @@ table {
   border-collapse: collapse;
 }
 td {
-  padding: 0.5vw;
+  padding: 0.3vw;
   border: solid 1px #c5c5c5;
 }
 </style>

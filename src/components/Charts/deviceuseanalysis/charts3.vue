@@ -3,7 +3,7 @@
     <chartsname chartsname="每小时内用水次数占总用水次数的比例" />
     <div class="chartsbgbox">
       <div id="deviceuseanalysis3" />
-      <xytable style="width:90%"></xytable>
+      <xytable :ydata="ydata" :xdata="xdatainit" style="width:90%"></xytable>
     </div>
   </div>
 </template>
@@ -11,91 +11,119 @@
 import echarts from 'echarts'
 import chartsname from '@/components/chartsname'
 import xytable from '@/components/Charts/xytabletest'
-
+import { usewater } from '@/api/deviceuseanalysis/index'
 export default {
   components: {
     chartsname,
     xytable
   },
+
+  created() {
+    usewater().then(x => {
+      let a = x.data.perHourTotal
+      console.log(x)
+      let temp = [
+        a.clock0,
+        a.clock1,
+        a.clock2,
+        a.clock3,
+        a.clock4,
+        a.clock5,
+        a.clock6,
+        a.clock7,
+        a.clock8,
+        a.clock9,
+        a.clock10,
+        a.clock11,
+        a.clock12,
+        a.clock13,
+        a.clock14,
+        a.clock15,
+        a.clock16,
+        a.clock17,
+        a.clock18,
+        a.clock19,
+        a.clock20,
+        a.clock21,
+        a.clock22,
+        a.clock23
+      ]
+      let scale = [
+        x.data.clock_0,
+        x.data.clock_1,
+        x.data.clock_2,
+        x.data.clock_3,
+        x.data.clock_4,
+        x.data.clock_5,
+        x.data.clock_6,
+        x.data.clock_7,
+        x.data.clock_8,
+        x.data.clock_9,
+        x.data.clock_10,
+        x.data.clock_11,
+        x.data.clock_12,
+        x.data.clock_13,
+        x.data.clock_14,
+        x.data.clock_15,
+        x.data.clock_16,
+        x.data.clock_17,
+        x.data.clock_18,
+        x.data.clock_19,
+        x.data.clock_20,
+        x.data.clock_21,
+        x.data.clock_22,
+        x.data.clock_23
+      ].map(x => {
+        if (x === 0) {
+          return x
+        }
+        let x100 = x * 100
+        return x100.toFixed(2) + '%'
+      })
+      console.log(scale)
+
+      this.option.series[0].data = temp
+      this.echartsupdated()
+      this.xdatainit[1] = temp
+      this.xdatainit[2] = scale
+      this.xdatainit.push(null)
+    })
+  },
   data() {
     return {
-      tableData: [
-        {
-          date: '0-100',
-          name: '50',
-          address: '20%'
-        },
-        {
-          date: '0-100',
-          name: '50',
-          address: '20%'
-        },
-        {
-          date: '0-100',
-          name: '50',
-          address: '20%'
-        },
-        {
-          date: '0-100',
-          name: '50',
-          address: '20%'
-        },
-        {
-          date: '0-100',
-          name: '50',
-          address: '20%'
-        },
-        {
-          date: '0-100',
-          name: '50',
-          address: '20%'
-        },
-        {
-          date: '0-100',
-          name: '50',
-          address: '20%'
-        }
-      ]
-    }
-  },
-  mounted() {
-    this.$nextTick(() => {
-      var myChart = echarts.init(document.getElementById('deviceuseanalysis3'))
-
-      var option = {
+      option: {
         color: ['#80adf8'],
         tooltip: {
           trigger: 'axis'
         },
-
         xAxis: [
           {
             type: 'category',
             data: [
-              '0-100',
-              '101-200',
-              '201-300',
-              '301-400',
-              '401-500',
-              '501-600',
-              '6000-700',
-              '701-800',
-              '801-900',
-              '901-1000',
-              '1100-1200',
-              '1200-1300',
-              '0-100',
-              '101-200',
-              '201-300',
-              '301-400',
-              '401-500',
-              '501-600',
-              '0-100',
-              '101-200',
-              '201-300',
-              '301-400',
-              '401-500',
-              '501-600'
+              '00:00',
+              '01:00',
+              '02:00',
+              '03:00',
+              '04:00',
+              '05:00',
+              '06:00',
+              '07:00',
+              '08:00',
+              '09:00',
+              '10:00',
+              '11:00',
+              '12:00',
+              '13:00',
+              '14:00',
+              '15:00',
+              '16:00',
+              '17:00',
+              '18:00',
+              '19:00',
+              '20:00',
+              '21:00',
+              '22:00',
+              '23:00'
             ]
           }
         ],
@@ -117,40 +145,54 @@ export default {
             type: 'bar',
             barWidth: 10,
             itemStyle: { barBorderRadius: 5 },
-            data: [
-              19,
-              15,
-              13,
-              10,
-              15,
-              14,
-              16,
-              27,
-              15,
-              13,
-              10,
-              15,
-              14,
-              16,
-              27,
-              15,
-              14,
-              16,
-              27,
-
-              10,
-              15,
-
-              13,
-              14,
-              10
-            ]
+            data: []
           }
         ]
-      }
+      },
+      ydata: ['时间', '次数', '次数占比'],
+      xdatainit: [
+        [
+          '00.00',
+          '01.00',
+          '02.00',
+          '03.00',
+          '04.00',
+          '05.00',
+          '06.00',
+          '07.00',
+          '08.00',
+          '09.00',
+          '10.00',
+          '11.00',
+          '12.00',
+          '13.00',
+          '14.00',
+          '15.00',
+          '16.00',
+          '17.00',
+          '18.00',
+          '19.00',
+          '20.00',
+          '21.00',
+          '22.00',
+          '23.00'
+        ],
+        [],
+        []
+      ]
+    }
+  },
+  mounted() {},
+  methods: {
+    echartsupdated() {
+      this.$nextTick(() => {
+        let myChart = echarts.init(
+          document.getElementById('deviceuseanalysis3')
+        )
 
-      myChart.setOption(option)
-    })
+        myChart.setOption(this.option)
+      })
+    }
   }
 }
 </script>

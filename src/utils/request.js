@@ -15,22 +15,19 @@ const service = axios.create({
 // request拦截器
 service.interceptors.request.use(
   config => {
-    console.log(config)
-    if (getToken()) {
+     if (getToken()) {
       config.headers['Authorization'] = 'Bearer ' + getToken() // 让每个请求携带自定义token 请根据实际情况自行修改
     }
     return config
   },
   error => {
-    console.log(error)
-    Promise.reject(error)
+     Promise.reject(error)
   }
 )
 
 // 响应拦截器
 service.interceptors.response.use(res => {
-    console.log(res)
-    const code = res.data.code
+     const code = res.data.code
     if (code === 401) {
       MessageBox.confirm(
         '登录状态已过期，您可以继续留在该页面，或者重新登录',

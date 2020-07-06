@@ -22,8 +22,8 @@ body .el-table colgroup.gutter {
 } */
 /* /定义滚动条高宽及背景 高宽分别对应横竖滚动条的尺寸/ */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
   background-color: #dcdcdc;
 }
 /* /定义滚动条轨道 内阴影+圆角/ */
@@ -36,7 +36,7 @@ body .el-table colgroup.gutter {
 ::-webkit-scrollbar-thumb {
   border-radius: 10px;
   -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-  background-color: #3484fc;
+  background-color: #3484fcaa;
 }
 </style>
 

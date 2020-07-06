@@ -9,24 +9,16 @@
 <script>
 import echarts from 'echarts'
 import chartsname from '@/components/chartsname'
+import request from '@/utils/request'
 
 export default {
   components: {
     chartsname
   },
   data() {
-    return {}
-  },
-  mounted() {
-    this.$nextTick(() => {
-      var myChart = echarts.init(document.getElementById('deviceuseanalysis2'))
-      var data = [
-        { value: 90, name: '0-30分钟' },
-        { value: 60, name: '30-60分钟' },
-        { value: 114, name: '60-90分钟' },
-        { value: 36, name: '90分钟以上' }
-      ]
-      var option = {
+    return {
+      count: 0,
+      option: {
         tooltip: {
           formatter: '{a} <br/>{b} : {c} ({d}%)'
         },
@@ -35,7 +27,7 @@ export default {
         },
         title: [
           {
-            text: '300',
+            text: '',
             left: 'center',
             top: '40%',
             textStyle: {
@@ -58,10 +50,14 @@ export default {
 
         series: [
           {
-            name: '姓名',
             type: 'pie',
             radius: ['45%', '60%'],
-            data,
+            data: [
+              { value: 90, name: '0-30分钟' },
+              { value: 60, name: '30-60分钟' },
+              { value: 114, name: '60-90分钟' },
+              { value: 36, name: '90分钟以上' }
+            ],
             label: {
               formatter: '{d}%'
             },
@@ -76,9 +72,40 @@ export default {
           }
         ]
       }
-
-      myChart.setOption(option)
+    }
+  },
+  created() {
+    request('/statistical/customer/waterRatio').then(x => {
+      let temp = x.data.map((y, index) => {
+        let name
+        this.count = this.count + y.counts
+        if (index == 0) name = '90分钟以上'
+        if (index == 1) name = '0-30分钟'
+        if (index == 2) name = '30-60分钟'
+        if (index == 3) name = '60-90分钟'
+        return {
+          name,
+          value: y.counts
+        }
+      })
+      this.option.title[0].text = this.count
+      this.option.series[0].data = temp
+      this.echartsupdated()
     })
+  },
+  mounted() {
+    this.echartsupdated()
+  },
+  methods: {
+    echartsupdated() {
+      this.$nextTick(() => {
+        let myChart = echarts.init(
+          document.getElementById('deviceuseanalysis2')
+        )
+
+        myChart.setOption(this.option)
+      })
+    }
   }
 }
 </script>
