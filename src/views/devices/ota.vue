@@ -29,7 +29,13 @@
           prefix-icon="el-icon-search"
           v-model="input2"
         ></el-input>
-        <el-tree class="mainleft" :data="data" :props="defaultProps" @node-click="handleNodeClick"></el-tree>
+        <el-tree
+          class="mainleft"
+          :data="data"
+          default-expand-all
+          :props="defaultProps"
+          @node-click="handleNodeClick"
+        ></el-tree>
       </div>
       <div class="rightsection">
         <!-- 固件版本图 -->

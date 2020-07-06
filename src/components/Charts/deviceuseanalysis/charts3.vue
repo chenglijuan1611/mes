@@ -80,13 +80,12 @@ export default {
         let x100 = x * 100
         return x100.toFixed(2) + '%'
       })
-      console.log(scale)
 
       this.option.series[0].data = temp
       this.echartsupdated()
       this.xdatainit[1] = temp
       this.xdatainit[2] = scale
-      this.xdatainit.push(null)
+      this.xdatainit = Object.assign({}, this.xdatainit)
     })
   },
   data() {
