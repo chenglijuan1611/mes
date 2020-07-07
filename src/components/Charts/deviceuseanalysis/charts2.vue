@@ -93,9 +93,7 @@ export default {
       this.echartsupdated()
     })
   },
-  mounted() {
-    this.echartsupdated()
-  },
+  mounted() {},
   methods: {
     echartsupdated() {
       this.$nextTick(() => {

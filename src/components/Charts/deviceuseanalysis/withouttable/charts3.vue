@@ -95,7 +95,7 @@ export default {
 
       this.xdatainit[1] = temp
       this.xdatainit[2] = scale
-      console.log(this.xdatainit)
+  
       this.echartsupdated()
       let tabledata = []
       this.xdatainit[0].map((x, y) => {

@@ -21,8 +21,7 @@ export default {
   created() {
     usewater().then(x => {
       let a = x.data.perHourTotal
-      console.log(x)
-      let temp = [
+       let temp = [
         a.clock0,
         a.clock1,
         a.clock2,
