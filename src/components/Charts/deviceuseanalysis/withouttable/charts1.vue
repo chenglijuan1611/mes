@@ -3,6 +3,15 @@
     <chartsname chartsname="用户平均每日用水量" />
     <div class="chartsbgbox">
       <div id="deviceuseanalysis1" />
+      <div class="righttable">
+        <div>
+          <el-table height="250" :data="x">
+            <el-table-column prop="time" label="日期"></el-table-column>
+            <el-table-column prop="count" label="姓名"></el-table-column>
+            <el-table-column prop="scale" label="地址"></el-table-column>
+          </el-table>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -16,6 +25,7 @@ export default {
   },
   data() {
     return {
+      x: [],
       xAxisdata: [
         '0-100',
         '101-200',
@@ -67,27 +77,6 @@ export default {
         5,
         3,
         4
-      ],
-      tabledata: [
-        { num: '0-100', a: '20' },
-        { num: '0-100', a: '20' },
-        { num: '0-100', a: '20' },
-        { num: '0-100', a: '20' },
-        { num: '0-100', a: '20' },
-        { num: '0-100', a: '20' },
-        { num: '0-100', a: '20' },
-        { num: '0-100', a: '20' },
-        { num: '0-100', a: '20' },
-        { num: '0-100', a: '20' },
-        { num: '0-100', a: '20' },
-        { num: '0-100', a: '20' },
-        { num: '0-100', a: '20' },
-        { num: '0-100', a: '20' },
-        { num: '0-100', a: '20' },
-        { num: '0-100', a: '20' },
-        { num: '0-100', a: '20' },
-        { num: '0-100', a: '20' },
-        { num: '0-100', a: '20' }
       ]
     }
   },
@@ -146,7 +135,8 @@ export default {
 </script>
 <style scoped>
 #deviceuseanalysis1 {
-  width: 100%;
+  width: 68%;
+  height: 300px;
 }
 
 .chartsbgbox {
@@ -155,5 +145,15 @@ export default {
   flex-wrap: wrap;
   background-color: #fff;
   height: 300px;
+  align-items: flex-start;
+}
+.righttable {
+  width: 30%;
+  height: 300px;
+
+  background-color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>

@@ -6,7 +6,8 @@
       <div class="block" style="padding-top:1vw">
         <span class="demonstration">时段选择</span>
         <el-date-picker
-          v-model="value1"
+          value-format="yyyy-MM-dd"
+          v-model="time"
           type="daterange"
           range-separator="至"
           start-placeholder="开始日期"
@@ -14,6 +15,7 @@
           size="mini"
         />
         <el-button
+          @click="search"
           size="mini"
           style="margin-left:1vw;background-color:#15b9bb"
           type="primary"
@@ -28,6 +30,7 @@
 import echarts from 'echarts'
 import 'echarts/map/js/china'
 import chartsname from '@/components/chartsname'
+import request from '@/utils/request'
 
 export default {
   components: {
@@ -35,32 +38,19 @@ export default {
   },
   data() {
     return {
-      value1: ''
-    }
-  },
-  mounted() {
-    this.$nextTick(() => {
-      var myChart = echarts.init(document.getElementById('newuserline'))
-
-      // 指定图表的配置项和数据
-      var option = {
+      time: '',
+      option: {
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+            type: 'cross'
+          }
+        },
         xAxis: {
-          type: 'category',
-          data: [
-            '4-15',
-            '4-16',
-            '4-17',
-            '4-18',
-            '4-19',
-            '4-20',
-            '4-21',
-            '4-22',
-            '4-23',
-            '4-24',
-            '4-25'
-          ]
+          type: 'time'
         },
         yAxis: {
+          minInterval: 1,
           name: '数量',
           type: 'value'
         },
@@ -85,10 +75,36 @@ export default {
           }
         ]
       }
+    }
+  },
 
-      // 使用刚指定的配置项和数据显示图表。
-      myChart.setOption(option)
-    })
+  created() {
+    this.up()
+  },
+  mounted() {},
+  methods: {
+    up(a = '', b = '') {
+      request(
+        '/statistical/customer/increaseNumber?beginTime=' + a + '&endTime=' + b
+      ).then(x => {
+        this.option.series[0].data = x.data.map(x => [
+          x.increaseDate,
+          x.increaseCount
+        ])
+        this.dateupdated()
+      })
+    },
+    dateupdated() {
+      this.$nextTick(() => {
+        let myChart = echarts.init(document.getElementById('newuserline'))
+
+        myChart.setOption(this.option)
+      })
+    },
+    search() {
+      console.log(this.time)
+      this.up(this.time[0], this.time[1])
+    }
   }
 }
 </script>
