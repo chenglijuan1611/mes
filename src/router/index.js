@@ -105,17 +105,7 @@ export const constantRoutes = [
       }
     ]
   },
-  {
-    path: '/test',
-    component: Layout,
-    hidden: true,
-    children: [
-      {
-        path: '',
-        component: () => import('@/views/test2'),
-      }
-    ]
-  }
+ 
 
 ]
 

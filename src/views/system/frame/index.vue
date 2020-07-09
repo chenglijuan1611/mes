@@ -1,5 +1,14 @@
 <template>
   <div class="app-container">
+    <div>
+      <span>&emsp; MAC地址 ：</span>
+      <el-input class="ipt" v-model="ipt1" placeholder="请输入MAC地址"></el-input>
+      <span>&emsp;keys ：</span>
+      <el-input class="ipt" v-model="ipt2" placeholder="请输入keys"></el-input>
+      <span>&emsp;vlaues :</span>
+      <el-input class="ipt" v-model="ipt3" placeholder="请输入vlaues"></el-input>&emsp;
+      <el-button @click="send" type="primary">发送</el-button>
+    </div>
     <el-form :model="queryParams" ref="queryForm" :inline="true" label-width="68px">
       <el-form-item label="数据帧" prop="frame">
         <el-input
@@ -11,12 +20,15 @@
         />
       </el-form-item>
       <el-form-item label="创建时间" prop="gmtCreatetime">
-        <el-date-picker clearable size="small" style="width: 200px"
+        <el-date-picker
+          clearable
+          size="small"
+          style="width: 200px"
           v-model="queryParams.gmtCreatetime"
           type="date"
           value-format="yyyy-MM-dd"
-          placeholder="选择创建时间">
-        </el-date-picker>
+          placeholder="选择创建时间"
+        ></el-date-picker>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
@@ -94,9 +106,9 @@
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
-      v-show="total>0"
+      v-show="total > 0"
       :total="total"
       :page.sync="queryParams.pageNum"
       :limit.sync="queryParams.pageSize"
@@ -122,10 +134,19 @@
 </template>
 
 <script>
-import { listFrame, getFrame, delFrame, addFrame, updateFrame, exportFrame } from "@/api/system/frame";
+import axios from 'axios'
+
+import {
+  listFrame,
+  getFrame,
+  delFrame,
+  addFrame,
+  updateFrame,
+  exportFrame
+} from '@/api/system/frame'
 
 export default {
-  name: "Frame",
+  name: 'Frame',
   data() {
     return {
       // 遮罩层
@@ -141,7 +162,7 @@ export default {
       // 帧信息表格数据
       frameList: [],
       // 弹出层标题
-      title: "",
+      title: '',
       // 是否显示弹出层
       open: false,
       // 查询参数
@@ -149,35 +170,36 @@ export default {
         pageNum: 1,
         pageSize: 10,
         frame: undefined,
-        gmtCreatetime: undefined,
+        gmtCreatetime: undefined
       },
       // 表单参数
       form: {},
       // 表单校验
       rules: {
-        frame: [
-          { required: true, message: "数据帧不能为空", trigger: "blur" }
-        ],
-      }
-    };
+        frame: [{ required: true, message: '数据帧不能为空', trigger: 'blur' }]
+      },
+      ipt1: '',
+      ipt2: '',
+      ipt3: ''
+    }
   },
   created() {
-    this.getList();
+    this.getList()
   },
   methods: {
     /** 查询帧信息列表 */
     getList() {
-      this.loading = true;
+      this.loading = true
       listFrame(this.queryParams).then(response => {
-        this.frameList = response.rows;
-        this.total = response.total;
-        this.loading = false;
-      });
+        this.frameList = response.rows
+        this.total = response.total
+        this.loading = false
+      })
     },
     // 取消按钮
     cancel() {
-      this.open = false;
-      this.reset();
+      this.open = false
+      this.reset()
     },
     // 表单重置
     reset() {
@@ -187,96 +209,134 @@ export default {
         isDefault: undefined,
         gmtCreatetime: undefined,
         gmtModifytime: undefined
-      };
-      this.resetForm("form");
+      }
+      this.resetForm('form')
     },
     /** 搜索按钮操作 */
     handleQuery() {
-      this.queryParams.pageNum = 1;
-      this.getList();
+      this.queryParams.pageNum = 1
+      this.getList()
     },
     /** 重置按钮操作 */
     resetQuery() {
-      this.resetForm("queryForm");
-      this.handleQuery();
+      this.resetForm('queryForm')
+      this.handleQuery()
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
       this.ids = selection.map(item => item.id)
-      this.single = selection.length!=1
+      this.single = selection.length != 1
       this.multiple = !selection.length
     },
     /** 新增按钮操作 */
     handleAdd() {
-      this.reset();
-      this.open = true;
-      this.title = "添加帧信息";
+      this.reset()
+      this.open = true
+      this.title = '添加帧信息'
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
-      this.reset();
+      this.reset()
       const id = row.id || this.ids
       getFrame(id).then(response => {
-        this.form = response.data;
-        this.open = true;
-        this.title = "修改帧信息";
-      });
+        this.form = response.data
+        this.open = true
+        this.title = '修改帧信息'
+      })
     },
     /** 提交按钮 */
     submitForm: function() {
-      this.$refs["form"].validate(valid => {
+      this.$refs['form'].validate(valid => {
         if (valid) {
           if (this.form.id != undefined) {
             updateFrame(this.form).then(response => {
               if (response.code === 200) {
-                this.msgSuccess("修改成功");
-                this.open = false;
-                this.getList();
+                this.msgSuccess('修改成功')
+                this.open = false
+                this.getList()
               } else {
-                this.msgError(response.msg);
+                this.msgError(response.msg)
               }
-            });
+            })
           } else {
             addFrame(this.form).then(response => {
               if (response.code === 200) {
-                this.msgSuccess("新增成功");
-                this.open = false;
-                this.getList();
+                this.msgSuccess('新增成功')
+                this.open = false
+                this.getList()
               } else {
-                this.msgError(response.msg);
+                this.msgError(response.msg)
               }
-            });
+            })
           }
         }
-      });
+      })
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      const ids = row.id || this.ids;
-      this.$confirm('是否确认删除帧信息编号为"' + ids + '"的数据项?', "警告", {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning"
-        }).then(function() {
-          return delFrame(ids);
-        }).then(() => {
-          this.getList();
-          this.msgSuccess("删除成功");
-        }).catch(function() {});
+      const ids = row.id || this.ids
+      this.$confirm('是否确认删除帧信息编号为"' + ids + '"的数据项?', '警告', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(function() {
+          return delFrame(ids)
+        })
+        .then(() => {
+          this.getList()
+          this.msgSuccess('删除成功')
+        })
+        .catch(function() {})
     },
     /** 导出按钮操作 */
     handleExport() {
-      const queryParams = this.queryParams;
-      this.$confirm('是否确认导出所有帧信息数据项?', "警告", {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning"
-        }).then(function() {
-          return exportFrame(queryParams);
-        }).then(response => {
-          this.download(response.msg);
-        }).catch(function() {});
+      const queryParams = this.queryParams
+      this.$confirm('是否确认导出所有帧信息数据项?', '警告', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(function() {
+          return exportFrame(queryParams)
+        })
+        .then(response => {
+          this.download(response.msg)
+        })
+        .catch(function() {})
+    },
+    send() {
+      axios
+        .get(
+          'http://47.114.84.236:8066/applets/control?strMac=' +
+            this.ipt1 +
+            '&keys=' +
+            this.ipt2 +
+            '&values=' +
+            this.ipt3
+        )
+        .then(x => {
+          this.$notify({
+            message: x.data,
+            type: 'success',
+            position: 'top-left'
+          }),
+            this.handleQuery()
+        })
+        .catch(x => {
+          this.$notify.error({
+            message: x,
+            type: 'success',
+            position: 'top-left'
+          })
+          this.handleQuery()
+        })
     }
   }
-};
+}
 </script>
+<style>
+.ipt {
+  width: 20%;
+}
+</style>
