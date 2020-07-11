@@ -21,7 +21,7 @@
     </div>
     <!--  选择框    -->
     <div class="mainbox">
-      <div class="leftsection" style>
+      <!-- <div class="leftsection" style>
         <el-input
           size="mini"
           style="width:200px;margin-top:40px"
@@ -36,30 +36,30 @@
           :props="defaultProps"
           @node-click="handleNodeClick"
         ></el-tree>
-      </div>
+      </div>-->
       <div class="rightsection">
         <!-- 固件版本图 -->
-        <div style="width:700px">
+        <div style="width:82vw">
           <firmwareversion></firmwareversion>
         </div>
         <!-- 固件版本图 -->
 
         <!-- 设备ota 列表 -->
-        <div>
-          <chartsname chartsname="设备OTA列表" />
-          <div class="otalist">
-            <!-- button  -->
-            <div style="width:30px">
-              <!-- 占空 -->
-            </div>
-            <el-button type="primary" icon="el-icon-s-promotion">推送</el-button>
+        <!-- <div> -->
+        <!-- <chartsname chartsname="设备OTA列表" />
+        <div class="otalist">-->
+        <!-- button  -->
+        <!-- <div style="width:30px"> -->
+        <!-- 占空 -->
+        <!-- </div> -->
+        <!-- <el-button type="primary" icon="el-icon-s-promotion">推送</el-button>
             <el-button type="warning" icon="el-icon-video-pause">暂停</el-button>
             <el-button type="danger" icon="el-icon-delete">删除</el-button>
-          </div>
-          <!-- 
+        </div>-->
+        <!-- 
               多选表单
-          -->
-          <div class="otalistform">
+        -->
+        <!-- <div class="otalistform">
             <el-table
               ref="multipleTable"
               :data="tableData"
@@ -101,9 +101,9 @@
                 </template>
               </el-table-column>
             </el-table>
-          </div>
-          <!-- 分页 -->
-          <div class="pagination">
+        </div>-->
+        <!-- 分页 -->
+        <!-- <div class="pagination">
             <el-pagination
               pager-count=4
               background
@@ -112,8 +112,8 @@
               :total="100"
             >sss</el-pagination>&nbsp; &nbsp;&nbsp;
             <span>共有80条信息，共有6页，当前第1页</span>
-          </div>
-        </div>
+        </div>-->
+        <!-- </div> -->
       </div>
     </div>
   </div>
@@ -273,6 +273,7 @@ export default {
   padding-left: 3vw;
   height: 20px;
 }
+
 .leftsection {
   width: 275px;
 
@@ -288,6 +289,9 @@ export default {
 }
 .mainbox {
   display: flex;
+}
+.rightsection {
+  margin: 0 auto;
 }
 .otalist {
   width: 1000px;

@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" :inline="true">
+    <el-form label-width="auto" :model="queryParams" ref="queryForm" :inline="true">
       <el-form-item label="mac地址" prop="mac">
         <el-input
           v-model="queryParams.mac"
@@ -190,42 +190,14 @@
         ></el-date-picker>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
-      </el-form-item>
-    </el-form>
-
-    <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
         <el-button
+          style="margin-left:30px"
           type="primary"
-          icon="el-icon-plus"
+          icon="el-icon-search"
           size="mini"
-          @click="handleAdd"
-          v-hasPermi="['system:device:add']"
-        >新增</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="success"
-          icon="el-icon-edit"
-          size="mini"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['system:device:edit']"
-        >修改</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="danger"
-          icon="el-icon-delete"
-          size="mini"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['system:device:remove']"
-        >删除</el-button>
-      </el-col>
-      <el-col :span="1.5">
+          @click="handleQuery"
+        >搜索</el-button>
+        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
         <el-button
           type="warning"
           icon="el-icon-download"
@@ -233,11 +205,11 @@
           @click="handleExport"
           v-hasPermi="['system:device:export']"
         >导出</el-button>
-      </el-col>
-    </el-row>
+      </el-form-item>
+    </el-form>
 
     <el-table v-loading="loading" :data="deviceList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
+      <!-- <el-table-column type="selection" width="55" align="center" /> -->
       <el-table-column label="名称" align="center" prop="name" />
       <!-- <el-table-column label="自增长唯一标识" align="center" prop="id" /> -->
       <el-table-column label="设备型号编码" align="center" prop="modelCode" />

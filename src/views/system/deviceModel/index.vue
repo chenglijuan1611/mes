@@ -5,7 +5,7 @@
       ref="queryForm"
       :inline="true"
       label-width="auto"
-       
+     
     >
       <el-form-item label="产品型号名称" prop="modelName">
         <el-input
@@ -96,6 +96,7 @@
       </el-form-item>
       <el-form-item>
         <el-button
+          style="margin-left:100px"
           class="filter-item"
           type="primary"
           icon="el-icon-search"
@@ -121,6 +122,7 @@
     </el-form>
 
     <el-table
+      fit
       v-loading="loading"
       :data="deviceModelList"
       row-key="deviceModelId"
@@ -226,13 +228,14 @@
       :before-close="handleClose"
     >
       <el-upload
+        :before-upload="upaction"
         ref="up"
         drag
         :headers="upheaders"
         :action="updata.url"
         :name="updata.name"
         :data="updata.data"
-        limit="1"
+        :limit="limit"
       >
         <i class="el-icon-upload"></i>
         <div class="el-upload__text">
@@ -266,6 +269,7 @@ export default {
   data() {
     return {
       // 遮罩层
+      limit: 1,
       loading: true,
       // 设备分类信息表格数据
       deviceModelList: [],
@@ -498,6 +502,9 @@ export default {
           done()
         })
         .catch(_ => {})
+    },
+    upaction(x) {
+      console.log(x)
     }
   }
 }
