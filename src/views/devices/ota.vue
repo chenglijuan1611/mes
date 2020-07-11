@@ -3,7 +3,7 @@
     <div style="height:1px;background-color: #c5c5c5;"></div>
     <!--  选择框    -->
     <div class="seqrch">
-      <el-form class="elinput" size="mini" inline="true">
+      <el-form class="elinput" size="mini" :inline="true">
         <el-form-item label="产品型号">
           <el-select v-model="form.region" placeholder="请选择产品型号">
             <el-option label="型号" value="shanghai"></el-option>
@@ -105,7 +105,7 @@
           <!-- 分页 -->
           <div class="pagination">
             <el-pagination
-              pager-count="4"
+              pager-count=4
               background
               class="elpagination"
               layout="prev, pager, next"
@@ -252,10 +252,14 @@ export default {
           updatestatus: '当前是最新版本'
         }
       ],
-      multipleSelection: []
+      multipleSelection: [],
+      input2: ''
     }
   },
-  methods: {}
+  methods: {
+    handleSelectionChange() {},
+    handleNodeClick() {}
+  }
 }
 </script>
 <style  scoped>

@@ -89,6 +89,9 @@ export default {
           document.getElementById('devicedistribution')
         )
         myChart.setOption(this.option)
+        myChart.on('click', function(params) {
+          console.log(params)
+        })
       })
     }
   }
