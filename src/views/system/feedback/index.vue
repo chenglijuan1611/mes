@@ -124,7 +124,7 @@
       </el-table-column>
       <el-table-column label="处理状态" align="center" prop="dealStatus">
         <template slot-scope="scope">
-          <span>{{ scope.row.dealStatus==='1'?'已处理':'未处理' }}</span>
+          <span>{{ scope.row.dealStatus== 1 ?'已处理':'未处理' }}</span>
         </template>
       </el-table-column>
       <el-table-column label="处理时间" align="center" prop="dealTime" width="180">
