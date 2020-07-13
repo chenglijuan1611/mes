@@ -1,12 +1,6 @@
 <template>
   <div class="app-container">
-    <el-form
-      :model="queryParams"
-      ref="queryForm"
-      :inline="true"
-      label-width="auto"
-     
-    >
+    <el-form :model="queryParams" ref="queryForm" :inline="true" label-width="auto">
       <el-form-item label="产品型号名称" prop="modelName">
         <el-input
           v-model="queryParams.modelName"
@@ -159,14 +153,14 @@
             size="mini"
             type="text"
             icon="el-icon-edit"
-            @click="upimg(scope.row)"
+            @click="upimgclick(scope.row)"
             v-hasPermi="['system:deviceModel:edit']"
           >上传图片</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-edit"
-            @click="upfwk(scope.row)"
+            @click="upfwkclick(scope.row)"
             v-hasPermi="['system:deviceModel:edit']"
           >上传固件</el-button>
           <el-button
@@ -223,20 +217,11 @@
     <!-- // 文件上传 -->
     <el-dialog
       :title="updata.title"
-      :visible.sync="dialogVisible"
-      width="36%"
+      :visible.sync="updata.dialogVisible"
+      width="30%"
       :before-close="handleClose"
     >
-      <el-upload
-        :before-upload="upaction"
-        ref="up"
-        drag
-        :headers="upheaders"
-        :action="updata.url"
-        :name="updata.name"
-        :data="updata.data"
-        :limit="limit"
-      >
+      <el-upload ref="up" drag :action="updata.url" :limit="limit" :http-request="upfunc">
         <i class="el-icon-upload"></i>
         <div class="el-upload__text">
           将文件拖到此处，或
@@ -257,8 +242,11 @@ import {
   delDeviceModel,
   addDeviceModel,
   updateDeviceModel,
-  exportDeviceModel
+  exportDeviceModel,
+  upfile
 } from '@/api/system/deviceModel'
+import axios from 'axios'
+
 import { handleTree } from '@/utils/dafeng'
 import Treeselect from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
@@ -300,13 +288,13 @@ export default {
       form: {},
       // 表单校验
       rules: {},
-      dialogVisible: false,
       editcode: false,
       updata: {
-        name: '',
-        data: '',
+        dialogVisible: false,
         url: '',
-        title: ''
+        title: '',
+        name: '',
+        modelEcode: ''
       }
     }
   },
@@ -314,13 +302,7 @@ export default {
   created() {
     this.getList()
   },
-  computed: {
-    upheaders: function() {
-      return {
-        Authorization: 'Bearer ' + this.$store.getters.token
-      }
-    }
-  },
+  computed: {},
   methods: {
     /** 查询设备分类信息列表 */
     getList() {
@@ -467,31 +449,28 @@ export default {
     imgurl(a) {
       return process.env.VUE_APP_BASE_API + a.row.picUrl
     },
-    // 上传图片操作
-    upimg(a) {
-      ;(this.updata.url =
-        process.env.VUE_APP_BASE_API + '/system/deviceModel/uploadPicture'),
-        (this.updata.name = 'picture'),
-        (this.updata.data = {
-          modelEcode: a.modelEcode
-        })
-      this.updata.title = '选择上传图片'
-      this.dialogVisible = true
+    // // 上传图片操作
+    upimgclick(x) {
+      this.updata.title = '上传设备图片'
+      this.updata.url = '/system/deviceModel/uploadPicture'
+      this.updata.dialogVisible = true
+      this.updata.name = 'picture'
+      this.updata.modelEcode = x.modelEcode
     },
 
-    upfwk(a) {
-      ;(this.updata.url =
-        process.env.VUE_APP_BASE_API + '/system/deviceModel/uploadFirmware'),
-        (this.updata.name = 'firmwareFile'),
-        (this.updata.data = {
-          modelEcode: a.modelEcode
-        })
-      this.updata.title = '选择上传固件文件'
-      this.dialogVisible = true
+    // 上传固件操作
+    upfwkclick(a) {
+      this.updata.title = '上传设备固件'
+      this.updata.url = '/system/deviceModel/uploadFirmware'
+      this.updata.dialogVisible = true
+      this.updata.name = 'firmwareFile'
+      this.updata.modelEcode = x.modelEcode
     },
+
+    // 清理文件列表
     upok() {
       this.resetQuery()
-      this.dialogVisible = false
+      this.updata.dialogVisible = false
       this.$refs.up.clearFiles()
     },
     handleClose(done) {
@@ -503,8 +482,23 @@ export default {
         })
         .catch(_ => {})
     },
-    upaction(x) {
-      console.log(x)
+    upfunc(x) {
+      let formData = new FormData()
+      formData.append(this.updata.name, x.file)
+      formData.append('modelEcode', this.updata.modelEcode)
+      upfile(this.updata.url, formData, z => {
+        let p = (z.loaded / z.total) * 100
+        x.onProgress({ percent: p })
+      })
+        .then(res => {
+          x.onSuccess()
+        })
+        .catch(err => {
+          x.onError()
+          this.$alert(err, '上传出现错误', {
+            confirmButtonText: '确定'
+          })
+        })
     }
   }
 }

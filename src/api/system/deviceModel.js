@@ -26,6 +26,23 @@ export function addDeviceModel(data) {
   })
 }
 
+// 上传文件接口
+export function upfile(url,data,fun) {
+  return request({
+    headers:{
+      "Content-Type" :"multipart/form-data; boundary=<calculated when request is sent>"
+    },
+    onUploadProgress: fun,
+    url: url,
+    method: 'post',
+    data: data,
+    timeout: 0,
+
+  })
+}
+
+
+
 // 修改设备分类信息
 export function updateDeviceModel(data) {
   return request({
@@ -34,6 +51,10 @@ export function updateDeviceModel(data) {
     data: data
   })
 }
+
+
+
+
 
 // 删除设备分类信息
 export function delDeviceModel(deviceModelId) {
