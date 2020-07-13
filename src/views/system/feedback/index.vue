@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" :inline="true" label-width="68px">
+    <el-form :model="queryParams" ref="queryForm" :inline="true" label-width="auto">
       <el-form-item label="mac地址" prop="mac">
         <el-input
           v-model="queryParams.mac"
