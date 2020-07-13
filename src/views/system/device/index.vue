@@ -10,15 +10,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="销售编码" prop="salerCode">
-        <el-input
-          v-model="queryParams.salerCode"
-          placeholder="请输入销售编码"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
+      
       <el-form-item label="设备型号编码" prop="modelCode">
         <el-input
           v-model="queryParams.modelCode"
@@ -37,15 +29,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="是否授权" prop="isAuth">
-        <el-input
-          v-model="queryParams.isAuth"
-          placeholder="请输入是否授权"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
+    
       <el-form-item label="名称" prop="name">
         <el-input
           v-model="queryParams.name"
@@ -64,24 +48,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="国家" prop="country">
-        <el-input
-          v-model="queryParams.country"
-          placeholder="请输入国家"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="地区" prop="region">
-        <el-input
-          v-model="queryParams.region"
-          placeholder="请输入地区"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
+
       <el-form-item label="省份" prop="province">
         <el-input
           v-model="queryParams.province"
@@ -91,15 +58,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="地区" prop="area">
-        <el-input
-          v-model="queryParams.area"
-          placeholder="请输入地区"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
+
       <el-form-item label="城市" prop="city">
         <el-input
           v-model="queryParams.city"
@@ -109,15 +68,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="现城市" prop="currentCity">
-        <el-input
-          v-model="queryParams.currentCity"
-          placeholder="请输入现城市"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
+     
       <el-form-item label="地址" prop="address">
         <el-input
           v-model="queryParams.address"
@@ -127,16 +78,8 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="创建人" prop="createUser">
-        <el-input
-          v-model="queryParams.createUser"
-          placeholder="请输入创建人"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="创建人" prop="gmtCreatetime">
+
+      <el-form-item label="添加时间" prop="gmtCreatetime">
         <el-date-picker
           clearable
           size="small"
@@ -144,29 +87,10 @@
           v-model="queryParams.gmtCreatetime"
           type="date"
           value-format="yyyy-MM-dd"
-          placeholder="选择创建人"
+          placeholder="选择添加时间"
         ></el-date-picker>
       </el-form-item>
-      <el-form-item label="创建人" prop="modifyUser">
-        <el-input
-          v-model="queryParams.modifyUser"
-          placeholder="请输入创建人"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="创建时间" prop="gmtModifytime">
-        <el-date-picker
-          clearable
-          size="small"
-          style="width: 200px"
-          v-model="queryParams.gmtModifytime"
-          type="date"
-          value-format="yyyy-MM-dd"
-          placeholder="选择创建时间"
-        ></el-date-picker>
-      </el-form-item>
+
       <el-form-item label="购买时间" prop="purchaseTime">
         <el-date-picker
           clearable
@@ -209,36 +133,22 @@
     </el-form>
 
     <el-table v-loading="loading" :data="deviceList" @selection-change="handleSelectionChange">
-      <!-- <el-table-column type="selection" width="55" align="center" /> -->
       <el-table-column label="名称" align="center" prop="name" />
-      <!-- <el-table-column label="自增长唯一标识" align="center" prop="id" /> -->
       <el-table-column label="设备型号编码" align="center" prop="modelCode" />
       <el-table-column label="设备的mac地址" align="center" prop="mac" />
-      <!-- <el-table-column label="销售编码" align="center" prop="salerCode" /> -->
-
+      <el-table-column label="是否在线" align="center" prop="isOnline" />
+      <el-table-column label="固件版本" align="center" prop="firmwareVersion" />
       <el-table-column label="序列号" align="center" prop="serialNumber" />
-      <el-table-column label="是否授权" align="center" prop="isAuth" />
-
       <el-table-column label="手机号" align="center" prop="phone" />
-      <el-table-column label="国家" align="center" prop="country" />
-      <el-table-column label="地区" align="center" prop="region" />
       <el-table-column label="省份" align="center" prop="province" />
-      <el-table-column label="地区" align="center" prop="area" />
       <el-table-column label="城市" align="center" prop="city" />
-      <el-table-column label="现城市" align="center" prop="currentCity" />
       <el-table-column label="地址" align="center" prop="address" />
-      <el-table-column label="创建人" align="center" prop="createUser" />
-      <el-table-column label="创建人" align="center" prop="gmtCreatetime" width="180">
+      <el-table-column label="添加时间" align="center" prop="gmtCreatetime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.gmtCreatetime) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="创建人" align="center" prop="modifyUser" />
-      <el-table-column label="创建时间" align="center" prop="gmtModifytime" width="180">
-        <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.gmtModifytime) }}</span>
-        </template>
-      </el-table-column>
+
       <el-table-column label="购买时间" align="center" prop="purchaseTime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.purchaseTime) }}</span>
@@ -247,24 +157,6 @@
       <el-table-column label="保修时间" align="center" prop="warrantyTime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.warrantyTime) }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
-        <template slot-scope="scope">
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-edit"
-            @click="handleUpdate(scope.row)"
-            v-hasPermi="['system:device:edit']"
-          >修改</el-button>
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-delete"
-            @click="handleDelete(scope.row)"
-            v-hasPermi="['system:device:remove']"
-          >删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -276,7 +168,6 @@
       :limit.sync="queryParams.pageSize"
       @pagination="getList"
     />
-
     <!-- 添加或修改设备信息表对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" :close-on-click-modal="false">
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
