@@ -451,20 +451,20 @@ export default {
     },
     // // 上传图片操作
     upimgclick(x) {
-      this.updata.title = '上传设备图片'
       this.updata.url = '/system/deviceModel/uploadPicture'
       this.updata.dialogVisible = true
       this.updata.name = 'picture'
       this.updata.modelEcode = x.modelEcode
+      this.updata.title = '上传设备图片  英文编码为' + this.updata.modelEcode
     },
 
     // 上传固件操作
     upfwkclick(a) {
-      this.updata.title = '上传设备固件'
       this.updata.url = '/system/deviceModel/uploadFirmware'
       this.updata.dialogVisible = true
       this.updata.name = 'firmwareFile'
-      this.updata.modelEcode = x.modelEcode
+      this.updata.modelEcode = a.modelEcode
+      this.updata.title = '上传设备固件  英文编码为' + this.updata.modelEcode
     },
 
     // 清理文件列表
@@ -486,6 +486,7 @@ export default {
       let formData = new FormData()
       formData.append(this.updata.name, x.file)
       formData.append('modelEcode', this.updata.modelEcode)
+
       upfile(this.updata.url, formData, z => {
         let p = (z.loaded / z.total) * 100
         x.onProgress({ percent: p })
