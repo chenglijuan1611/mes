@@ -21,14 +21,14 @@
       </el-form-item>
       <el-form-item label="反馈时间" prop="feedbackTime">
         <el-date-picker
-          clearable
-          size="small"
-          style="width: 200px"
-          v-model="queryParams.feedbackTime"
-          type="date"
           value-format="yyyy-MM-dd"
-          placeholder="选择反馈时间"
-        ></el-date-picker>
+          v-model="time"
+          type="daterange"
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          size="small"
+        />
       </el-form-item>
       <el-form-item label="处理状态" prop="dealStatus">
         <el-select v-model="queryParams.dealStatus" placeholder="请选择处理状态" clearable size="small">
@@ -36,7 +36,7 @@
           <el-option label="未处理" value="0" />
         </el-select>
       </el-form-item>
-      <el-form-item label="处理时间" prop="dealTime">
+      <!-- <el-form-item label="处理时间" prop="dealTime">
         <el-date-picker
           clearable
           size="small"
@@ -46,7 +46,7 @@
           value-format="yyyy-MM-dd"
           placeholder="选择处理时间"
         ></el-date-picker>
-      </el-form-item>
+      </el-form-item>-->
       <el-form-item label="处理意见" prop="dealIdea">
         <el-input
           v-model="queryParams.dealIdea"
@@ -112,7 +112,7 @@
     </el-row>
 
     <el-table v-loading="loading" :data="feedbackList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
+      <!-- <el-table-column type="selection" width="55" align="center" /> -->
       <!-- <el-table-column label="id" align="center" prop="id" /> -->
       <el-table-column label="mac地址" align="center" prop="mac" />
       <el-table-column label="反馈人" align="center" prop="feedbackUser" />
@@ -142,13 +142,13 @@
             @click="handleUpdate(scope.row)"
             v-hasPermi="['system:feedback:edit']"
           >修改</el-button>
-          <el-button
+          <!-- <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
             v-hasPermi="['system:feedback:remove']"
-          >删除</el-button>
+          >删除</el-button> -->
         </template>
       </el-table-column>
     </el-table>
@@ -173,8 +173,9 @@
         <el-form-item label="反馈内容" prop="feedbackContent">
           <el-input disabled v-model="form.feedbackContent" placeholder="请输入反馈内容" />
         </el-form-item>
-        <!-- <el-form-item label="反馈时间" prop="feedbackTime">
+        <el-form-item label="反馈时间" prop="feedbackTime">
           <el-date-picker
+            disabled
             clearable
             size="small"
             style="width: 200px"
@@ -183,7 +184,7 @@
             value-format="yyyy-MM-dd"
             placeholder="选择反馈时间"
           ></el-date-picker>
-        </el-form-item>-->
+        </el-form-item>
         <el-form-item label="处理状态">
           <el-radio-group v-model="form.dealStatus">
             <el-radio label="1">已处理</el-radio>
@@ -258,7 +259,8 @@ export default {
       // 表单参数
       form: {},
       // 表单校验
-      rules: {}
+      rules: {},
+      time: undefined
     }
   },
   created() {
@@ -289,17 +291,27 @@ export default {
         dealStatus: '0',
         dealTime: undefined,
         dealIdea: undefined,
-        feedbackContent: undefined
+        feedbackContent: undefined,
+        beginTime: undefined,
+        endTime: undefined
       }
+      this.time = undefined
       this.resetForm('form')
     },
     /** 搜索按钮操作 */
     handleQuery() {
+      if (this.time) {
+        this.queryParams.beginTime = this.time[0]
+        this.queryParams.endTime = this.time[1]
+      }
       this.queryParams.pageNum = 1
       this.getList()
     },
     /** 重置按钮操作 */
     resetQuery() {
+      this.queryParams.beginTime = undefined
+      this.queryParams.endTime = undefined
+      this.time = undefined
       this.resetForm('queryForm')
       this.handleQuery()
     },
@@ -310,11 +322,11 @@ export default {
       this.multiple = !selection.length
     },
     /** 新增按钮操作 */
-    handleAdd() {
-      this.reset()
-      this.open = true
-      this.title = '添加意见反馈'
-    },
+    // handleAdd() {
+    //   this.reset()
+    //   this.open = true
+    //   this.title = '添加意见反馈'
+    // },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset()
@@ -330,7 +342,7 @@ export default {
       this.$refs['form'].validate(valid => {
         if (valid) {
           if (this.form.id != undefined) {
-            updateFeedback(this.form).then(response => {
+             updateFeedback(this.form).then(response => {
               if (response.code === 200) {
                 this.msgSuccess('修改成功')
                 this.open = false
@@ -355,9 +367,9 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      const ids = row.id || this.ids
+      const ids = row.feedbackContent || this.feedbackContent
       this.$confirm(
-        '是否确认删除意见反馈编号为"' + ids + '"的数据项?',
+        '是否确认删除意见反馈内容为   ' + ids + '   的数据项?',
         '警告',
         {
           confirmButtonText: '确定',

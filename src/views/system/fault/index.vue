@@ -41,7 +41,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="创建时间" prop="gmtCreate">
-        <el-date-picker
+        <!-- <el-date-picker
           clearable
           size="small"
           style="width: 200px"
@@ -49,9 +49,18 @@
           type="date"
           value-format="yyyy-MM-dd"
           placeholder="创建时间"
-        ></el-date-picker>
+        ></el-date-picker>-->
+        <el-date-picker
+          value-format="yyyy-MM-dd"
+          v-model="time"
+          type="daterange"
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          size="small"
+        />
       </el-form-item>
-      <el-form-item label="修改时间" prop="gmtModified">
+      <!-- <el-form-item label="修改时间" prop="gmtModified">
         <el-date-picker
           clearable
           size="small"
@@ -61,7 +70,7 @@
           value-format="yyyy-MM-dd"
           placeholder="修改时间"
         ></el-date-picker>
-      </el-form-item>
+      </el-form-item>-->
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -82,7 +91,7 @@
 
     <el-table v-loading="loading" :data="faultList" @selection-change="handleSelectionChange">
       <!-- <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="id" align="center" prop="id" /> -->
+      <el-table-column label="id" align="center" prop="id" />-->
       <el-table-column label="设备Mac地址" align="center" prop="device" />
       <el-table-column label="设备型号" align="center" prop="modelCode" />
       <el-table-column label="故障名称" align="center" prop="faultName" />
@@ -118,7 +127,7 @@
     />
 
     <!-- 添加或修改告警信息对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" :close-on-click-modal="false">
+    <!-- <el-dialog :title="title" :visible.sync="open" width="500px" :close-on-click-modal="false">
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="客户账号" prop="customer">
           <el-input v-model="form.customer" placeholder="请输入客户账号" />
@@ -171,7 +180,7 @@
         <el-button type="primary" @click="submitForm">确 定</el-button>
         <el-button @click="cancel">取 消</el-button>
       </div>
-    </el-dialog>
+    </el-dialog>-->
   </div>
 </template>
 
@@ -223,7 +232,9 @@ export default {
       // 表单参数
       form: {},
       // 表单校验
-      rules: {}
+      rules: {},
+      isadd: true,
+      time: undefined
     }
   },
   created() {
@@ -234,8 +245,6 @@ export default {
     getList() {
       this.loading = true
       listFault(this.queryParams).then(response => {
-        console.log(response.rows)
-
         this.faultList = response.rows
         this.total = response.total
         this.loading = false
@@ -259,17 +268,27 @@ export default {
         mode: undefined,
         tip: undefined,
         gmtCreate: undefined,
-        gmtModified: undefined
+        gmtModified: undefined,
+        beginTime: undefined,
+        endTime: undefined
       }
+      this.time = undefined
       this.resetForm('form')
     },
     /** 搜索按钮操作 */
     handleQuery() {
-      this.queryParams.pageNum = 1
+      if (this.time) {
+        this.queryParams.beginTime = this.time[0]
+        this.queryParams.endTime = this.time[1]
+      }
       this.getList()
+      this.queryParams.pageNum = 1
     },
     /** 重置按钮操作 */
     resetQuery() {
+      this.queryParams.beginTime = undefined
+      this.queryParams.endTime = undefined
+      this.time = undefined
       this.resetForm('queryForm')
       this.handleQuery()
     },
@@ -279,71 +298,71 @@ export default {
       this.single = selection.length != 1
       this.multiple = !selection.length
     },
-    /** 新增按钮操作 */
-    handleAdd() {
-      this.reset()
-      this.open = true
-      this.title = '添加告警信息'
-    },
-    /** 修改按钮操作 */
-    handleUpdate(row) {
-      this.reset()
-      const id = row.id || this.ids
-      getFault(id).then(response => {
-        this.form = response.data
-        this.open = true
-        this.title = '修改告警信息'
-      })
-    },
-    /** 提交按钮 */
-    submitForm: function() {
-      this.$refs['form'].validate(valid => {
-        if (valid) {
-          if (this.form.id != undefined) {
-            updateFault(this.form).then(response => {
-              if (response.code === 200) {
-                this.msgSuccess('修改成功')
-                this.open = false
-                this.getList()
-              } else {
-                this.msgError(response.msg)
-              }
-            })
-          } else {
-            addFault(this.form).then(response => {
-              if (response.code === 200) {
-                this.msgSuccess('新增成功')
-                this.open = false
-                this.getList()
-              } else {
-                this.msgError(response.msg)
-              }
-            })
-          }
-        }
-      })
-    },
-    /** 删除按钮操作 */
-    handleDelete(row) {
-      const ids = row.id || this.ids
-      this.$confirm(
-        '是否确认删除告警信息编号为"' + ids + '"的数据项?',
-        '警告',
-        {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }
-      )
-        .then(function() {
-          return delFault(ids)
-        })
-        .then(() => {
-          this.getList()
-          this.msgSuccess('删除成功')
-        })
-        .catch(function() {})
-    },
+    // /** 新增按钮操作 */
+    // handleAdd() {
+    //   this.reset()
+    //   this.open = true
+    //   this.title = '添加告警信息'
+    // },
+    // /** 修改按钮操作 */
+    // handleUpdate(row) {
+    //   this.reset()
+    //   const id = row.id || this.ids
+    //   getFault(id).then(response => {
+    //     this.form = response.data
+    //     this.open = true
+    //     this.title = '修改告警信息'
+    //   })
+    // },
+    // /** 提交按钮 */
+    // submitForm: function() {
+    //   this.$refs['form'].validate(valid => {
+    //     if (valid) {
+    //       if (this.form.id != undefined) {
+    //         updateFault(this.form).then(response => {
+    //           if (response.code === 200) {
+    //             this.msgSuccess('修改成功')
+    //             this.open = false
+    //             this.getList()
+    //           } else {
+    //             this.msgError(response.msg)
+    //           }
+    //         })
+    //       } else {
+    //         addFault(this.form).then(response => {
+    //           if (response.code === 200) {
+    //             this.msgSuccess('新增成功')
+    //             this.open = false
+    //             this.getList()
+    //           } else {
+    //             this.msgError(response.msg)
+    //           }
+    //         })
+    //       }
+    //     }
+    //   })
+    // },
+    // /** 删除按钮操作 */
+    // handleDelete(row) {
+    //   const ids = row.id || this.ids
+    //   this.$confirm(
+    //     '是否确认删除告警信息编号为"' + ids + '"的数据项?',
+    //     '警告',
+    //     {
+    //       confirmButtonText: '确定',
+    //       cancelButtonText: '取消',
+    //       type: 'warning'
+    //     }
+    //   )
+    //     .then(function() {
+    //       return delFault(ids)
+    //     })
+    //     .then(() => {
+    //       this.getList()
+    //       this.msgSuccess('删除成功')
+    //     })
+    //     .catch(function() {})
+    // },
     /** 导出按钮操作 */
     handleExport() {
       const queryParams = this.queryParams

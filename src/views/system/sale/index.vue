@@ -10,6 +10,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
+
       <el-form-item label="姓名" prop="name">
         <el-input
           v-model="queryParams.name"
@@ -47,7 +48,7 @@
         />
       </el-form-item>
       <el-form-item label="创建时间" prop="gmtCreatetime">
-        <el-date-picker
+        <!-- <el-date-picker
           clearable
           size="small"
           style="width: 200px"
@@ -55,7 +56,16 @@
           type="date"
           value-format="yyyy-MM-dd"
           placeholder="选择创建时间"
-        ></el-date-picker>
+        ></el-date-picker>-->
+        <el-date-picker
+          value-format="yyyy-MM-dd"
+          v-model="time"
+          type="daterange"
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          size="small"
+        />
       </el-form-item>
       <el-form-item label="修改人" prop="modifyUser">
         <el-input
@@ -114,10 +124,14 @@
     </el-row>
 
     <el-table v-loading="loading" :data="saleList" @selection-change="handleSelectionChange">
-      <!-- <el-table-column type="selection" width="55" align="center" /> -->
+      <el-table-column type="selection" width="55" align="center" />
       <!-- <el-table-column label="售后账号的唯一标识" align="center" prop="id" /> -->
       <el-table-column label="售后账号" align="center" prop="account" />
-      <el-table-column label="密码" align="center" prop="password" />
+      <el-table-column label="密码" align="center">
+        <template>
+          <span>******</span>
+        </template>
+      </el-table-column>
       <el-table-column label="姓名" align="center" prop="name" />
       <el-table-column label="联系方式" align="center" prop="phone" />
       <el-table-column label="年龄" align="center" prop="age" />
@@ -258,7 +272,9 @@ export default {
         address: undefined,
         createUser: undefined,
         gmtCreatetime: undefined,
-        modifyUser: undefined
+        modifyUser: undefined,
+        beginTime: undefined,
+        endTime: undefined
       },
       // 表单参数
       form: {},
@@ -269,7 +285,8 @@ export default {
         ],
         password: [{ required: true, message: '密码不能为空', trigger: 'blur' }]
       },
-      isadd: true
+      isadd: true,
+      time: undefined
     }
   },
   created() {
@@ -303,17 +320,27 @@ export default {
         createUser: undefined,
         gmtCreatetime: undefined,
         modifyUser: undefined,
-        gmtModifytime: undefined
+        gmtModifytime: undefined,
+        beginTime: undefined,
+        endTime: undefined
       }
+      this.time = undefined
       this.resetForm('form')
     },
     /** 搜索按钮操作 */
     handleQuery() {
+      if (this.time) {
+        this.queryParams.beginTime = this.time[0]
+        this.queryParams.endTime = this.time[1]
+      }
       this.queryParams.pageNum = 1
       this.getList()
     },
     /** 重置按钮操作 */
     resetQuery() {
+      this.queryParams.beginTime = undefined
+      this.queryParams.endTime = undefined
+      this.time = undefined
       this.resetForm('queryForm')
       this.handleQuery()
     },
@@ -337,6 +364,9 @@ export default {
       const id = row.id || this.ids
       getSale(id).then(response => {
         this.form = response.data
+
+        console.log(this.form)
+
         this.open = true
         this.title = '修改售后账号信息'
       })

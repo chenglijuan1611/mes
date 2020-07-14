@@ -39,14 +39,14 @@
       </el-form-item>
       <el-form-item label="创建时间" prop="gmtCreatetime">
         <el-date-picker
-          clearable
-          size="small"
-          style="width: 200px"
-          v-model="queryParams.gmtCreatetime"
-          type="date"
           value-format="yyyy-MM-dd"
-          placeholder="选择创建时间"
-        ></el-date-picker>
+          v-model="time"
+          type="daterange"
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          size="small"
+        />
       </el-form-item>
       <el-form-item label="修改人" prop="modifyUser">
         <el-input
@@ -57,7 +57,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="修改时间" prop="gmtModifytime">
+      <!-- <el-form-item label="修改时间" prop="gmtModifytime">
         <el-date-picker
           clearable
           size="small"
@@ -67,7 +67,7 @@
           value-format="yyyy-MM-dd"
           placeholder="选择修改时间"
         ></el-date-picker>
-      </el-form-item>
+      </el-form-item>-->
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -116,7 +116,7 @@
     </el-row>
 
     <el-table v-loading="loading" :data="problemList" @selection-change="handleSelectionChange">
-      <!-- <el-table-column type="selection" width="55" align="center" /> -->
+      <el-table-column type="selection" width="55" align="center" />
       <!-- <el-table-column label="常见问题的id" align="center" prop="comproblemId" /> -->
       <el-table-column label="问题标题" align="center" prop="problemTitle" />
       <!-- <el-table-column label="解决方案" align="center" prop="problemSolution" /> -->
@@ -259,7 +259,9 @@ export default {
         createUser: undefined,
         gmtCreatetime: undefined,
         modifyUser: undefined,
-        gmtModifytime: undefined
+        gmtModifytime: undefined,
+        beginTime: undefined,
+        endTime: undefined
       },
       // 表单参数
       form: {},
@@ -272,7 +274,8 @@ export default {
           { required: true, message: '修改人不能为空', trigger: 'blur' }
         ]
       },
-      isadd: true
+      isadd: true,
+      time: undefined
     }
   },
   created() {
@@ -295,7 +298,7 @@ export default {
     },
     // 表单重置
     reset() {
-      this.form = {
+      ;(this.form = {
         comproblemId: undefined,
         problemTitle: undefined,
         problemSolution: undefined,
@@ -303,17 +306,27 @@ export default {
         createUser: undefined,
         gmtCreatetime: undefined,
         modifyUser: undefined,
-        gmtModifytime: undefined
-      }
+        gmtModifytime: undefined,
+        beginTime: undefined,
+        endTime: undefined
+      }),
+        (this.time = undefined)
       this.resetForm('form')
     },
     /** 搜索按钮操作 */
     handleQuery() {
+      if (this.time) {
+        this.queryParams.beginTime = this.time[0]
+        this.queryParams.endTime = this.time[1]
+      }
       this.queryParams.pageNum = 1
       this.getList()
     },
     /** 重置按钮操作 */
     resetQuery() {
+      this.queryParams.beginTime = undefined
+      this.queryParams.endTime = undefined
+      this.time = undefined
       this.resetForm('queryForm')
       this.handleQuery()
     },
@@ -371,9 +384,9 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      const comproblemIds = row.comproblemId || this.ids
+      const comproblemIds = row.problemTitle || this.ids
       this.$confirm(
-        '是否确认删除常见问题标题为"' + problemTitle + '"的数据项?',
+        '是否确认删除常见问题标题为"' + comproblemIds + '"的数据项?',
         '警告',
         {
           confirmButtonText: '确定',
