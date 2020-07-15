@@ -8,3 +8,10 @@ export function usewater(query) {
    })
 }
  
+export function userstatistics(query) {
+  return request({
+    url: '/WeChatApp/addAvtive',
+    method: 'get',
+   })
+}
+ 
