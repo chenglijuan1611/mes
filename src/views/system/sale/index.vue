@@ -180,7 +180,7 @@
     <el-dialog :title="title" :visible.sync="open" width="500px" :close-on-click-modal="false">
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="售后账号" prop="account">
-          <el-input v-model="form.account" placeholder="请输入售后账号" />
+          <el-input :disabled="!isadd" v-model="form.account" placeholder="请输入售后账号" />
         </el-form-item>
         <el-form-item label="密码" prop="password">
           <el-input v-model="form.password" placeholder="请输入密码" />
