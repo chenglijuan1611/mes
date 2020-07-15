@@ -1,9 +1,9 @@
-import request from '@/utils/request'
+import request from "@/utils/request";
 
- export function devicedistributionapi( ) {
+export function devicedistributionapi(query) {
   return request({
-    url: '/statistical/device/distribution',
-    method: 'get',
-  })
+    url: "/statistical/device/distribution",
+    method: "get",
+    params: query
+  });
 }
- 

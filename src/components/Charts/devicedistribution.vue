@@ -3,8 +3,7 @@
     <chartsname chartsname="设备分布图" />
     <div class="chartsbgbox">
       <div id="devicedistribution" />
-      <i style="opacity:0.5" class="el-icon-circle-plus-outline iconar"></i>
-      <i style="opacity:0.5" class="el-icon-remove-outline iconar"></i>
+      <i @click="provincedata" style="opacity:0.5" class="el-icon-arrow-left iconar"></i>
     </div>
   </div>
 </template>
@@ -13,6 +12,9 @@ import echarts from 'echarts'
 import 'echarts/map/js/china'
 import chartsname from '@/components/chartsname'
 import { devicedistributionapi } from '@/api/devicedistribution'
+const requireAll = requireContext => requireContext.keys().map(requireContext)
+const req = require.context('echarts/map/js/province', true, /\.js$/)
+requireAll(req)
 
 export default {
   components: {
@@ -67,31 +69,59 @@ export default {
     }
   },
   created() {
-    devicedistributionapi().then(x => {
-      let temp = x.data.map(y => {
-        return {
-          name: y.province,
-          value: y.specificCount,
-          online: y.onlineCount
-        }
-      })
-      this.option.series[0].data = temp
-      this.echartsupdated()
-    })
+    this.provincedata()
   },
   mounted() {
     // this.echartsupdated()
   },
   methods: {
+    provincedata() {
+      devicedistributionapi().then(x => {
+        let temp = x.data.map(y => {
+          return {
+            name: y.province,
+            value: y.specificCount,
+            online: y.onlineCount
+          }
+        })
+        this.option.series[0].data = temp
+        this.option.geo.map = 'china'
+        this.echartsupdated()
+      })
+    },
     echartsupdated() {
       this.$nextTick(() => {
         let myChart = echarts.init(
           document.getElementById('devicedistribution')
         )
-        myChart.setOption(this.option)
-        myChart.on('click', function(params) {
-          console.log(params)
+        myChart.setOption(this.option, true)
+
+        myChart.on('click', params => {
+          this.city(params.name)
         })
+      })
+    },
+    echartsupdated2() {
+      this.$nextTick(() => {
+        let myChart = echarts.init(
+          document.getElementById('devicedistribution')
+        )
+        myChart.off('click')
+        myChart.setOption(this.option, true)
+      })
+    },
+    city(p) {
+      devicedistributionapi({ province: p }).then(x => {
+        let temp = x.data.map(y => {
+          return {
+            name: y.city,
+            value: y.specificCount,
+            online: y.onlineCount
+          }
+        })
+        this.option.geo.map = p
+        this.option.series[0].data = temp
+        this.echartsupdated2()
       })
     }
   }
