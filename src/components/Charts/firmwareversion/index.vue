@@ -9,27 +9,18 @@
 <script>
 import echarts from 'echarts'
 import chartsname from '@/components/chartsname'
+import { firmVerDistribute } from '@/api/system/firmVerDistribute'
 
 export default {
   components: {
     chartsname
   },
   data() {
-    return {}
-  },
-  mounted() {
-    this.$nextTick(() => {
-      var myChart = echarts.init(document.getElementById('firmwareversion'))
-      var data = [
-        { value: 400, name: '固件版本1' },
-        { value: 150, name: '固件版本2' },
-        { value: 250, name: '固件版本3' },
-        { value: 200, name: '固件版本4' }
-      ]
-      var option = {
+    return {
+      option: {
         tooltip: {
           trigger: 'item',
-          formatter: '{a} <br/>{b} : {c} ({d}%)'
+          formatter: ' {b} : {c}台 ({d}%)'
         },
         legend: {
           left: 'center',
@@ -41,16 +32,43 @@ export default {
             type: 'pie',
             radius: [20, 100],
             roseType: 'area',
-            data,
+            data: [],
             label: {
-              formatter: '{c}台  {d}%'
+              formatter: ' {b}  {c}台  {d}%'
             }
           }
         ]
       }
-
-      myChart.setOption(option)
+    }
+  },
+  created() {
+    firmVerDistribute().then(x => {
+      console.log(x.data)
+      let data = x.data.map(y => {
+        let temp = {}
+        temp.name = y.firmVersion
+        temp.value = y.count
+        return temp
+      })
+      this.option.series[0].data = data
+      this.echartsupdata()
     })
+  },
+  mounted() {},
+  methods: {
+    echartsupdata() {
+      this.$nextTick(() => {
+        let myChart = echarts.init(document.getElementById('firmwareversion'))
+        // var data = [
+        //   { value: 400, name: '固件版本1' },
+        //   { value: 150, name: '固件版本2' },
+        //   { value: 250, name: '固件版本3' },
+        //   { value: 200, name: '固件版本4' }
+        // ]
+
+        myChart.setOption(this.option)
+      })
+    }
   }
 }
 </script>
