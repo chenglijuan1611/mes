@@ -1,16 +1,16 @@
 <template>
   <div>
-    <chartsname chartsname="用户平均每日用水量" />
+    <chartsname chartsname="用户平均每日用水量用户数量百分比" />
     <div class="chartsbgbox">
       <div id="deviceuseanalysis1" />
-
-      <xytable style="width:90%"></xytable>
+      <xytable :ydata="ydata" :xdata="xdatainit" style="width:90%"></xytable>
     </div>
   </div>
 </template>
 <script>
 import echarts from 'echarts'
 import chartsname from '@/components/chartsname'
+import { dayAverageWater } from '@/api/deviceuseanalysis/index'
 import xytable from '@/components/Charts/xytabletest'
 
 export default {
@@ -20,86 +20,7 @@ export default {
   },
   data() {
     return {
-      xAxisdata: [
-        '0-100',
-        '101-200',
-        '201-300',
-        '301-400',
-        '401-500',
-        '501-600',
-        '6000-700',
-        '701-800',
-        '801-900',
-        '901-1000',
-        '1100-1200',
-        '1200-1300',
-        '0-100',
-        '101-200',
-        '201-300',
-        '301-400',
-        '401-500',
-        '501-600',
-        '0-100',
-        '101-200',
-        '201-300',
-        '301-400',
-        '401-500',
-        '501-600'
-      ],
-      seriesdata: [
-        11,
-        15,
-        13,
-        10,
-        15,
-        14,
-        16,
-        17,
-        13,
-        14,
-        10,
-        15,
-        14,
-        16,
-        17,
-        13,
-        4,
-        10,
-        15,
-        3,
-        6,
-        5,
-        3,
-        4
-      ],
-      tabledata: [
-        { num: '0-100', a: '20' },
-        { num: '0-100', a: '20' },
-        { num: '0-100', a: '20' },
-        { num: '0-100', a: '20' },
-        { num: '0-100', a: '20' },
-        { num: '0-100', a: '20' },
-        { num: '0-100', a: '20' },
-        { num: '0-100', a: '20' },
-        { num: '0-100', a: '20' },
-        { num: '0-100', a: '20' },
-        { num: '0-100', a: '20' },
-        { num: '0-100', a: '20' },
-        { num: '0-100', a: '20' },
-        { num: '0-100', a: '20' },
-        { num: '0-100', a: '20' },
-        { num: '0-100', a: '20' },
-        { num: '0-100', a: '20' },
-        { num: '0-100', a: '20' },
-        { num: '0-100', a: '20' }
-      ]
-    }
-  },
-  mounted() {
-    this.$nextTick(() => {
-      var myChart = echarts.init(document.getElementById('deviceuseanalysis1'))
-
-      var option = {
+      option: {
         color: ['#80adf8'],
         tooltip: {
           trigger: 'axis'
@@ -108,7 +29,7 @@ export default {
         xAxis: [
           {
             type: 'category',
-            data: this.xAxisdata
+            data: []
           }
         ],
         yAxis: [
@@ -138,13 +59,40 @@ export default {
                 }
               }
             },
-            data: this.seriesdata
+            data: []
           }
         ]
-      }
-
-      myChart.setOption(option)
+      },
+      ydata: ['时间', '次数', '次数占比'],
+      xdatainit: [[], [], []]
+    }
+  },
+  created() {
+    dayAverageWater().then(x => {
+      let a = []
+      let b = []
+      let c = []
+      x.data.forEach((y, index) => {
+        a[index] = y.interval.slice(5).replace('_', '-')
+        b[index] = y.count
+        c[index] = y.proportion
+      })
+      a[a.length - 1] = '大于2000'
+      this.xdatainit = [a, b, c]
+      this.option.xAxis[0].data = a
+      this.option.series[0].data = b
+      this.echartsupdata()
     })
+  },
+  methods: {
+    echartsupdata() {
+      this.$nextTick(() => {
+        var myChart = echarts.init(
+          document.getElementById('deviceuseanalysis1')
+        )
+        myChart.setOption(this.option)
+      })
+    }
   }
 }
 </script>
