@@ -52,6 +52,8 @@ export function resetForm(refName) {
 }
 
 // 添加日期范围
+// 奇怪的做法 指向了vue 实例 耦合
+//
 export function addDateRange(params, dateRange) {
 	var search = params;
 	search.beginTime = "";
