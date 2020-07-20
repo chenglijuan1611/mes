@@ -3,6 +3,7 @@
     <el-form :model="queryParams" ref="queryForm" :inline="true" label-width="auto">
       <el-form-item label="产品型号名称" prop="modelName">
         <el-input
+          style="width: 240px"
           v-model="queryParams.modelName"
           placeholder="请输入产品型号"
           clearable
@@ -13,6 +14,7 @@
 
       <el-form-item label="产品型号英文编码" prop="modelEcode">
         <el-input
+          style="width: 240px"
           v-model="queryParams.modelEcode"
           placeholder="请输入型号编码"
           clearable
@@ -22,6 +24,7 @@
       </el-form-item>
       <el-form-item label="产品型号编码" prop="modelCode">
         <el-input
+          style="width: 240px"
           v-model="queryParams.modelCode"
           placeholder="请输入型号编码"
           clearable
@@ -31,6 +34,7 @@
       </el-form-item>
       <el-form-item label="设备描述" prop="describe">
         <el-input
+          style="width: 240px"
           v-model="queryParams.describe"
           placeholder="请输入设备描述"
           clearable
@@ -40,6 +44,7 @@
       </el-form-item>
       <el-form-item label="耗材" prop="consumables">
         <el-input
+          style="width: 240px"
           v-model="queryParams.consumables"
           placeholder="请输入耗材"
           clearable
@@ -53,6 +58,7 @@
           v-model="queryParams.createUser"
           placeholder="请输入创建人"
           clearable
+          style="width: 240px"
           size="small"
           @keyup.enter.native="handleQuery"
         />
@@ -60,16 +66,19 @@
       <el-form-item label="创建时间" prop="gmtCreatetime">
         <el-date-picker
           clearable
+          style="width: 240px"
           size="small"
-          style="width: 200px"
-          v-model="queryParams.gmtCreatetime"
-          type="date"
+          v-model="dateRange"
+          type="daterange"
           value-format="yyyy-MM-dd"
-          placeholder="选择创建时间"
+          range-separator="-"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
         ></el-date-picker>
       </el-form-item>
       <el-form-item label="修改人" prop="modifyUser">
         <el-input
+          style="width: 240px"
           v-model="queryParams.modifyUser"
           placeholder="请输入修改人"
           clearable
@@ -77,7 +86,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="修改时间" prop="gmtModifytime">
+      <!-- <el-form-item label="修改时间" prop="gmtModifytime">
         <el-date-picker
           clearable
           size="small"
@@ -87,7 +96,7 @@
           value-format="yyyy-MM-dd"
           placeholder="选择修改时间"
         ></el-date-picker>
-      </el-form-item>
+      </el-form-item>-->
       <el-form-item>
         <el-button
           style="margin-left:100px"
@@ -116,7 +125,6 @@
     </el-form>
 
     <el-table
-      fit
       v-loading="loading"
       :data="deviceModelList"
       row-key="deviceModelId"
@@ -136,18 +144,18 @@
       <el-table-column label="耗材" align="center" prop="consumables" />
       <el-table-column label="固件版本" align="center" prop="firmwareVersion" />
       <el-table-column label="创建人" align="center" prop="createUser" />
-      <el-table-column label="创建时间" align="center" prop="gmtCreatetime" width="180">
+      <el-table-column label="创建时间" align="center" prop="gmtCreatetime">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.gmtCreatetime) }}</span>
         </template>
       </el-table-column>
       <el-table-column label="修改人" align="center" prop="modifyUser" />
-      <el-table-column label="修改时间" align="center" prop="gmtModifytime" width="180">
+      <el-table-column label="修改时间" align="center" prop="gmtModifytime">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.gmtModifytime) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -289,13 +297,15 @@ export default {
       // 表单校验
       rules: {},
       editcode: false,
+
       updata: {
         dialogVisible: false,
         url: '',
         title: '',
         name: '',
         modelEcode: ''
-      }
+      },
+      dateRange: []
     }
   },
 
@@ -307,14 +317,16 @@ export default {
     /** 查询设备分类信息列表 */
     getList() {
       this.loading = true
-      listDeviceModel(this.queryParams).then(response => {
-        this.deviceModelList = handleTree(
-          response.data,
-          'deviceModelId',
-          'parentId'
-        )
-        this.loading = false
-      })
+      listDeviceModel(this.addDateRange(this.queryParams, this.dateRange)).then(
+        response => {
+          this.deviceModelList = handleTree(
+            response.data,
+            'deviceModelId',
+            'parentId'
+          )
+          this.loading = false
+        }
+      )
     },
     /** 转换设备分类信息数据结构 */
     normalizer(node) {
@@ -323,7 +335,7 @@ export default {
       }
       return {
         id: node.deviceModelId,
-        label: node.modelCode,
+        label: node.modelName,
         children: node.children
       }
     },
@@ -331,7 +343,7 @@ export default {
     getTreeselect() {
       listDeviceModel().then(response => {
         this.deviceModelOptions = []
-        const data = { deviceModelId: 0, modelCode: '主类目', children: [] }
+        const data = { deviceModelId: 0, modelCode: '主类目',modelName: '主类目', modelEcode: '主类目', children: [] }
         data.children = handleTree(response.data, 'deviceModelId', 'parentId')
         this.deviceModelOptions.push(data)
       })
@@ -369,6 +381,7 @@ export default {
     },
     /** 重置按钮操作 */
     resetQuery() {
+      this.dateRange = []
       this.resetForm('queryForm')
       this.handleQuery()
     },
@@ -443,7 +456,8 @@ export default {
           this.getList()
           this.msgSuccess('删除成功')
         })
-        .catch(function() {})
+        .catch(function() {x=>console.log(x);
+        })
     },
     //  图片地址
     imgurl(a) {
