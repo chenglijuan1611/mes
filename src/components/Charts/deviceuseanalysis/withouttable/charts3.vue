@@ -4,12 +4,12 @@
     <div class="chartsbgbox">
       <div id="deviceuseanalysisw3" />
 
-      <div  class="righttable">
+      <div class="righttable">
         <div>
           <el-table height="250" :data="tableData">
-            <el-table-column prop="time" label="日期"></el-table-column>
-            <el-table-column prop="count" label="姓名"></el-table-column>
-            <el-table-column prop="scale" label="地址"></el-table-column>
+            <el-table-column width="100" prop="time" label="日期"></el-table-column>
+            <el-table-column width="80" prop="count" label="姓名"></el-table-column>
+            <el-table-column width="100" prop="scale" label="地址"></el-table-column>
           </el-table>
         </div>
       </div>
@@ -95,7 +95,7 @@ export default {
 
       this.xdatainit[1] = temp
       this.xdatainit[2] = scale
-  
+
       this.echartsupdated()
       let tabledata = []
       this.xdatainit[0].map((x, y) => {

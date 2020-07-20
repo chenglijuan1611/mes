@@ -7,8 +7,8 @@
         <div>
           <el-table height="235" :data="tableData">
             <el-table-column width="100" prop="name" label="用户单次时长"></el-table-column>
-            <el-table-column prop="value" label="次数"></el-table-column>
-            <el-table-column prop="ratioOfWater" label="用水次数占比"></el-table-column>
+            <el-table-column width="80" prop="value" label="次数"></el-table-column>
+            <el-table-column width="100" prop="ratioOfWater" label="用水次数占比"></el-table-column>
           </el-table>
         </div>
       </div>
