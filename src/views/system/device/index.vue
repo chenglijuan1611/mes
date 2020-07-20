@@ -1,20 +1,28 @@
 <template>
   <div class="app-container">
     <el-form label-width="auto" :model="queryParams" ref="queryForm" :inline="true">
-      <el-form-item label="mac地址" prop="mac">
+      <el-form-item label="名称" prop="name">
         <el-input
-          v-model="queryParams.mac"
-          placeholder="请输入设备的mac地址"
+          v-model="queryParams.name"
+          placeholder="请输入名称"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      
       <el-form-item label="设备型号编码" prop="modelCode">
         <el-input
           v-model="queryParams.modelCode"
           placeholder="请输入设备型号编码"
+          clearable
+          size="small"
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="mac地址" prop="mac">
+        <el-input
+          v-model="queryParams.mac"
+          placeholder="请输入设备的mac地址"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
@@ -29,16 +37,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-    
-      <el-form-item label="名称" prop="name">
-        <el-input
-          v-model="queryParams.name"
-          placeholder="请输入名称"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
+
       <el-form-item label="手机号" prop="phone">
         <el-input
           v-model="queryParams.phone"
@@ -68,8 +67,8 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-     
-      <el-form-item label="地址" prop="address">
+
+      <!-- <el-form-item label="地址" prop="address">
         <el-input
           v-model="queryParams.address"
           placeholder="请输入地址"
@@ -77,9 +76,9 @@
           size="small"
           @keyup.enter.native="handleQuery"
         />
-      </el-form-item>
+      </el-form-item>-->
 
-      <el-form-item label="添加时间" prop="gmtCreatetime">
+      <!-- <el-form-item label="添加时间" prop="gmtCreatetime">
         <el-date-picker
           clearable
           size="small"
@@ -89,20 +88,22 @@
           value-format="yyyy-MM-dd"
           placeholder="选择添加时间"
         ></el-date-picker>
-      </el-form-item>
+      </el-form-item>-->
 
       <el-form-item label="购买时间" prop="purchaseTime">
         <el-date-picker
           clearable
+          v-model="dateRange"
           size="small"
-          style="width: 200px"
-          v-model="queryParams.purchaseTime"
-          type="date"
+          style="width: 240px"
           value-format="yyyy-MM-dd"
-          placeholder="选择购买时间"
+          type="daterange"
+          range-separator="-"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
         ></el-date-picker>
       </el-form-item>
-      <el-form-item label="保修时间" prop="warrantyTime">
+      <!-- <el-form-item label="保修时间" prop="warrantyTime">
         <el-date-picker
           clearable
           size="small"
@@ -112,7 +113,7 @@
           value-format="yyyy-MM-dd"
           placeholder="选择保修时间"
         ></el-date-picker>
-      </el-form-item>
+      </el-form-item>-->
       <el-form-item>
         <el-button
           style="margin-left:30px"
@@ -136,27 +137,33 @@
       <el-table-column label="名称" align="center" prop="name" />
       <el-table-column label="设备型号编码" align="center" prop="modelCode" />
       <el-table-column label="设备的mac地址" align="center" prop="mac" />
-      <el-table-column label="是否在线" align="center" prop="isOnline" />
-      <el-table-column label="固件版本" align="center" prop="firmwareVersion" />
+
       <el-table-column label="序列号" align="center" prop="serialNumber" />
       <el-table-column label="手机号" align="center" prop="phone" />
       <el-table-column label="省份" align="center" prop="province" />
       <el-table-column label="城市" align="center" prop="city" />
       <el-table-column label="地址" align="center" prop="address" />
-      <el-table-column label="添加时间" align="center" prop="gmtCreatetime" width="180">
+      <el-table-column label="固件版本" align="center" prop="firmwareVersion" />
+      <el-table-column label="是否在线" align="center">
+        <template slot-scope="scope">
+          <span v-if="scope.row.isOnline==1">在线</span>
+          <span v-if="!scope.row.isOnline==1">不在线</span>
+        </template>
+      </el-table-column>
+      <!-- <el-table-column label="添加时间" align="center" prop="gmtCreatetime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.gmtCreatetime) }}</span>
         </template>
-      </el-table-column>
+      </el-table-column>-->
 
-      <el-table-column label="购买时间" align="center" prop="purchaseTime" width="180">
+      <el-table-column label="购买时间" align="center" prop="purchaseTime">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.purchaseTime) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="保修时间" align="center" prop="warrantyTime" width="180">
+      <el-table-column label="操作" align="center">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.warrantyTime) }}</span>
+          <el-button size="mini" type="text" icon="el-icon-more" @click="more(scope.row)">其他信息</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -169,7 +176,7 @@
       @pagination="getList"
     />
     <!-- 添加或修改设备信息表对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" :close-on-click-modal="false">
+    <!-- <el-dialog :title="title" :visible.sync="open" width="500px" :close-on-click-modal="false">
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="设备的mac地址" prop="mac">
           <el-input v-model="form.mac" placeholder="请输入设备的mac地址" />
@@ -283,7 +290,7 @@
         <el-button type="primary" @click="submitForm">确 定</el-button>
         <el-button @click="cancel">取 消</el-button>
       </div>
-    </el-dialog>
+    </el-dialog>-->
   </div>
 </template>
 
@@ -345,7 +352,8 @@ export default {
       // 表单参数
       form: {},
       // 表单校验
-      rules: {}
+      rules: {},
+      dateRange: []
     }
   },
   created() {
@@ -355,11 +363,13 @@ export default {
     /** 查询设备信息表列表 */
     getList() {
       this.loading = true
-      listDevice(this.queryParams).then(response => {
-        this.deviceList = response.rows
-        this.total = response.total
-        this.loading = false
-      })
+      listDevice(this.addDateRange(this.queryParams, this.dateRange)).then(
+        response => {
+          this.deviceList = response.rows
+          this.total = response.total
+          this.loading = false
+        }
+      )
     },
     // 取消按钮
     cancel() {
@@ -405,6 +415,7 @@ export default {
     },
     /** 重置按钮操作 */
     resetQuery() {
+      this.dateRange = []
       this.resetForm('queryForm')
       this.handleQuery()
     },
@@ -494,6 +505,18 @@ export default {
           this.download(response.msg)
         })
         .catch(function() {})
+    },
+    //  详细信息
+    more(x) {
+      const h = this.$createElement
+      this.$msgbox({
+        title: '其他信息',
+        message: h('p', null, [
+          h('p', null, '详细地址:' +  x.address ),
+          h('p', null, '添加时间:' + this.parseTime(x.gmtCreatetime)),
+          h('p', null, '保修时间: ' + this.parseTime(x.warrantyTime))
+        ]) // type: 'info'
+      })
     }
   }
 }
