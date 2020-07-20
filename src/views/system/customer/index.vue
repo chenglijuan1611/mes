@@ -72,8 +72,8 @@
         <el-date-picker
           value-format="yyyy-MM-dd"
           v-model="time"
+          style="width: 240px"
           type="daterange"
-          range-separator="至"
           start-placeholder="开始日期"
           end-placeholder="结束日期"
           size="small"
@@ -87,10 +87,7 @@
           placeholder="选择修改时间">
         </el-date-picker>
       </el-form-item>-->
-      <el-form-item>
-        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
-      </el-form-item>
+      <el-form-item></el-form-item>
     </el-form>
 
     <el-row :gutter="10" class="mb8">
@@ -124,6 +121,8 @@
         >删除</el-button>
       </el-col>-->
       <el-col :span="1.5">
+        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
+        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
         <el-button
           type="warning"
           icon="el-icon-download"
@@ -268,7 +267,8 @@ import {
   delCustomer,
   addCustomer,
   updateCustomer,
-  exportCustomer
+  exportCustomer,
+  CustomerdeviceLiist
 } from '@/api/system/customer'
 
 export default {
@@ -325,10 +325,40 @@ export default {
   },
   methods: {
     detailaddress(x) {
-      console.log(x)
+      this.$msgbox({
+        title: '显示详细地址',
+        // x.province+x.city+x.district+x.address
+        message: x.province + ' ' + x.city + ' ' + x.district + '  ' + x.address
+        // type: 'info'
+      })
     },
+    // 显示用户设备列表
     bdevicelist(x) {
-      console.log(x)
+      CustomerdeviceLiist(x.customer).then(x => {
+        console.log(x.data)
+
+        const h = this.$createElement
+
+        let list = x.data.map(y => {
+          return h('p', null, [
+            h('p', null, '设备型号：' + y.modelCode),
+            h('p', null, '设备名称：' + y.name),
+            h('p', null, '设备序列号：' + y.serialNumber),
+            h('p', null, '设备mac地址：' + y.mac),
+            h('br', null, ' ')
+          ])
+        })
+        let node
+        if (x.data.length > 0) {
+          node = list
+        } else {
+          node = '未查询到已绑定设备'
+        }
+        this.$msgbox({
+          title: '用户已绑定设备',
+          message: h('p', null, node) // type: 'info'
+        })
+      })
     },
     /** 查询客户信息列表 */
     getList() {

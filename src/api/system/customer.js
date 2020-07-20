@@ -51,3 +51,12 @@ export function exportCustomer(query) {
     params: query
   })
 }
+
+
+export function  CustomerdeviceLiist(id) {
+  return request({
+    url: '/system/customer/deviceList/'+id,
+    method: 'get',
+    
+  })
+}
