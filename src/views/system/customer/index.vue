@@ -317,7 +317,7 @@ export default {
       form: {},
       // 表单校验
       rules: {},
-      time: undefined
+      time: null
     }
   },
   created() {
@@ -396,14 +396,17 @@ export default {
         beginTime: undefined,
         endTime: undefined
       }
-      this.time = undefined
+      this.time = null
       this.resetForm('form')
     },
     /** 搜索按钮操作 */
     handleQuery() {
-      if (this.time) {
+      if (this.time !== null) {
         this.queryParams.beginTime = this.time[0]
         this.queryParams.endTime = this.time[1]
+      } else {
+        this.queryParams.beginTime = undefined
+        this.queryParams.endTime = undefined
       }
       this.queryParams.pageNum = 1
       this.getList()
@@ -412,7 +415,7 @@ export default {
     resetQuery() {
       this.queryParams.beginTime = undefined
       this.queryParams.endTime = undefined
-      this.time = undefined
+      this.time = null
       this.resetForm('queryForm')
       this.handleQuery()
     },

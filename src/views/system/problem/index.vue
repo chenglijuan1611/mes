@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" :inline="true" label-width="68px">
+    <el-form :model="queryParams" ref="queryForm" :inline="true" label-width="auto">
       <el-form-item label="问题标题" prop="problemTitle">
         <el-input
           v-model="queryParams.problemTitle"
@@ -42,7 +42,7 @@
           value-format="yyyy-MM-dd"
           v-model="time"
           type="daterange"
-          range-separator="至"
+          style="width: 200px"
           start-placeholder="开始日期"
           end-placeholder="结束日期"
           size="small"
@@ -275,7 +275,7 @@ export default {
         ]
       },
       isadd: true,
-      time: undefined
+      time: null
     }
   },
   created() {
@@ -298,7 +298,7 @@ export default {
     },
     // 表单重置
     reset() {
-      ;(this.form = {
+      this.form = {
         comproblemId: undefined,
         problemTitle: undefined,
         problemSolution: undefined,
@@ -309,15 +309,18 @@ export default {
         gmtModifytime: undefined,
         beginTime: undefined,
         endTime: undefined
-      }),
-        (this.time = undefined)
+      }
+      this.time = null
       this.resetForm('form')
     },
     /** 搜索按钮操作 */
     handleQuery() {
-      if (this.time) {
+      if (this.time !== null) {
         this.queryParams.beginTime = this.time[0]
         this.queryParams.endTime = this.time[1]
+      } else {
+        this.queryParams.beginTime = undefined
+        this.queryParams.endTime = undefined
       }
       this.queryParams.pageNum = 1
       this.getList()
@@ -326,7 +329,7 @@ export default {
     resetQuery() {
       this.queryParams.beginTime = undefined
       this.queryParams.endTime = undefined
-      this.time = undefined
+      this.time = null
       this.resetForm('queryForm')
       this.handleQuery()
     },

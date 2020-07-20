@@ -148,7 +148,7 @@
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
             v-hasPermi="['system:feedback:remove']"
-          >删除</el-button> -->
+          >删除</el-button>-->
         </template>
       </el-table-column>
     </el-table>
@@ -260,7 +260,7 @@ export default {
       form: {},
       // 表单校验
       rules: {},
-      time: undefined
+      time: null
     }
   },
   created() {
@@ -295,14 +295,17 @@ export default {
         beginTime: undefined,
         endTime: undefined
       }
-      this.time = undefined
+      this.time = null
       this.resetForm('form')
     },
     /** 搜索按钮操作 */
     handleQuery() {
-      if (this.time) {
+      if (this.time !== null) {
         this.queryParams.beginTime = this.time[0]
         this.queryParams.endTime = this.time[1]
+      } else {
+        this.queryParams.beginTime = undefined
+        this.queryParams.endTime = undefined
       }
       this.queryParams.pageNum = 1
       this.getList()
@@ -311,7 +314,7 @@ export default {
     resetQuery() {
       this.queryParams.beginTime = undefined
       this.queryParams.endTime = undefined
-      this.time = undefined
+      this.time = null
       this.resetForm('queryForm')
       this.handleQuery()
     },
@@ -342,7 +345,7 @@ export default {
       this.$refs['form'].validate(valid => {
         if (valid) {
           if (this.form.id != undefined) {
-             updateFeedback(this.form).then(response => {
+            updateFeedback(this.form).then(response => {
               if (response.code === 200) {
                 this.msgSuccess('修改成功')
                 this.open = false
