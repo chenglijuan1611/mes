@@ -10,15 +10,6 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="故障名称" prop="faultName">
-        <el-input
-          v-model="queryParams.faultName"
-          placeholder="请输入故障名称"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
       <el-form-item label="设备型号" prop="modelCode">
         <el-input
           v-model="queryParams.modelCode"
@@ -28,6 +19,34 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
+      <el-form-item label="故障名称" prop="faultName">
+        <el-input
+          v-model="queryParams.faultName"
+          placeholder="请输入故障名称"
+          clearable
+          size="small"
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="省份" prop="province">
+        <el-input
+          v-model="queryParams.province"
+          placeholder="请输入省份"
+          clearable
+          size="small"
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="城市" prop="city">
+        <el-input
+          v-model="queryParams.city"
+          placeholder="请输入城市"
+          clearable
+          size="small"
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+
       <el-form-item label="处理状态" prop="state">
         <el-select v-model="queryParams.state" placeholder="请选择处理状态" clearable size="small">
           <el-option label="已处理" value="1" />
@@ -40,7 +59,7 @@
           <el-option label="未提示" value="0" />
         </el-select>
       </el-form-item>
-      <el-form-item label="创建时间" prop="gmtCreate">
+      <el-form-item label="报警时间" prop="gmtCreate">
         <!-- <el-date-picker
           clearable
           size="small"
@@ -52,9 +71,10 @@
         ></el-date-picker>-->
         <el-date-picker
           value-format="yyyy-MM-dd"
-          v-model="time"
+          v-model="dateRange"
+          style="width: 240px"
           type="daterange"
-          range-separator="至"
+       
           start-placeholder="开始日期"
           end-placeholder="结束日期"
           size="small"
@@ -95,7 +115,10 @@
       <el-table-column label="设备Mac地址" align="center" prop="device" />
       <el-table-column label="设备型号" align="center" prop="modelCode" />
       <el-table-column label="故障名称" align="center" prop="faultName" />
+
       <el-table-column label="故障描述" align="center" prop="faultDescription" />
+      <el-table-column label="省份" align="center" prop="province" />
+      <el-table-column label="城市" align="center" prop="city" />
       <el-table-column label="处理状态" align="center" prop="state">
         <template slot-scope="scope">
           <span>{{ scope.row.state== 1 ?'已处理':'未处理' }}</span>
@@ -114,6 +137,11 @@
       <el-table-column label="修改时间" align="center" prop="gmtModified" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.gmtModified) }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="操作" align="center">
+        <template slot-scope="scope">
+          <el-button @click="detail(scope.row)" type="text" icon="el-icon-search" size="mini">详细</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -218,37 +246,37 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        customer: undefined,
         device: undefined,
-        faultcode: undefined,
+        modelCode: undefined,
+        faultName: undefined,
+        province: undefined,
+        city: undefined,
         state: undefined,
-        flag: undefined,
-        times: undefined,
-        mode: undefined,
-        tip: undefined,
-        gmtCreate: undefined,
-        gmtModified: undefined
+        tip: undefined
       },
       // 表单参数
       form: {},
       // 表单校验
       rules: {},
       isadd: true,
-      time: undefined
+      dateRange: []
     }
   },
   created() {
     this.getList()
   },
+
   methods: {
     /** 查询告警信息列表 */
     getList() {
       this.loading = true
-      listFault(this.queryParams).then(response => {
-        this.faultList = response.rows
-        this.total = response.total
-        this.loading = false
-      })
+      listFault(this.addDateRange(this.queryParams, this.dateRange)).then(
+        response => {
+          this.faultList = response.rows
+          this.total = response.total
+          this.loading = false
+        }
+      )
     },
     // 取消按钮
     cancel() {
@@ -258,37 +286,26 @@ export default {
     // 表单重置
     reset() {
       this.form = {
-        id: undefined,
-        customer: undefined,
+        pageNum: 1,
+        pageSize: 10,
         device: undefined,
-        faultcode: undefined,
+        modelCode: undefined,
+        faultName: undefined,
+        province: undefined,
+        city: undefined,
         state: undefined,
-        flag: undefined,
-        times: undefined,
-        mode: undefined,
-        tip: undefined,
-        gmtCreate: undefined,
-        gmtModified: undefined,
-        beginTime: undefined,
-        endTime: undefined
+        tip: undefined
       }
-      this.time = undefined
+      this.dateRange = []
       this.resetForm('form')
     },
     /** 搜索按钮操作 */
     handleQuery() {
-      if (this.time) {
-        this.queryParams.beginTime = this.time[0]
-        this.queryParams.endTime = this.time[1]
-      }
       this.getList()
-      this.queryParams.pageNum = 1
     },
     /** 重置按钮操作 */
     resetQuery() {
-      this.queryParams.beginTime = undefined
-      this.queryParams.endTime = undefined
-      this.time = undefined
+      this.dateRange = []
       this.resetForm('queryForm')
       this.handleQuery()
     },
@@ -297,6 +314,22 @@ export default {
       this.ids = selection.map(item => item.id)
       this.single = selection.length != 1
       this.multiple = !selection.length
+    },
+    detail() {
+      const h = this.$createElement
+      this.$msgbox({
+        title: '详细信息',
+        message: h('div', null, [
+          h('p', null, '添加时间:'),
+          h('p', null, '保修时间: '),
+          h('p', null, '保修时间: '),
+          h('p', null, '保修时间: '),
+          h('p', null, '保修时间: '),
+          h('p', null, '保修时间: '),
+          h('p', null, '保修时间: '),
+          h('p', null, '保修时间: ')
+        ]) // type: 'info'
+      })
     },
     // /** 新增按钮操作 */
     // handleAdd() {
