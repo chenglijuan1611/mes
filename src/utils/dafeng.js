@@ -22,6 +22,7 @@ export function parseTime(time, pattern) {
 			time = time * 1000
 		}
 		date = new Date(time)
+
 	}
 	const formatObj = {
 		y: date.getFullYear(),
@@ -43,6 +44,14 @@ export function parseTime(time, pattern) {
 	})
 	return time_str
 }
+
+export function secondToDate(result) {
+    var h = Math.floor(result / 3600) < 10 ? '0'+Math.floor(result / 3600) : Math.floor(result / 3600);
+    var m = Math.floor((result / 60 % 60)) < 10 ? '0' + Math.floor((result / 60 % 60)) : Math.floor((result / 60 % 60));
+    var s = Math.floor((result % 60)) < 10 ? '0' + Math.floor((result % 60)) : Math.floor((result % 60));
+    return result = h + "小时" + m + "分钟" + s+'秒';
+}
+
 
 // 表单重置
 export function resetForm(refName) {
