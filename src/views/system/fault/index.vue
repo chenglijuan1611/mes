@@ -47,7 +47,7 @@
         />
       </el-form-item>
 
-      <el-form-item label="处理状态" prop="state">
+      <el-form-item label="当前状态" prop="state">
         <el-select v-model="queryParams.state" placeholder="请选择处理状态" clearable size="small">
           <el-option label="已处理" value="1" />
           <el-option label="未处理" value="0" />
@@ -74,7 +74,6 @@
           v-model="dateRange"
           style="width: 240px"
           type="daterange"
-       
           start-placeholder="开始日期"
           end-placeholder="结束日期"
           size="small"
@@ -119,7 +118,7 @@
       <el-table-column label="故障描述" align="center" prop="faultDescription" />
       <el-table-column label="省份" align="center" prop="province" />
       <el-table-column label="城市" align="center" prop="city" />
-      <el-table-column label="处理状态" align="center" prop="state">
+      <el-table-column label="当前状态" align="center" prop="state">
         <template slot-scope="scope">
           <span>{{ scope.row.state== 1 ?'已处理':'未处理' }}</span>
         </template>
@@ -134,7 +133,7 @@
           <span>{{ parseTime(scope.row.gmtCreate) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="修改时间" align="center" prop="gmtModified" width="180">
+      <el-table-column label="处理时间" align="center" prop="gmtModified" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.gmtModified) }}</span>
         </template>
@@ -315,13 +314,17 @@ export default {
       this.single = selection.length != 1
       this.multiple = !selection.length
     },
-    detail() {
+    detail(x) {
       const h = this.$createElement
+      let time = this.secondToDate(
+        (new Date(x.gmtModified).getTime() - new Date(x.gmtCreate).getTime()) /
+          1000
+      )
       this.$msgbox({
         title: '详细信息',
         message: h('div', null, [
-          h('p', null, '添加时间:'),
-          h('p', null, '保修时间: '),
+         
+          h('p', null, '告警持续时长：'+time),
           h('p', null, '保修时间: '),
           h('p', null, '保修时间: '),
           h('p', null, '保修时间: '),

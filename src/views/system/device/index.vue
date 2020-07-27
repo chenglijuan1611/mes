@@ -10,10 +10,10 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="设备型号编码" prop="modelCode">
+      <el-form-item label="设备型号" prop="modelCode">
         <el-input
           v-model="queryParams.modelCode"
-          placeholder="请输入设备型号编码"
+          placeholder="请输入设备型号"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
@@ -38,7 +38,7 @@
         />
       </el-form-item>
 
-      <el-form-item label="手机号" prop="phone">
+      <!-- <el-form-item label="手机号" prop="phone">
         <el-input
           v-model="queryParams.phone"
           placeholder="请输入手机号"
@@ -46,7 +46,7 @@
           size="small"
           @keyup.enter.native="handleQuery"
         />
-      </el-form-item>
+      </el-form-item> -->
 
       <el-form-item label="省份" prop="province">
         <el-input
@@ -68,15 +68,15 @@
         />
       </el-form-item>
 
-      <!-- <el-form-item label="地址" prop="address">
+      <el-form-item label="mac地址" prop="mac">
         <el-input
-          v-model="queryParams.address"
+          v-model="queryParams.mac"
           placeholder="请输入地址"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
         />
-      </el-form-item>-->
+      </el-form-item>
 
       <!-- <el-form-item label="添加时间" prop="gmtCreatetime">
         <el-date-picker
@@ -135,21 +135,22 @@
 
     <el-table v-loading="loading" :data="deviceList" @selection-change="handleSelectionChange">
       <el-table-column label="名称" align="center" prop="name" />
-      <el-table-column label="设备型号编码" align="center" prop="modelCode" />
-      <el-table-column label="设备的mac地址" align="center" prop="mac" />
+      <el-table-column label="设备型号" align="center" prop="modelCode" />
+      <el-table-column label="设备mac地址" align="center" prop="mac" />
 
       <el-table-column label="序列号" align="center" prop="serialNumber" />
-      <el-table-column label="手机号" align="center" prop="phone" />
-      <el-table-column label="省份" align="center" prop="province" />
-      <el-table-column label="城市" align="center" prop="city" />
-      <el-table-column label="地址" align="center" prop="address" />
+      <!-- <el-table-column label="手机号" align="center" prop="phone" /> -->
+      <el-table-column label="省份(ip)" align="center" prop="province" />
+      <el-table-column label="城市(ip)" align="center" prop="city" />
+      <!-- <el-table-column label="地址" align="center" prop="address" /> -->
       <el-table-column label="固件版本" align="center" prop="firmwareVersion" />
       <el-table-column label="是否在线" align="center">
-        <template slot-scope="scope">
+        <template slot-scope="scope">吧
           <span v-if="scope.row.isOnline==1">在线</span>
           <span v-if="!scope.row.isOnline==1">不在线</span>
         </template>
       </el-table-column>
+      
       <!-- <el-table-column label="添加时间" align="center" prop="gmtCreatetime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.gmtCreatetime) }}</span>

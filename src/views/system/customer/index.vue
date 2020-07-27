@@ -53,7 +53,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="区" prop="district">
+      <!-- <el-form-item label="区" prop="district">
         <el-input
           v-model="queryParams.district"
           placeholder="请输入区"
@@ -61,7 +61,7 @@
           size="small"
           @keyup.enter.native="handleQuery"
         />
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="创建时间" prop="gmtCreatetime">
         <!-- <el-date-picker clearable size="small" style="width: 200px"
           v-model="queryParams.gmtCreatetime"
@@ -72,7 +72,7 @@
         <el-date-picker
           value-format="yyyy-MM-dd"
           v-model="time"
-          style="width: 240px"
+          style="width: 180px"
           type="daterange"
           start-placeholder="开始日期"
           end-placeholder="结束日期"
@@ -142,7 +142,7 @@
       <!-- <el-table-column label="是否是维修" align="center" prop="isRepair" /> -->
       <el-table-column label="省" align="center" prop="province" />
       <el-table-column label="市" align="center" prop="city" />
-      <el-table-column label="区" align="center" prop="district" />
+      <!-- <el-table-column label="区" align="center" prop="district" /> -->
       <!-- <el-table-column label="详细地址" align="center" prop="address" /> -->
       <!-- <el-table-column label="头像" align="center" prop="avatar" /> -->
       <!-- <el-table-column label="是否是测试" align="center" prop="isTest" /> -->
