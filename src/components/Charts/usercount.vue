@@ -64,7 +64,8 @@ export default {
       userstatistics().then(x => {
         this.bnew1 = x.data.visit_uv_new
         this.b1 = x.data.visit_uv
-        this.b7 = x.data.sevenDaysActive
+        this.b7 = x.data.sevenDaysActive,
+        this.top=x.data.customerTotal
       })
     }
   }

@@ -25,9 +25,10 @@ export function dayAverageWater( ) {
 
 // 首页 设备统计
 
-export function devicecount( ) {
+export function devicecount(query) {
   return request({
     url: '/system/device/countStatis',
     method: 'get',
+    params:query
    })
 }

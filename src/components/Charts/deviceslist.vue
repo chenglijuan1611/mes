@@ -5,13 +5,13 @@
       <div style="padding:5vw 0">
         <el-form class="elinput" size="mini" :inline="true">
           <el-form-item label="设备型号">
-            <el-select v-model="form.region" placeholder="请选择产品型号">
+            <el-input v-model="modelCode" placeholder="请输入产品型号">
               <!-- <el-option value label="ETF2300 PF12"></el-option>
               <el-option value label="ETF2300 PF18"></el-option>
               <el-option value label="ETF2300 PF16"></el-option>-->
-            </el-select>
+            </el-input>
           </el-form-item>
-          <el-button size="mini" icon="el-icon-search" type="primary">查询</el-button>
+          <el-button @click="search" size="mini" icon="el-icon-search" type="primary">查询</el-button>
         </el-form>
       </div>
 
@@ -37,7 +37,7 @@
             <span style="font-size: 3vw;color: #15b9bb;">{{customerCounts}}</span>
             <span style="font-size: 1vw;color: #15b9bb;">台</span>
           </div>
-          <div >用户数量</div>
+          <div>用户数量</div>
         </div>
       </div>
     </div>
@@ -54,9 +54,7 @@ export default {
   },
   data() {
     return {
-      form: {
-        region: ''
-      },
+      modelCode: '',
       activeCount: 0,
       customerCounts: 0,
       onlineCount: 0
@@ -68,7 +66,17 @@ export default {
   methods: {
     getdata() {
       devicecount().then(x => {
-         this.activeCount = x.data.activeCount
+        this.activeCount = x.data.activeCount
+        this.onlineCount = x.data.onlineCount
+        this.customerCounts = x.data.customerCounts
+      })
+    },
+    search() {
+      let data = {
+        modelCode: this.modelCode
+      }
+      devicecount(data).then(x => {
+        this.activeCount = x.data.activeCount
         this.onlineCount = x.data.onlineCount
         this.customerCounts = x.data.customerCounts
       })
