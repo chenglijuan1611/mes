@@ -303,7 +303,8 @@ export default {
         url: '',
         title: '',
         name: '',
-        modelEcode: ''
+        modelEcode: '',
+        modelCode: ''
       },
       dateRange: []
     }
@@ -343,7 +344,13 @@ export default {
     getTreeselect() {
       listDeviceModel().then(response => {
         this.deviceModelOptions = []
-        const data = { deviceModelId: 0, modelCode: '主类目',modelName: '主类目', modelEcode: '主类目', children: [] }
+        const data = {
+          deviceModelId: 0,
+          modelCode: '主类目',
+          modelName: '主类目',
+          modelEcode: '主类目',
+          children: []
+        }
         data.children = handleTree(response.data, 'deviceModelId', 'parentId')
         this.deviceModelOptions.push(data)
       })
@@ -456,7 +463,8 @@ export default {
           this.getList()
           this.msgSuccess('删除成功')
         })
-        .catch(function() {x=>console.log(x);
+        .catch(function() {
+          x => console.log(x)
         })
     },
     //  图片地址
@@ -468,17 +476,17 @@ export default {
       this.updata.url = '/system/deviceModel/uploadPicture'
       this.updata.dialogVisible = true
       this.updata.name = 'picture'
-      this.updata.modelEcode = x.modelEcode
-      this.updata.title = '上传设备图片  英文编码为' + this.updata.modelEcode
+      this.updata.modelCode = x.modelCode
+      this.updata.title = '上传设备图片   编码为' + this.updata.modelCode
     },
 
     // 上传固件操作
     upfwkclick(a) {
-      this.updata.url = '/system/deviceModel/uploadFirmware'
+      this.updata.url = '/system/deviceModel/uploadFirmware2'
       this.updata.dialogVisible = true
       this.updata.name = 'firmwareFile'
-      this.updata.modelEcode = a.modelEcode
-      this.updata.title = '上传设备固件  英文编码为' + this.updata.modelEcode
+      this.updata.modelCode = a.modelCode
+      this.updata.title = '上传设备固件  编码为' + this.updata.modelCode
     },
 
     // 清理文件列表
@@ -499,7 +507,7 @@ export default {
     upfunc(x) {
       let formData = new FormData()
       formData.append(this.updata.name, x.file)
-      formData.append('modelEcode', this.updata.modelEcode)
+      formData.append('modelCode', this.updata.modelCode)
 
       upfile(this.updata.url, formData, z => {
         let p = (z.loaded / z.total) * 100
