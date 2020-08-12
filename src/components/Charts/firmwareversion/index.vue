@@ -28,7 +28,7 @@ export default {
         },
         series: [
           {
-            name: '数据',
+            name: '固件版本图',
             type: 'pie',
             radius: [20, 100],
             roseType: 'area',

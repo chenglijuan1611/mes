@@ -52,7 +52,7 @@ export default {
           realtime: false,
           calculable: true,
           type: 'piecewise',
-          left: '8%',
+          left: '3%',
           inRange: {
             color: ['#ded9ea', '#a8a0cc']
           }
