@@ -143,6 +143,7 @@
       <el-table-column label="设备描述" align="center" prop="describe" />
       <el-table-column label="耗材" align="center" prop="consumables" />
       <el-table-column label="固件版本" align="center" prop="firmwareVersion" />
+      <el-table-column label="crc16" align="center" prop="crc16" />
       <el-table-column label="创建人" align="center" prop="createUser" />
       <el-table-column label="创建时间" align="center" prop="gmtCreatetime">
         <template slot-scope="scope">
@@ -155,7 +156,7 @@
           <span>{{ parseTime(scope.row.gmtModifytime) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center">
+      <el-table-column label="上传" align="center">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -171,6 +172,18 @@
             @click="upfwkclick(scope.row)"
             v-hasPermi="['system:deviceModel:edit']"
           >上传固件</el-button>
+
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-edit"
+            @click="upfont(scope.row)"
+            v-hasPermi="['system:deviceModel:edit']"
+          >上传字库</el-button>
+        </template>
+      </el-table-column>
+      <el-table-column label="操作" align="center">
+        <template slot-scope="scope">
           <el-button
             size="mini"
             type="text"
@@ -240,6 +253,36 @@
         <el-button type="primary" @click="upok">确 定</el-button>
       </span>
     </el-dialog>
+
+
+    <!-- 固件上传 -->
+    <el-dialog :before-close="handleClose" :visible.sync="versionup">
+      <el-form label-width="auto">
+        <el-form-item label="固件的版本号">
+          <el-input v-model="versiondata.txt" placeholder="请输入版本号" clearable style="width: 240px" />
+        </el-form-item>
+        <el-form-item label="固件的版本描述">
+          <div v-for="(item ,index) in versiondata.msg.length+1" :key="item+index">
+            <el-input
+              @input="xxx"
+              v-model="versiondata.msg[index]"
+              :placeholder="'请输入版本描述  '+(index+1)"
+              clearable
+              style="width: 240px;margin:5px"
+            />
+          </div>
+        </el-form-item>
+      </el-form>
+      <el-upload :limit="1" ref="versionupload" action :auto-upload="false" :http-request="upfunc2">
+        <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+        <el-button
+          style="margin-left: 10px;"
+          size="small"
+          type="success"
+          @click="versionuploadstart"
+        >上传到服务器</el-button>
+      </el-upload>
+    </el-dialog>
   </div>
 </template>
 
@@ -251,17 +294,18 @@ import {
   addDeviceModel,
   updateDeviceModel,
   exportDeviceModel,
-  upfile
-} from '@/api/system/deviceModel'
-import axios from 'axios'
+  upfile,
+} from "@/api/system/deviceModel";
+import axios from "axios";
 
-import { handleTree } from '@/utils/dafeng'
-import Treeselect from '@riophae/vue-treeselect'
-import '@riophae/vue-treeselect/dist/vue-treeselect.css'
+import { handleTree } from "@/utils/dafeng";
+import Treeselect from "@riophae/vue-treeselect";
+import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 
 export default {
-  name: 'DeviceModel',
+  name: "DeviceModel",
   components: { Treeselect },
+
   data() {
     return {
       // 遮罩层
@@ -272,7 +316,7 @@ export default {
       // 设备分类信息树选项
       deviceModelOptions: [],
       // 弹出层标题
-      title: '',
+      title: "",
       // 是否显示弹出层
       open: false,
       // 查询参数
@@ -290,7 +334,7 @@ export default {
         createUser: undefined,
         gmtCreatetime: undefined,
         modifyUser: undefined,
-        gmtModifytime: undefined
+        gmtModifytime: undefined,
       },
       // 表单参数
       form: {},
@@ -300,65 +344,71 @@ export default {
 
       updata: {
         dialogVisible: false,
-        url: '',
-        title: '',
-        name: '',
-        modelEcode: '',
-        modelCode: ''
+        url: "",
+        title: "",
+        name: "",
+        modelEcode: "",
+        modelCode: "",
       },
-      dateRange: []
-    }
+      dateRange: [],
+      versionup: false,
+      versiondata: {
+        text: "",
+        msg: [],
+      },
+    };
   },
 
   created() {
-    this.getList()
+    this.getList();
   },
-  computed: {},
+
   methods: {
+  
     /** 查询设备分类信息列表 */
     getList() {
-      this.loading = true
+      this.loading = true;
       listDeviceModel(this.addDateRange(this.queryParams, this.dateRange)).then(
-        response => {
+        (response) => {
           this.deviceModelList = handleTree(
             response.data,
-            'deviceModelId',
-            'parentId'
-          )
-          this.loading = false
+            "deviceModelId",
+            "parentId"
+          );
+          this.loading = false;
         }
-      )
+      );
     },
     /** 转换设备分类信息数据结构 */
     normalizer(node) {
       if (node.children && !node.children.length) {
-        delete node.children
+        delete node.children;
       }
       return {
         id: node.deviceModelId,
         label: node.modelName,
-        children: node.children
-      }
+        children: node.children,
+      };
     },
     /** 查询部门下拉树结构 */
     getTreeselect() {
-      listDeviceModel().then(response => {
-        this.deviceModelOptions = []
+      listDeviceModel().then((response) => {
+        this.deviceModelOptions = [];
         const data = {
           deviceModelId: 0,
-          modelCode: '主类目',
-          modelName: '主类目',
-          modelEcode: '主类目',
-          children: []
-        }
-        data.children = handleTree(response.data, 'deviceModelId', 'parentId')
-        this.deviceModelOptions.push(data)
-      })
+          modelCode: "主类目",
+          modelName: "主类目",
+          modelEcode: "主类目",
+          children: [],
+        };
+        data.children = handleTree(response.data, "deviceModelId", "parentId");
+        this.deviceModelOptions.push(data);
+      });
     },
     // 取消按钮
     cancel() {
-      this.open = false
-      this.reset()
+      this.open = false;
+      this.reset();
     },
     // 添加修改 的表单重置
     reset() {
@@ -378,151 +428,223 @@ export default {
         createUser: undefined,
         gmtCreatetime: undefined,
         modifyUser: undefined,
-        gmtModifytime: undefined
-      }
-      this.resetForm('form')
+        gmtModifytime: undefined,
+      };
+      this.resetForm("form");
     },
     /** 搜索按钮操作 */
     handleQuery() {
-      this.getList()
+      this.getList();
     },
     /** 重置按钮操作 */
     resetQuery() {
-      this.dateRange = []
-      this.resetForm('queryForm')
-      this.handleQuery()
+      this.dateRange = [];
+      this.resetForm("queryForm");
+      this.handleQuery();
     },
     /** 新增按钮操作 */
     handleAdd() {
-      this.editcode = false
-      this.reset()
-      this.getTreeselect()
+      this.editcode = false;
+      this.reset();
+      this.getTreeselect();
 
-      this.open = true
-      this.title = '添加设备分类信息'
+      this.open = true;
+      this.title = "添加设备分类信息";
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
-      this.reset()
-      this.editcode = true
-      this.getTreeselect()
+      this.reset();
+      this.editcode = true;
+      this.getTreeselect();
       if (row != undefined) {
-        this.form.parentId = row.deviceModelId
+        this.form.parentId = row.deviceModelId;
       }
-      getDeviceModel(row.deviceModelId).then(response => {
-        this.form = response.data
-        this.open = true
-        this.title = '修改设备分类信息'
-      })
+      getDeviceModel(row.deviceModelId).then((response) => {
+        this.form = response.data;
+        this.open = true;
+        this.title = "修改设备分类信息";
+      });
     },
     /** 提交按钮 */
-    submitForm: function() {
-      this.$refs['form'].validate(valid => {
-        console.log(this.form)
+    submitForm: function () {
+      this.$refs["form"].validate((valid) => {
+        console.log(this.form);
 
         if (valid) {
           if (this.form.deviceModelId != undefined) {
-            updateDeviceModel(this.form).then(response => {
+            updateDeviceModel(this.form).then((response) => {
               if (response.code === 200) {
-                this.msgSuccess('修改成功')
-                this.open = false
-                this.getList()
+                this.msgSuccess("修改成功");
+                this.open = false;
+                this.getList();
               } else {
-                this.msgError(response.msg)
+                this.msgError(response.msg);
               }
-            })
+            });
           } else {
-            addDeviceModel(this.form).then(response => {
+            addDeviceModel(this.form).then((response) => {
               if (response.code === 200) {
-                this.msgSuccess('新增成功')
-                this.open = false
-                this.getList()
+                this.msgSuccess("新增成功");
+                this.open = false;
+                this.getList();
               } else {
-                this.msgError(response.msg)
+                this.msgError(response.msg);
               }
-            })
+            });
           }
         }
-      })
+      });
     },
     /** 删除按钮操作 */
     handleDelete(row) {
       this.$confirm(
-        '是否确认删除设备分类名称为   ' + row.modelName + '  的数据项?',
-        '警告',
+        "是否确认删除设备分类名称为   " + row.modelName + "  的数据项?",
+        "警告",
         {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
         }
       )
-        .then(function() {
-          return delDeviceModel(row.deviceModelId)
+        .then(function () {
+          return delDeviceModel(row.deviceModelId);
         })
         .then(() => {
-          this.getList()
-          this.msgSuccess('删除成功')
+          this.getList();
+          this.msgSuccess("删除成功");
         })
-        .catch(function() {
-          x => console.log(x)
-        })
+        .catch(function () {
+          (x) => console.log(x);
+        });
     },
     //  图片地址
     imgurl(a) {
-      return process.env.VUE_APP_BASE_API + a.row.picUrl
+      return process.env.VUE_APP_BASE_API + a.row.picUrl;
     },
     // // 上传图片操作
     upimgclick(x) {
-      this.updata.url = '/system/deviceModel/uploadPicture'
-      this.updata.dialogVisible = true
-      this.updata.name = 'picture'
-      this.updata.modelCode = x.modelCode
-      this.updata.title = '上传设备图片   编码为' + this.updata.modelCode
+      this.upclear();
+      this.updata.url = "/system/deviceModel/uploadPicture";
+      this.updata.dialogVisible = true;
+      this.updata.name = "picture";
+      this.updata.modelCode = x.modelCode;
+      this.updata.title = "上传设备图片   编码为" + this.updata.modelCode;
     },
 
     // 上传固件操作
     upfwkclick(a) {
-      this.updata.url = '/system/deviceModel/uploadFirmware2'
-      this.updata.dialogVisible = true
-      this.updata.name = 'firmwareFile'
-      this.updata.modelCode = a.modelCode
-      this.updata.title = '上传设备固件  编码为' + this.updata.modelCode
+      this.versionup = true;
+      this.upclear();
+      this.updata.url = "/system/deviceModel/uploadFirmware2";
+      this.updata.name = "firmwareFile";
+      this.updata.modelCode = a.modelCode;
+      this.updata.title = "上传设备固件  编码为" + this.updata.modelCode;
+      this.versiondata = {
+        text: "",
+        msg: [],
+      };
     },
-
+    // 上传字库
+    upfont(a) {
+      this.upclear();
+      this.updata.url = "/system/deviceModel/uploadFile";
+      this.updata.dialogVisible = true;
+      this.updata.name = "file";
+      this.updata.modelCode = a.modelCode;
+      this.updata.title = "上传字库  编码为" + this.updata.modelCode;
+    },
+    upclear() {
+      this.updata.url = "";
+      this.updata.dialogVisible = false;
+      this.updata.name = "";
+      this.updata.modelCode = "";
+      this.updata.title = "";
+    },
     // 清理文件列表
     upok() {
-      this.resetQuery()
-      this.updata.dialogVisible = false
-      this.$refs.up.clearFiles()
+      this.resetQuery();
+      this.updata.dialogVisible = false;
+      this.$refs.up.clearFiles();
     },
     handleClose(done) {
-      this.$confirm('确认关闭？')
-        .then(_ => {
-          this.$refs.up.clearFiles()
-          this.resetQuery()
-          done()
+      this.$confirm("确认关闭？")
+        .then((_) => {
+          try {
+            this.$refs.up.clearFiles();
+          } catch (error) {}
+          try {
+            this.$refs.versionupload.clearFiles();
+          } catch (error) {}
+
+          this.resetQuery();
+          done();
         })
-        .catch(_ => {})
+        .catch((x) => {
+          console.log(x);
+        });
     },
     upfunc(x) {
-      let formData = new FormData()
-      formData.append(this.updata.name, x.file)
-      formData.append('modelCode', this.updata.modelCode)
+      let formData = new FormData();
+      formData.append(this.updata.name, x.file);
+      formData.append("modelCode", this.updata.modelCode);
 
-      upfile(this.updata.url, formData, z => {
-        let p = (z.loaded / z.total) * 100
-        x.onProgress({ percent: p })
+      upfile(this.updata.url, formData, (z) => {
+        let p = (z.loaded / z.total) * 100;
+        x.onProgress({ percent: p });
       })
-        .then(res => {
-          x.onSuccess()
+        .then((res) => {
+          x.onSuccess();
         })
-        .catch(err => {
-          x.onError()
-          this.$alert(err, '上传出现错误', {
-            confirmButtonText: '确定'
-          })
+        .catch((err) => {
+          x.onError();
+          this.$alert(err, "上传出现错误", {
+            confirmButtonText: "确定",
+          });
+        });
+    },
+    //点击版本 上传
+    versionuploadstart() {
+      this.$refs.versionupload.submit();
+    },
+
+    // 去除空白 
+       xxx() {
+      this.versiondata.msg = this.versiondata.msg.filter((x) => {
+        if (x != "") return x;
+      });
+    },
+    upfunc2(x) {
+      let formData = new FormData();
+      formData.append(this.updata.name, x.file);
+      formData.append("modelCode", this.updata.modelCode);
+      formData.append("vsionDescrip", this.versiondata.msg);
+      formData.append("firmVsion", this.versiondata.txt);
+      console.log(formData);
+      upfile(this.updata.url, formData, (z) => {
+        let p = (z.loaded / z.total) * 100;
+        x.onProgress({ percent: p });
+      })
+        .then((res) => {
+          x.onSuccess();
+          console.log(res);
+          this.msgSuccess(res.msg);
+          this.$refs.versionupload.clearFiles();
+
+          this.versiondata = {
+            text: "",
+            msg: [],
+          };
+          this.versionup = false;
         })
-    }
-  }
-}
+        .catch((err) => {
+          this.$refs.versionupload.clearFiles();
+
+          x.onError();
+          this.$alert(err, "上传出现错误", {
+            confirmButtonText: "确定",
+          });
+        });
+    },
+  },
+};
 </script>
