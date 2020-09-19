@@ -1,10 +1,10 @@
-import Vue from 'vue'
-import Router from 'vue-router'
+import Vue from "vue";
+import Router from "vue-router";
 
-Vue.use(Router)
+Vue.use(Router);
 
 /* Layout */
-import Layout from '@/layout'
+import Layout from "@/layout";
 
 /**
  * Note: 路由配置项
@@ -27,90 +27,105 @@ import Layout from '@/layout'
 // 公共路由
 export const constantRoutes = [
   {
-    path: '/redirect',
+    path: "/redirect",
     component: Layout,
     hidden: true,
     children: [
       {
-        path: '/redirect/:path*',
-        component: () => import('@/views/redirect')
+        path: "/redirect/:path*",
+        component: () => import("@/views/redirect")
       }
     ]
   },
   {
-    path: '/login',
-    component: () => import('@/views/login'),
+    path: "/login",
+    component: () => import("@/views/login"),
     hidden: true
   },
   {
-    path: '/404',
-    component: () => import('@/views/error/404'),
+    path: "/404",
+    component: () => import("@/views/error/404"),
     hidden: true
   },
   {
-    path: '/401',
-    component: () => import('@/views/error/401'),
+    path: "/401",
+    component: () => import("@/views/error/401"),
     hidden: true
   },
   {
-    path: '',
+    path: "",
     component: Layout,
-    redirect: 'index',
+    redirect: "index",
     children: [
       {
-        path: 'index',
-        component: () => import('@/views/index'),
-        name: '系统首页',
-        meta: { title: '系统首页', icon: 'dashboard', noCache: true, affix: true }
+        path: "index",
+        component: () => import("@/views/index"),
+        name: "系统首页",
+        meta: {
+          title: "系统首页",
+          icon: "dashboard",
+          noCache: true,
+          affix: true
+        }
       }
     ]
   },
   {
-    path: '/user',
+    path: "/user",
     component: Layout,
     hidden: true,
-    redirect: 'noredirect',
+    redirect: "noredirect",
     children: [
       {
-        path: 'profile',
-        component: () => import('@/views/system/user/profile/index'),
-        name: 'Profile',
-        meta: { title: '个人中心', icon: 'user' }
+        path: "profile",
+        component: () => import("@/views/system/user/profile/index"),
+        name: "Profile",
+        meta: { title: "个人中心", icon: "user" }
       }
     ]
   },
   {
-    path: '/dict',
+    path: "/dict",
     component: Layout,
     hidden: true,
     children: [
       {
-        path: 'type/data/:dictId(\\d+)',
-        component: () => import('@/views/system/dict/data'),
-        name: 'Data',
-        meta: { title: '字典数据', icon: '' }
+        path: "type/data/:dictId(\\d+)",
+        component: () => import("@/views/system/dict/data"),
+        name: "Data",
+        meta: { title: "字典数据", icon: "" }
       }
     ]
   },
   {
-    path: '/gen',
+    path: "/gen",
     component: Layout,
     hidden: true,
     children: [
       {
-        path: 'edit',
-        component: () => import('@/views/tool/gen/editTable'),
-        name: 'GenEdit',
-        meta: { title: '修改生成配置' }
+        path: "edit",
+        component: () => import("@/views/tool/gen/editTable"),
+        name: "GenEdit",
+        meta: { title: "修改生成配置" }
       }
     ]
   },
- 
-
-]
+  {
+    path: "/test",
+    component: Layout,
+    hidden: true,
+    children: [
+      {
+        path: "",
+        component: () => import("@/views/test.vue"),
+     
+      }
+    ]
+  }
+];
 
 export default new Router({
-  mode: 'hash', // 去掉url中的#
+  mode: "hash", // 去掉url中的#
   scrollBehavior: () => ({ y: 0 }),
   routes: constantRoutes
-})
+});

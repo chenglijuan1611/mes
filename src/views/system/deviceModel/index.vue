@@ -199,6 +199,12 @@
             @click="handleDelete(scope.row)"
             v-hasPermi="['system:deviceModel:remove']"
           >删除</el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-edit"
+            @click="FirmVerDesc(scope.row)"
+          >版本描述</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -254,9 +260,8 @@
       </span>
     </el-dialog>
 
-
     <!-- 固件上传 -->
-    <el-dialog :before-close="handleClose" :visible.sync="versionup">
+    <el-dialog :title="updata.title" :before-close="handleClose" :visible.sync="versionup">
       <el-form label-width="auto">
         <el-form-item label="固件的版本号">
           <el-input v-model="versiondata.txt" placeholder="请输入版本号" clearable style="width: 240px" />
@@ -283,6 +288,33 @@
         >上传到服务器</el-button>
       </el-upload>
     </el-dialog>
+    <!-- 版本描述 -->
+    <el-dialog title="固件版本描述" :before-close="handleClose" :visible.sync="Firmshow">
+      <el-form size="mini" label-width="auto">
+        <el-form-item
+          style="width:70%"
+          v-for="(item ,index) in FirmVerDesclist "
+          :key="index"
+          :label="index+1+''"
+        >
+          <el-input style="margin-bottom:10px" type="textarea" v-model="item.description"></el-input>
+
+          <el-button type="success" @click="savedesc(item,index)">保存</el-button>
+          <el-button type="danger" @click="deldesc(item,index)">删除</el-button>
+        </el-form-item>
+      </el-form>
+
+      <!-- <div v-for="(item ,index) in FirmVerDesclist" :key="item+index">
+        {{index}}
+        <el-input
+          v-model="item.description"
+          :placeholder="'请输入版本描述  '+(index+1)"
+          clearable
+          type="textarea"
+          style="width: 240px;margin:5px"
+        />
+      </div>-->
+    </el-dialog>
   </div>
 </template>
 
@@ -296,7 +328,7 @@ import {
   exportDeviceModel,
   upfile,
 } from "@/api/system/deviceModel";
-import axios from "axios";
+import request from "@/utils/request";
 
 import { handleTree } from "@/utils/dafeng";
 import Treeselect from "@riophae/vue-treeselect";
@@ -317,6 +349,9 @@ export default {
       deviceModelOptions: [],
       // 弹出层标题
       title: "",
+      Firmshow: false,
+      FirmVerDesclist: [{ description: "" }],
+      no: "",
       // 是否显示弹出层
       open: false,
       // 查询参数
@@ -364,7 +399,32 @@ export default {
   },
 
   methods: {
-  
+    savedesc(x) {
+      console.log(x);
+      request
+        .post(
+          "/system/deviceModel/editFirmVerDesc",
+          {},
+          {
+            params: { id: x.id, description: x.description },
+          }
+        )
+        .then((Z) => {
+          this.msgSuccess(Z.msg);
+        });
+    },
+    deldesc(x, y) {
+      console.log(x);
+      request
+        .post(
+          "/system/deviceModel/delFirmVerDesc",
+          {},
+          {
+            params: { id: x.id },
+          }
+        )
+        .then(this.FirmVerDesclist.splice(y, 1));
+    },
     /** 查询设备分类信息列表 */
     getList() {
       this.loading = true;
@@ -378,6 +438,24 @@ export default {
           this.loading = false;
         }
       );
+    },
+    FirmVerDesc(x) {
+      request
+        .post(
+          "/system/deviceModel/lookFirmVerDesc",
+          {},
+          {
+            params: {
+              version: x.firmwareVersion,
+              modelCode: x.modelCode,
+            },
+          }
+        )
+        .then((x) => {
+          this.Firmshow = true;
+          this.FirmVerDesclist = x.data;
+          console.log(x.data);
+        });
     },
     /** 转换设备分类信息数据结构 */
     normalizer(node) {
@@ -607,8 +685,8 @@ export default {
       this.$refs.versionupload.submit();
     },
 
-    // 去除空白 
-       xxx() {
+    // 去除空白
+    xxx() {
       this.versiondata.msg = this.versiondata.msg.filter((x) => {
         if (x != "") return x;
       });
