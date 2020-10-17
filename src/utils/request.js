@@ -19,7 +19,7 @@ service.interceptors.request.use(
     if (getToken()) {
       config.headers['Authorization'] = 'Bearer ' + getToken() // 让每个请求携带自定义token 请根据实际情况自行修改
     }
-    console.log('请求信息：>>  ' + config.url, config);
+    // console.log('请求信息：>>  ' + config.url, config);
 
     return config
   },
@@ -31,7 +31,7 @@ service.interceptors.request.use(
 // 响应拦截器
 service.interceptors.response.use(res => {
   const code = res.data.code
-  console.log('响应信息>>  ' + res.config.url, res);
+  // console.log('响应信息>>  ' + res.config.url, res);
 
   if (code === 401) {
     MessageBox.confirm(

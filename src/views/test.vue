@@ -1,9 +1,9 @@
- <template>
+<template>
   <div>
     <chartsname chartsname="设备分布图" />
     <div class="chartsbgbox">
       <div id="devicedistribution" />
-      <!-- <i @click="provincedata" style="opacity:0.5" class="el-icon-arrow-left iconar"></i> -->
+      <i @click="provincedata" style="opacity:0.5" class="el-icon-arrow-left iconar"></i>
     </div>
   </div>
 </template>
@@ -16,7 +16,6 @@ const requireAll = (requireContext) =>
   requireContext.keys().map(requireContext);
 const req = require.context("echarts/map/js/province", true, /\.js$/);
 requireAll(req);
-import { listWaterQuality } from "@/api/system/waterQuality";
 
 export default {
   components: {
@@ -24,16 +23,15 @@ export default {
   },
   data() {
     return {
-      list: {},
       option: {
         tooltip: {
-          //   formatter: function (a) {
-          //     let temp;
-          //     try {
-          //       temp = `${a.name} <br />设备数量：${a.data.value} <br />当前联网数量：${a.data.online}`;
-          //     } catch (error) {}
-          //     return temp;
-          //   },
+          formatter: function (a) {
+            let temp;
+            try {
+              temp = `${a.name} <br />设备数量：${a.data.value} <br />当前联网数量：${a.data.online}`;
+            } catch (error) {}
+            return temp;
+          },
         },
         geo: {
           map: "china",
@@ -65,99 +63,72 @@ export default {
             name: "数据",
             type: "map",
             geoIndex: 0,
-            data: [
-              { name: "浙江", value: 20 },
-              { name: "北京", value: 15 },
-              { name: "河南", value: 31 },
-              { name: "天津", value: 69 },
-              { name: "四川", value: 44 },
-            ],
+            data: [],
           },
         ],
       },
     };
   },
-  created() {},
+  created() {
+    this.provincedata();
+  },
   mounted() {
-    listWaterQuality().then((x) => {
-      let obj = {};
-      x.rows.forEach((x) => {
-        if (obj[x.province] === undefined) {
-          obj[x.province] = [];
-          obj[x.province].push({
-            city: x.city,
-            tds: x.tds,
-            hardness: x.hardness,
-          });
-        } else {
-          obj[x.province].push({
-            city: x.city,
-            tds: x.tds,
-            hardness: x.hardness,
-          });
-        }
-      });
-      let data = [];
-      for (let i in obj) {
-        data.push({ name: i, value: 3 });
-      }
-      // this.option.series[0].data = data;
-      // console.log(this.option);
-    });
-    this.echartsupdated();
+    // this.echartsupdated()
   },
   methods: {
-    // provincedata() {
-    //   devicedistributionapi().then((x) => {
-    //     let temp = x.data.map((y) => {
-    //       return {
-    //         name: y.province,
-    //         value: y.specificCount,
-    //         online: y.onlineCount,
-    //       };
-    //     });
-    //     console.log(temp);
-    //     this.option.series[0].data = temp;
-    //     this.option.geo.map = "china";
-    //     this.echartsupdated();
-    //   });
-    // },
+    provincedata() {
+      devicedistributionapi().then((x) => {
+        let temp = x.data.map((y) => {
+          return {
+            name: y.province,
+            value: y.specificCount,
+            online: y.onlineCount,
+          };
+        });
+        this.option.series[0].data = temp;
+        this.option.geo.map = "china";
+        this.echartsupdated();
+      });
+    },
     echartsupdated() {
       this.$nextTick(() => {
         let myChart = echarts.init(
           document.getElementById("devicedistribution")
         );
         myChart.setOption(this.option, true);
-
-        // myChart.on("click", (params) => {
-        //   this.city(params.name);
-        // });
+        myChart.off("click");
+        myChart.on("click", (params) => {
+          this.city(params.name);
+        });
       });
     },
-    // echartsupdated2() {
-    //   this.$nextTick(() => {
-    //     let myChart = echarts.init(
-    //       document.getElementById("devicedistribution")
-    //     );
-    //     myChart.off("click");
-    //     myChart.setOption(this.option, true);
-    //   });
-    // },
-    // city(p) {
-    //   console.log(p);
-    //   devicedistributionapi({ province: p }).then((x) => {
-    //     let temp = x.data.map((y) => {
-    //       return {
-    //         name: y.city,
-    //         value: y.specificCount,
-    //         online: y.onlineCount,
-    //       };
-    //     });
-    //     this.option.geo.map = p;
-    //     this.option.series[0].data = temp;
-    //     this.echartsupdated2();
-    //   });
-    // },
+    echartsupdated2() {
+      this.$nextTick(() => {
+        let myChart = echarts.init(
+          document.getElementById("devicedistribution")
+        );
+        myChart.off("click");
+        myChart.on("click", (params) => {
+          this.city(params.name);
+        });
+        myChart.setOption(this.option, true);
+      });
+    },
+    city(p) {
+      console.log(p);
+      devicedistributionapi({ province: p }).then((x) => {
+        let temp = x.data.map((y) => {
+          return {
+            name: y.city,
+            value: y.specificCount,
+            online: y.onlineCount,
+          };
+        });
+        this.option.geo.map = p;
+        this.option.series[0].data = temp;
+        this.echartsupdated2();
+      });
+    },
   },
 };
 </script>

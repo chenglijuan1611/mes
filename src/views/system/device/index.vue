@@ -46,7 +46,7 @@
           size="small"
           @keyup.enter.native="handleQuery"
         />
-      </el-form-item> -->
+      </el-form-item>-->
 
       <el-form-item label="省份" prop="province">
         <el-input
@@ -145,12 +145,12 @@
       <!-- <el-table-column label="地址" align="center" prop="address" /> -->
       <el-table-column label="固件版本" align="center" prop="firmwareVersion" />
       <el-table-column label="是否在线" align="center">
-        <template slot-scope="scope">吧
+        <template slot-scope="scope">
           <span v-if="scope.row.isOnline==1">在线</span>
           <span v-if="!scope.row.isOnline==1">不在线</span>
         </template>
       </el-table-column>
-      
+
       <!-- <el-table-column label="添加时间" align="center" prop="gmtCreatetime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.gmtCreatetime) }}</span>
@@ -302,11 +302,11 @@ import {
   delDevice,
   addDevice,
   updateDevice,
-  exportDevice
-} from '@/api/system/device'
+  exportDevice,
+} from "@/api/system/device";
 
 export default {
-  name: 'Device',
+  name: "Device",
   data() {
     return {
       // 遮罩层
@@ -322,7 +322,7 @@ export default {
       // 设备信息表表格数据
       deviceList: [],
       // 弹出层标题
-      title: '',
+      title: "",
       // 是否显示弹出层
       open: false,
       // 查询参数
@@ -348,34 +348,34 @@ export default {
         modifyUser: undefined,
         gmtModifytime: undefined,
         purchaseTime: undefined,
-        warrantyTime: undefined
+        warrantyTime: undefined,
       },
       // 表单参数
       form: {},
       // 表单校验
       rules: {},
-      dateRange: []
-    }
+      dateRange: [],
+    };
   },
   created() {
-    this.getList()
+    this.getList();
   },
   methods: {
     /** 查询设备信息表列表 */
     getList() {
-      this.loading = true
+      this.loading = true;
       listDevice(this.addDateRange(this.queryParams, this.dateRange)).then(
-        response => {
-          this.deviceList = response.rows
-          this.total = response.total
-          this.loading = false
+        (response) => {
+          this.deviceList = response.rows;
+          this.total = response.total;
+          this.loading = false;
         }
-      )
+      );
     },
     // 取消按钮
     cancel() {
-      this.open = false
-      this.reset()
+      this.open = false;
+      this.reset();
     },
     // 表单重置
     reset() {
@@ -405,120 +405,120 @@ export default {
         modifyUser: undefined,
         gmtModifytime: undefined,
         purchaseTime: undefined,
-        warrantyTime: undefined
-      }
-      this.resetForm('form')
+        warrantyTime: undefined,
+      };
+      this.resetForm("form");
     },
     /** 搜索按钮操作 */
     handleQuery() {
-      this.queryParams.pageNum = 1
-      this.getList()
+      this.queryParams.pageNum = 1;
+      this.getList();
     },
     /** 重置按钮操作 */
     resetQuery() {
-      this.dateRange = []
-      this.resetForm('queryForm')
-      this.handleQuery()
+      this.dateRange = [];
+      this.resetForm("queryForm");
+      this.handleQuery();
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.id)
-      this.single = selection.length != 1
-      this.multiple = !selection.length
+      this.ids = selection.map((item) => item.id);
+      this.single = selection.length != 1;
+      this.multiple = !selection.length;
     },
     /** 新增按钮操作 */
     handleAdd() {
-      this.reset()
-      this.open = true
-      this.title = '添加设备信息表'
+      this.reset();
+      this.open = true;
+      this.title = "添加设备信息表";
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
-      this.reset()
-      const id = row.id || this.ids
-      getDevice(id).then(response => {
-        this.form = response.data
-        this.open = true
-        this.title = '修改设备信息表'
-      })
+      this.reset();
+      const id = row.id || this.ids;
+      getDevice(id).then((response) => {
+        this.form = response.data;
+        this.open = true;
+        this.title = "修改设备信息表";
+      });
     },
     /** 提交按钮 */
-    submitForm: function() {
-      this.$refs['form'].validate(valid => {
+    submitForm: function () {
+      this.$refs["form"].validate((valid) => {
         if (valid) {
           if (this.form.id != undefined) {
-            updateDevice(this.form).then(response => {
+            updateDevice(this.form).then((response) => {
               if (response.code === 200) {
-                this.msgSuccess('修改成功')
-                this.open = false
-                this.getList()
+                this.msgSuccess("修改成功");
+                this.open = false;
+                this.getList();
               } else {
-                this.msgError(response.msg)
+                this.msgError(response.msg);
               }
-            })
+            });
           } else {
-            addDevice(this.form).then(response => {
+            addDevice(this.form).then((response) => {
               if (response.code === 200) {
-                this.msgSuccess('新增成功')
-                this.open = false
-                this.getList()
+                this.msgSuccess("新增成功");
+                this.open = false;
+                this.getList();
               } else {
-                this.msgError(response.msg)
+                this.msgError(response.msg);
               }
-            })
+            });
           }
         }
-      })
+      });
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      const ids = row.id || this.ids
+      const ids = row.id || this.ids;
       this.$confirm(
         '是否确认删除设备信息表编号为"' + ids + '"的数据项?',
-        '警告',
+        "警告",
         {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
         }
       )
-        .then(function() {
-          return delDevice(ids)
+        .then(function () {
+          return delDevice(ids);
         })
         .then(() => {
-          this.getList()
-          this.msgSuccess('删除成功')
+          this.getList();
+          this.msgSuccess("删除成功");
         })
-        .catch(function() {})
+        .catch(function () {});
     },
     /** 导出按钮操作 */
     handleExport() {
-      const queryParams = this.queryParams
-      this.$confirm('是否确认导出所有设备信息表数据项?', '警告', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
+      const queryParams = this.queryParams;
+      this.$confirm("是否确认导出所有设备信息表数据项?", "警告", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
       })
-        .then(function() {
-          return exportDevice(queryParams)
+        .then(function () {
+          return exportDevice(queryParams);
         })
-        .then(response => {
-          this.download(response.msg)
+        .then((response) => {
+          this.download(response.msg);
         })
-        .catch(function() {})
+        .catch(function () {});
     },
     //  详细信息
     more(x) {
-      const h = this.$createElement
+      const h = this.$createElement;
       this.$msgbox({
-        title: '其他信息',
-        message: h('p', null, [
-          h('p', null, '详细地址:' +  x.address ),
-          h('p', null, '添加时间:' + this.parseTime(x.gmtCreatetime)),
-          h('p', null, '保修时间: ' + this.parseTime(x.warrantyTime))
-        ]) // type: 'info'
-      })
-    }
-  }
-}
+        title: "其他信息",
+        message: h("p", null, [
+          h("p", null, "详细地址:" + x.address),
+          h("p", null, "添加时间:" + this.parseTime(x.gmtCreatetime)),
+          h("p", null, "保修时间: " + this.parseTime(x.warrantyTime)),
+        ]), // type: 'info'
+      });
+    },
+  },
+};
 </script>
