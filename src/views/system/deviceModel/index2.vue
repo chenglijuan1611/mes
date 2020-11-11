@@ -165,14 +165,12 @@
             @click="upimgclick(scope.row)"
             v-hasPermi="['system:deviceModel:edit']"
           >上传图片</el-button>
-
           <el-button
             size="mini"
             type="text"
-            @click="upfwkclick(scope.row)"
+            @click="clickupfirmware(scope.row)"
             v-hasPermi="['system:deviceModel:edit']"
           >上传固件</el-button>
-
           <el-button
             size="mini"
             type="text"
@@ -198,54 +196,10 @@
             @click="handleDelete(scope.row)"
             v-hasPermi="['system:deviceModel:remove']"
           >删除</el-button>
-          <el-button size="mini" type="text" @click="FirmVerDesc(scope.row)">版本描述</el-button>
-          <el-button size="mini" type="text" @click="doclass(scope.row)">分组管理</el-button>
+          <el-button size="mini" type="text" @click="serialnumbergroupmanage(scope.row)">分组管理</el-button>
         </template>
       </el-table-column>
     </el-table>
-    <!-- 版本管理 -->
-    <el-dialog title="版本管理" :visible.sync="versionmanageshow">
-      <el-table :data="versionmanagelist" border stripe>
-        <el-table-column align="center" prop="modelCode" label="modelCode"></el-table-column>
-        <el-table-column align="center" prop="version" label="version"></el-table-column>
-        <el-table-column align="center" prop="gmtCreatetime" label="上传时间"></el-table-column>
-        <el-table-column align="center" prop="forbidTime" label="禁用时间"></el-table-column>
-
-        <el-table-column align="center" label="版本状态">
-          <template slot-scope="scope">
-            <span v-show="scope.row.flag==1" style="color:green">正常</span>
-            <span v-show="scope.row.flag==0" style="color:red">禁用</span>
-          </template>
-        </el-table-column>
-        <el-table-column align="center" label="分组信息">
-          <template slot-scope="scope">
-            <el-button type="text" style="color:green" @click="showclassmsg(scope.row)">分组信息</el-button>
-          </template>
-        </el-table-column>
-        <el-table-column align="center" label="版本描述">
-          <template slot-scope="scope">
-            <el-button type="text" size="default" @click="showversiondes(scope.row)">查看</el-button>
-          </template>
-        </el-table-column>
-        <el-table-column align="center" label="操作">
-          <template slot-scope="scope">
-            <el-button
-              :disabled="scope.row.flag==0"
-              type="text"
-              size="default"
-              @click="versiontono(scope.row)"
-            >禁用此版本</el-button>
-            <el-button
-              style="margin:0"
-              :disabled="scope.row.flag==0"
-              type="text"
-              size="default"
-              @click="forceupdate(scope.row)"
-            >强制升级</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-    </el-dialog>
 
     <!-- 添加或修改设备分类信息
     对话框-->
@@ -280,14 +234,10 @@
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
+    <!-- 上传图片 -->
     <!-- // 文件上传 -->
-    <el-dialog
-      :title="updata.title"
-      :visible.sync="updata.dialogVisible"
-      width="30%"
-      :before-close="handleClose"
-    >
-      <el-upload ref="up" drag :action="updata.url" :limit="limit" :http-request="upfunc">
+    <el-dialog title="上传图片" :visible.sync="imguploadshow" width="30%">
+      <el-upload action ref="up" drag :limit="1" :http-request="imgupfunc">
         <i class="el-icon-upload"></i>
         <div class="el-upload__text">
           将文件拖到此处，或
@@ -295,20 +245,19 @@
         </div>
       </el-upload>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="upok">确 定</el-button>
+        <el-button type="primary" @click="imguploadok">确 定</el-button>
       </span>
     </el-dialog>
-
-    <!-- 固件上传 -->
-    <el-dialog :title="updata.title" :before-close="handleClose" :visible.sync="versionup">
+    <!-- 上传固件 -->
+    <el-dialog title="上传固件" :visible.sync="upfirmwareshow">
       <el-form :rules="rules" label-width="auto">
         <el-form-item label="固件的版本号" prop="versionchange">
-          <el-input v-model="versiondata.txt" placeholder="请输入版本号" clearable style="width: 240px" />
+          <el-input v-model="firmVsion" placeholder="请输入版本号 N.N.N" clearable style="width: 240px" />
         </el-form-item>
         <el-form-item label="固件的版本描述">
           <el-input
             autosize
-            v-model="versiondata.msg"
+            v-model="vsionDescrip"
             :placeholder="'请输入版本描述  ' "
             clearable
             type="textarea"
@@ -317,15 +266,15 @@
         </el-form-item>
         <el-form-item label="区域选择">
           <div>
-            <el-radio v-model="citysec" label="0">限定区域</el-radio>
-            <el-radio v-model="citysec" label="1">不限定区域</el-radio>
+            <el-radio v-model="allAreaFlag" :label="0">限定区域</el-radio>
+            <el-radio v-model="allAreaFlag" :label="1">不限定区域</el-radio>
           </div>
 
           <el-cascader
-            v-show="citysec==0"
+            v-show="allAreaFlag==0"
             filterable
-            v-model="city"
-            :options="options"
+            v-model="areas"
+            :options="citydata"
             :props="{
             multiple:true
           }"
@@ -333,25 +282,24 @@
         </el-form-item>
         <el-form-item label="序列号选择">
           <div>
-            <el-radio v-model="serialsec" label="0">限定序列号</el-radio>
-            <el-radio v-model="serialsec" label="1">不限定序列号</el-radio>
+            <el-radio v-model="allSerialNumFlag" :label="0">限定序列号</el-radio>
+            <el-radio v-model="allSerialNumFlag" :label="1">不限定序列号</el-radio>
           </div>
-          <el-checkbox-group v-show="serialsec==0" v-model="serialNumScopeIds">
+          <el-checkbox-group v-show="allSerialNumFlag==0" v-model="serialNumScopeIds">
             <el-checkbox
-              v-for="i in hadclass"
+              v-for="i in serialnumbergroup"
               :key="i.id"
               :label="i.id"
             >{{i.serialNumStart+"--"+i.serialNumEnd}}</el-checkbox>
           </el-checkbox-group>
         </el-form-item>
-
         <el-form-item label="固件选择">
           <el-upload
             :limit="1"
             ref="versionupload"
             action
             :auto-upload="false"
-            :http-request="upfunc2"
+            :http-request="upfun"
           >
             <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
             <el-button
@@ -364,9 +312,65 @@
         </el-form-item>
       </el-form>
     </el-dialog>
+    <!-- 版本管理 -->
+    <el-dialog title="版本管理" :visible.sync="versionmanageshow">
+      <el-table :data="versionmanagelist" border stripe>
+        <el-table-column align="center" prop="modelCode" label="modelCode"></el-table-column>
+        <el-table-column align="center" prop="version" label="version"></el-table-column>
+        <el-table-column align="center" prop="gmtCreatetime" label="上传时间"></el-table-column>
+        <el-table-column align="center" prop="forbidTime" label="禁用时间"></el-table-column>
 
+        <el-table-column align="center" label="版本状态">
+          <template slot-scope="scope">
+            <span v-show="scope.row.flag==1" style="color:green">正常</span>
+            <span v-show="scope.row.flag==0" style="color:red">禁用</span>
+          </template>
+        </el-table-column>
+        <el-table-column align="center" label="分组信息">
+          <template slot-scope="scope">
+            <el-button type="text" style="color:green" @click="getgroupdata(scope.row)">分组信息</el-button>
+          </template>
+        </el-table-column>
+        <el-table-column align="center" label="版本描述">
+          <template slot-scope="scope">
+            <el-button type="text" size="default" @click="showversiondes(scope.row)">查看</el-button>
+          </template>
+        </el-table-column>
+        <el-table-column align="center" label="操作">
+          <template slot-scope="scope">
+            <el-button
+              :disabled="scope.row.flag==0"
+              type="text"
+              size="default"
+              @click="versiontono(scope.row)"
+            >禁用此版本</el-button>
+            <el-button
+              style="margin:0"
+              :disabled="scope.row.flag!=0"
+              type="text"
+              size="default"
+              @click="versiontook(scope.row)"
+            >启用此版本</el-button>
+            <el-button
+              style="margin:0"
+              :disabled="scope.row.flag==0"
+              type="text"
+              size="default"
+              @click="forceupdate(scope.row)"
+            >强制升级</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-dialog>
+    <!-- 版本管理内的版本描述 -->
+    <el-dialog title="版本描述" :visible.sync="versiondesshow">
+      <el-input autosize v-model="versiondesdata.description" clearable type="textarea" />
+      <span slot="footer">
+        <el-button style="margin:20px" type="success" @click="editFirmVerDesc" size="small">更新描述</el-button>
+      </span>
+    </el-dialog>
     <!-- 分组管理 -->
-    <el-dialog title="分组管理" :visible.sync="doclassshow">
+    <el-dialog title="分组管理" :visible.sync="serialnumbergroupmanageshow">
       <el-form label-width="auto">
         <el-form-item label="选择序列号">
           <el-row>
@@ -385,17 +389,17 @@
         </el-form-item>
 
         <el-form-item label="操作">
-          <el-button @click="doclasssave" size="small">保存此分组</el-button>
+          <el-button @click=" serialnumbergroupsave" size="small">保存此分组</el-button>
         </el-form-item>
         <el-form-item label="分组信息">
           <template>
-            <div v-for="i in hadclass" :key="i.id">
+            <div v-for="i in serialnumbergroup" :key="i.id">
               <div
                 v-show="i.serialNumStart && i.serialNumStart!='' && i.serialNumEnd && i.serialNumEnd!=''? true:false"
               >
                 {{i.serialNumStart}} -- {{i.serialNumEnd}}
                 <a style="margin-left:8px;">
-                  <i @click="delconditions(i.id)" style="color:red" class="el-icon-delete"></i>
+                  <i @click="delserilagroup(i.id)" style="color:red" class="el-icon-delete"></i>
                 </a>
               </div>
             </div>
@@ -403,8 +407,85 @@
         </el-form-item>
       </el-form>
     </el-dialog>
+    <!-- 版本管理内的分组信息 -->
+    <el-dialog title="分组信息" :visible.sync="groupinformationshow">
+      <!-- <el-form :rules="rules" label-width="auto">
+        <el-form-item label="区域选择">
+          <div>
+            <el-radio v-model="allAreaFlag" :label="0">限定区域</el-radio>
+            <el-radio v-model="allAreaFlag" :label="1">不限定区域</el-radio>
+          </div>
 
-    <el-dialog title="分组信息" :visible.sync="groupmsg">{{groupmsgdata}}</el-dialog>
+          <el-cascader
+            v-show="allAreaFlag==0"
+            filterable
+            v-model="areas"
+            :options="citydata"
+            :props="{
+            multiple:true
+          }"
+          ></el-cascader>
+        </el-form-item>
+        <el-form-item label="序列号选择">
+          <div>
+            <el-radio v-model="allSerialNumFlag" :label="0">限定序列号</el-radio>
+            <el-radio v-model="allSerialNumFlag" :label="1">不限定序列号</el-radio>
+          </div>
+          <el-checkbox-group v-show="allSerialNumFlag==0" v-model="serialNumScopeIds">
+            <el-checkbox
+              v-for="i in serialnumbergroup"
+              :key="i.id"
+              :label="i.id"
+            >{{i.serialNumStart+"--"+i.serialNumEnd}}</el-checkbox>
+          </el-checkbox-group>
+        </el-form-item>
+      </el-form>-->
+      <el-form>
+        <el-form-item label="区域分组">
+          <span v-show="groupinformation.allAreaFlag==1">适用于所有区域</span>
+          <span style="margin-left:10px" v-for="i in groupinformation.arealist" :key="i">{{i}}</span>
+        </el-form-item>
+        <el-form-item label="序列号分组">
+          <span v-show="groupinformation.allSerialNumFlag==1">适用于所有序列号</span>
+          <span style="margin-left:10px" v-for="i in groupinformation.serialNumlist" :key="i">{{i}}</span>
+        </el-form-item>
+        <h2>修改分组</h2>
+        <el-form>
+          <el-form-item label="区域选择">
+            <div>
+              <el-radio v-model="allAreaFlag" :label="0">限定区域</el-radio>
+              <el-radio v-model="allAreaFlag" :label="1">不限定区域</el-radio>
+            </div>
+
+            <el-cascader
+              v-show="allAreaFlag==0"
+              filterable
+              v-model="areas"
+              :options="citydata"
+              :props="{
+            multiple:true
+          }"
+            ></el-cascader>
+          </el-form-item>
+          <el-form-item label="序列号选择">
+            <div>
+              <el-radio v-model="allSerialNumFlag" :label="0">限定序列号</el-radio>
+              <el-radio v-model="allSerialNumFlag" :label="1">不限定序列号</el-radio>
+            </div>
+            <el-checkbox-group v-show="allSerialNumFlag==0" v-model="serialNumScopeIds">
+              <el-checkbox
+                v-for="i in serialnumbergroup"
+                :key="i.id"
+                :label="i.id"
+              >{{i.serialNumStart+"--"+i.serialNumEnd}}</el-checkbox>
+            </el-checkbox-group>
+          </el-form-item>
+          <el-form-item label="修改分组">
+            <el-button @click="editgroup">修改分组</el-button>
+          </el-form-item>
+        </el-form>
+      </el-form>
+    </el-dialog>
   </div>
 </template>
  
@@ -419,6 +500,8 @@ import {
   upfile,
 } from "@/api/system/deviceModel";
 import request from "@/utils/request";
+import qs from "qs";
+
 import { citydata, CodeToText } from "@/utils/city/city";
 
 import { handleTree } from "@/utils/dafeng";
@@ -426,20 +509,19 @@ import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 
 export default {
-  name: "DeviceModel",
+  name: "DeviceModel2",
   components: { Treeselect },
 
   data() {
     var validatePass = (rule, value, callback) => {
-      if (!/v\d\.\d\.\d/.test(this.versiondata.txt)) {
-        callback(new Error("版本号不合法"));
+      if (!/^\d\.\d\.\d$/.test(this.firmVsion)) {
+        callback(new Error("版本号不合法,格式应为 N.N.N"));
       } else {
         callback();
       }
     };
     return {
       // 遮罩层
-      limit: 1,
       loading: true,
       // 设备分类信息表格数据
       deviceModelList: [],
@@ -474,51 +556,43 @@ export default {
       rules: {
         versionchange: [{ validator: validatePass, trigger: "blur" }],
       },
+
       editcode: false,
-
-      updata: {
-        dialogVisible: false,
-        url: "",
-        title: "",
-        name: "",
-        modelEcode: "",
-        modelCode: "",
-      },
       dateRange: [],
-      versionup: false,
-      versiondata: {
-        text: "",
-        msg: "",
-      },
+      // 城市数据
+      citydata: citydata,
+      // 上传图片
+      imguploadshow: false,
+      imgupdatatemp: {},
 
-      //   分类管理
-      doclassshow: false,
-      options: citydata,
-      city: [],
-      serialNumStart: "",
-      serialNumEnd: "",
-      doclasstemp: null,
-      hadclass: "",
-      isApplytoAll: null,
-      fireversionConditionIds1: [],
-      fireversionConditionIds2: [],
+      //  上传固件
+      upfirmwareshow: false,
+      modelCodetemp: "",
+      firmVsion: "",
+      vsionDescrip: "",
+      fireversionConditionIds: [],
+      allAreaFlag: 1,
+      allSerialNumFlag: 1,
+      areas: [],
+      serialNumScopeIds: [],
+      // 序列号分组列表
+      serialnumbergroup: [],
+
       // 版本管理
       versionmanageshow: false,
       versionmanagelist: [],
-      addclasslist: [],
-      addclasstemp: {},
-      isaddfromno: false,
-      addclassbutton: false,
-      // 20201105
-
-      groupmsg: false,
-      groupmsgdata: true,
-
-      //上传固件
-
-      citysec: "1",
-      serialsec: "1",
-      serialNumScopeIds: [],
+      // 版本管理内的版本描述
+      versiondesshow: false,
+      versiondesdata: {},
+      // 分组管理
+      serialnumbergroupmanageshow: false,
+      serialNumStart: "",
+      serialNumEnd: "",
+      serialnumbergrouptemp: {},
+      // 版本管理内的分组信息
+      groupinformationshow: false,
+      groupinformation: {},
+      opengroupinformationtemp: {},
     };
   },
 
@@ -527,39 +601,304 @@ export default {
   },
 
   methods: {
+    // 点击分组管理
+    serialnumbergroupmanage(x) {
+      this.serialnumbergrouptemp = {};
+      this.serialnumbergrouptemp = x;
+      this.serialNumStart = "";
+      this.serialNumEnd = "";
+      this.serialnumbergroup = [];
+      this.getserialnumbergroup();
+      this.serialnumbergroupmanageshow = true;
+    },
+    // 保存此分组
+    serialnumbergroupsave() {
+      if (parseInt(this.serialNumStart) && parseInt(this.serialNumEnd)) {
+        if (
+          this.serialNumStart.length != 13 ||
+          this.serialNumEnd.length != 13
+        ) {
+          this.msgError("序列号 应为13位数字");
+          return;
+        }
+
+        if (this.serialNumStart.slice(0, 3) != this.serialNumEnd.slice(0, 3)) {
+          this.msgError("序列号 非同组序列号");
+        }
+
+        request
+          .post("/system/conditions", {
+            deviceModelId: this.serialnumbergrouptemp.deviceModelId,
+            modelCode: this.serialnumbergrouptemp.modelCode,
+            serialNumStart: this.serialNumStart,
+            serialNumEnd: this.serialNumEnd,
+            flag: "2",
+          })
+          .then((x) => {
+            this.getserialnumbergroup();
+            this.msgSuccess("保存成功");
+          });
+      } else {
+        this.msgError("录入信息不完整");
+      }
+    },
     // 删除分组
-    delconditions(x) {
+    delserilagroup(x) {
       request.delete("/system/conditions/" + x).then((x) => {
         console.log(x);
-        this.getclassdata();
+        this.getserialnumbergroup();
       });
     },
-    //保存描述
-    savedesc(x) {
-      console.log(x);
+
+    // 获取版本描述
+    showversiondes(x) {
       request
         .post(
-          "/system/deviceModel/editFirmVerDesc",
+          "/system/deviceModel/lookFirmVerDesc",
           {},
           {
-            params: { id: x.id, description: x.description },
+            params: {
+              ...x,
+            },
           }
         )
-        .then((Z) => {
-          this.msgSuccess(Z.msg);
+        .then((y) => {
+          this.versiondesshow = true;
+          this.versiondesdata = y.data[0];
         });
     },
-    deldesc(x, y) {
-      console.log(x);
+    // 更新版本描述
+    editFirmVerDesc() {
+      console.log(this.versiondesdata);
+      request
+        .post("/system/deviceModel/editFirmVerDesc", this.versiondesdata)
+        .then((x) => {
+          console.log(x);
+          this.msgSuccess(x.msg)
+        });
+    },
+    // 打开版本管理
+    showversionmanage(x) {
+      this.versionmanageshow = true;
       request
         .post(
-          "/system/deviceModel/delFirmVerDesc",
+          "/system/deviceModel/lookHistoryFirmversion?modelCode=" + x.modelCode
+        )
+        .then((z) => {
+          this.versionmanagelist = z.data;
+        });
+    },
+    // 点击打开分组信息
+    getgroupdata(x) {
+      // 初始化值
+      this.serialNumScopeIds = [];
+      this.areas = [];
+      this.allSerialNumFlag = 1;
+      this.allAreaFlag = 1;
+
+      this.opengroupinformationtemp = x;
+      this.modelCodetemp = x.modelCode;
+      this.getserialnumbergroup();
+      request
+        .post(
+          "/system/deviceModel/lookgroups",
           {},
           {
-            params: { id: x.id },
+            params: {
+              ...x,
+            },
           }
         )
-        .then(this.FirmVerDesclist.splice(y, 1));
+        .then((y) => {
+          console.log(y);
+          this.groupinformationshow = true;
+          this.groupinformation = y.data;
+        });
+    },
+    editgroup() {
+      let reqdata = {};
+      reqdata.id = this.opengroupinformationtemp.id;
+      reqdata.allSerialNumFlag = this.allSerialNumFlag;
+      reqdata.allAreaFlag = this.allAreaFlag;
+
+      if (this.allAreaFlag == 0) {
+        let data = [];
+        this.areas.forEach((x) => {
+          data.push({ province: CodeToText[x[0]], city: CodeToText[x[1]] });
+        });
+        reqdata.areaStr = JSON.stringify(data);
+      } else {
+        reqdata.areaStr = "[]";
+      }
+      if (this.allSerialNumFlag == 0) {
+        reqdata.serialNumScopeIds = this.serialNumScopeIds.toString();
+      }
+      request
+        .post("/system/deviceModel/editgroup", qs.stringify(reqdata), {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        })
+        .then((x) => {
+          console.log(x);
+          request
+            .post(
+              "/system/deviceModel/lookgroups",
+              {},
+              {
+                params: {
+                  ...this.opengroupinformationtemp,
+                },
+              }
+            )
+            .then((y) => {
+              this.groupinformation = y.data;
+            });
+          this.msgSuccess("修改成功");
+        });
+    },
+    // 禁用此版本
+    versiontono(x) {
+      request
+        .post(
+          "/system/deviceModel/setHistoryFirmversion",
+          {},
+          {
+            params: {
+              ...x,
+            },
+          }
+        )
+        .then((z) => {
+          this.msgSuccess("操作成功");
+          this.showversionmanage(x);
+        });
+    },
+    // 解除禁用
+    versiontook(x) {
+      request
+        .post(
+          "/system/deviceModel/removeForbid",
+          {},
+          {
+            params: {
+              ...x,
+            },
+          }
+        )
+        .then((z) => {
+          this.msgSuccess("操作成功");
+          this.showversionmanage(x);
+        });
+    },
+    // 强制升级
+    forceupdate(x) {
+      request.put("/system/deviceModel/enforcement/" + x.id).then((x) => {
+        console.log(x);
+      });
+    },
+    // 打开上传固件模态框
+    clickupfirmware(x) {
+      this.upfirmwareshow = true;
+      this.modelCodetemp = x.modelCode;
+
+      this.serialNumScopeIds = [];
+      this.areas = [];
+      this.vsionDescrip = "";
+      this.firmVsion = "";
+      if (this.$refs.versionupload) {
+        this.$refs.versionupload.clearFiles();
+      }
+
+      this.getserialnumbergroup();
+    },
+    // 固件上传提交
+    versionuploadstart() {
+      this.$refs.versionupload.submit();
+    },
+    // 获取序列号分组信息
+    getserialnumbergroup() {
+      request
+        .get("/system/conditions/list?modelCode=" + this.modelCodetemp)
+        .then((x) => {
+          this.serialnumbergroup = x.rows;
+        });
+    },
+    // 自定义固件上传实现
+    upfun(x) {
+      let formData = new FormData();
+      formData.append("firmwareFile", x.file);
+      formData.append("modelCode", this.modelCodetemp);
+      formData.append("vsionDescrip", this.vsionDescrip);
+      formData.append("firmVsion", "v" + this.firmVsion);
+      formData.append("allAreaFlag", this.allAreaFlag);
+      formData.append("allSerialNumFlag ", this.allSerialNumFlag);
+
+      if (this.allAreaFlag == 0) {
+        let data = [];
+        this.areas.forEach((x) => {
+          data.push({ province: CodeToText[x[0]], city: CodeToText[x[1]] });
+        });
+        formData.append("areaStr", JSON.stringify(data));
+      } else {
+        formData.append("areaStr", JSON.stringify([]));
+      }
+      if (this.allSerialNumFlag == 0) {
+        formData.append(
+          "fireversionConditionIds",
+          this.fireversionConditionIds.toString()
+        );
+      }
+
+      upfile("/system/deviceModel/uploadFirmware2", formData, (z) => {
+        let p = (z.loaded / z.total) * 100;
+        x.onProgress({ percent: p });
+      })
+        .then((res) => {
+          x.onSuccess();
+          console.log(res);
+          this.msgSuccess(res.msg);
+          this.$refs.versionupload.clearFiles();
+
+          this.upfirmwareshow = false;
+
+          this.getList();
+        })
+        .catch((err) => {
+          this.$refs.versionupload.clearFiles();
+          this.msgError("上传出现错误 :" + err);
+        });
+    },
+    // 点击图片上传
+    upimgclick(x) {
+      this.imgupdatatemp = x;
+      this.imguploadshow = true;
+    },
+    // 自定义图片上传实现
+    imgupfunc(x) {
+      let formData = new FormData();
+      formData.append("picture", x.file);
+      formData.append("modelCode", this.imgupdatatemp.modelCode);
+
+      upfile("/system/deviceModel/uploadPicture", formData, (z) => {
+        let p = (z.loaded / z.total) * 100;
+        x.onProgress({ percent: p });
+      })
+        .then((res) => {
+          x.onSuccess();
+          this.getList();
+        })
+        .catch((err) => {
+          x.onError();
+          this.$alert(err, "上传出现错误", {
+            confirmButtonText: "确定",
+          });
+        });
+    },
+    // 关闭图片上传模态框
+    imguploadok() {
+      this.imguploadshow = false;
+      this.$refs.up.clearFiles();
     },
     /** 查询设备分类信息列表 */
     getList() {
@@ -575,28 +914,7 @@ export default {
         }
       );
     },
-    FirmVerDesc(x) {
-      request
-        .post(
-          "/system/deviceModel/lookFirmVerDesc",
-          {},
-          {
-            params: {
-              version: x.firmwareVersion,
-              modelCode: x.modelCode,
-            },
-          }
-        )
-        .then((x) => {
-          if (x.data.length === 0) {
-            this.msgError("当前没有版本描述");
-            return;
-          }
-          this.Firmshow = true;
-          this.FirmVerDesclist = x.data;
-          console.log(x.data);
-        });
-    },
+
     /** 转换设备分类信息数据结构 */
     normalizer(node) {
       if (node.children && !node.children.length) {
@@ -738,355 +1056,6 @@ export default {
     //  图片地址
     imgurl(a) {
       return process.env.VUE_APP_BASE_API + a.row.picUrl;
-    },
-    // // 上传图片操作
-    upimgclick(x) {
-      this.upclear();
-      this.updata.url = "/system/deviceModel/uploadPicture";
-      this.updata.dialogVisible = true;
-      this.updata.name = "picture";
-      this.updata.modelCode = x.modelCode;
-      this.updata.title = "上传设备图片   编码为" + this.updata.modelCode;
-    },
-
-    // 上传固件操作
-    upfwkclick(a) {
-      this.city = [];
-      this.serialNumScopeIds = [];
-      this.doclasstemp = {};
-      this.doclasstemp = a;
-      this.isApplytoAll = null;
-      this.fireversionConditionIds1 = [];
-      this.fireversionConditionIds2 = [];
-      this.versionup = true;
-      this.upclear();
-      this.hadclass = [];
-      this.getclassdata();
-      this.updata.url = "/system/deviceModel/uploadFirmware2";
-      this.updata.name = "firmwareFile";
-      this.updata.modelCode = a.modelCode;
-      this.updata.title =
-        "为编码为" + this.updata.modelCode + " 的设备上传固件";
-      this.versiondata = {
-        text: "",
-        msg: "",
-      };
-    },
-
-    upclear() {
-      this.updata.url = "";
-      this.updata.dialogVisible = false;
-      this.updata.name = "";
-      this.updata.modelCode = "";
-      this.updata.title = "";
-    },
-    // 清理文件列表
-    upok() {
-      this.resetQuery();
-      this.updata.dialogVisible = false;
-      this.$refs.up.clearFiles();
-    },
-    handleClose(done) {
-      this.$confirm("确认关闭？")
-        .then((_) => {
-          this.hadclass = [];
-          this.doclasstemp = {};
-          this.isApplytoAll = null;
-          this.fireversionConditionIds1 = [];
-          this.fireversionConditionIds2 = [];
-          try {
-            this.$refs.up.clearFiles();
-          } catch (error) {}
-          try {
-            this.$refs.versionupload.clearFiles();
-          } catch (error) {}
-
-          this.resetQuery();
-          done();
-        })
-        .catch((x) => {
-          console.log(x);
-        });
-    },
-    upfunc(x) {
-      let formData = new FormData();
-      formData.append(this.updata.name, x.file);
-      formData.append("modelCode", this.updata.modelCode);
-
-      upfile(this.updata.url, formData, (z) => {
-        let p = (z.loaded / z.total) * 100;
-        x.onProgress({ percent: p });
-      })
-        .then((res) => {
-          x.onSuccess();
-        })
-        .catch((err) => {
-          x.onError();
-          this.$alert(err, "上传出现错误", {
-            confirmButtonText: "确定",
-          });
-        });
-    },
-    //点击版本 上传
-    versionuploadstart() {
-      this.$refs.versionupload.submit();
-    },
-
-    upfunc2(x) {
-      let formData = new FormData();
-      formData.append("firmwareFile", x.file);
-      formData.append("modelCode", this.updata.modelCode);
-      formData.append("vsionDescrip", this.versiondata.msg);
-      formData.append("firmVsion", this.versiondata.txt);
-      formData.append("allAreaFlag", this.citysec);
-      formData.append("allSerialNumFlag ", this.serialsec);
-
-      if (this.citysec == 0) {
-        let data = [];
-        this.city.forEach((x) => {
-          data.push({ province: CodeToText[x[0]], city: CodeToText[x[1]] });
-        });
-        formData.append("areaStr", JSON.stringify(data));
-      } else {
-        formData.append("areaStr", JSON.stringify([]));
-      }
-      if (this.serialsec == 0) {
-        formData.append(
-          "fireversionConditionIds",
-          this.serialNumScopeIds.toString()
-        );
-      }
-
-      upfile(this.updata.url, formData, (z) => {
-        let p = (z.loaded / z.total) * 100;
-        x.onProgress({ percent: p });
-      })
-        .then((res) => {
-          x.onSuccess();
-          console.log(res);
-          this.msgSuccess(res.msg);
-          this.$refs.versionupload.clearFiles();
-
-          this.versiondata = {
-            text: "",
-            msg: "",
-          };
-          this.versionup = false;
-
-          this.getList();
-        })
-        .catch((err) => {
-          this.$refs.versionupload.clearFiles();
-          this.msgError("上传出现错误 :" + err);
-        });
-    },
-    //  分类管理
-    doclass(x) {
-      this.doclasstemp = {};
-      this.doclasstemp = x;
-
-      this.city = [];
-      this.serialNumStart = "";
-      this.serialNumEnd = "";
-      this.doclassshow = true;
-      this.hadclass = [];
-      this.getclassdata();
-    },
-    // 获取分组信息
-    getclassdata() {
-      request
-        .get("/system/conditions/list?modelCode=" + this.doclasstemp.modelCode)
-        .then((x) => {
-          this.hadclass = x.rows;
-        });
-    },
-    //  处理省名称
-    donamemap() {
-      let s = CodeToText[this.city[0]];
-      if (s == undefined) return null;
-      if (s.slice(-1) == "省") return s.slice(0, -1);
-      switch (s) {
-        case "广西壮族自治区":
-          return "广西";
-        case "内蒙古自治区":
-          return "内蒙古";
-        case "西藏自治区":
-          return "西藏";
-
-        case "宁夏回族自治区":
-          return "宁夏";
-        case "新疆维吾尔自治区":
-          return "新疆";
-        case "香港特别行政区":
-          return "香港";
-        case "澳门特别行政区":
-          return "澳门";
-        default:
-          return s;
-      }
-    },
-    //  保存分类
-    doclasssave() {
-      if (
-        (parseInt(this.serialNumStart) && parseInt(this.serialNumEnd)) ||
-        (CodeToText[this.city[0]] && CodeToText[this.city[1]])
-      ) {
-        if (CodeToText[this.city[0]] == "") {
-          if (
-            this.serialNumStart.length != 13 ||
-            this.serialNumEnd.length != 13
-          ) {
-            this.msgError("序列号 应为13位数字");
-            return;
-          }
-        }
-        if (CodeToText[this.city[0]] == "") {
-          if (
-            this.serialNumStart.slice(0, 3) != this.serialNumEnd.slice(0, 3)
-          ) {
-            this.msgError("序列号 非同组序列号");
-          }
-        }
-
-        request
-          .post("/system/conditions", {
-            deviceModelId: this.doclasstemp.deviceModelId,
-            modelCode: this.doclasstemp.modelCode,
-            serialNumStart: this.serialNumStart,
-            serialNumEnd: this.serialNumEnd,
-            province: this.donamemap(CodeToText[this.city[0]]),
-            city: CodeToText[this.city[1]],
-            flag: "2",
-          })
-          .then((x) => {
-            this.getclassdata();
-            this.msgSuccess("保存成功");
-          });
-      } else {
-        this.msgError("录入信息不完整");
-      }
-    },
-
-    // 版本管理
-    showversionmanage(x) {
-      this.versionmanageshow = true;
-      request
-        .post(
-          "/system/deviceModel/lookHistoryFirmversion?modelCode=" + x.modelCode
-        )
-        .then((z) => {
-          this.versionmanagelist = z.data;
-        });
-    },
-    // 查看 历史 版本描述
-    showversiondes(x) {
-      request
-        .post(
-          "/system/deviceModel/lookFirmVerDesc",
-          {},
-          {
-            params: {
-              ...x,
-            },
-          }
-        )
-        .then((y) => {
-          if (y.data.length < 1) {
-            this.msgError("没有版本描述");
-            return;
-          }
-          let html = "";
-          for (let i of y.data) {
-            html = html + "<p>" + i.description + "</p>";
-          }
-          this.$alert(html, {
-            title: x.version + "的 版本描述",
-            dangerouslyUseHTMLString: true,
-          });
-        });
-    },
-    versiontono(x) {
-      request
-        .post(
-          "/system/deviceModel/setHistoryFirmversion",
-          {},
-          {
-            params: {
-              ...x,
-            },
-          }
-        )
-        .then((z) => {
-          this.msgSuccess("操作成功");
-          this.showversionmanage(x);
-        });
-    },
-    // 查看历史版本
-
-    showclassmsg(x) {
-      request
-        .post(
-          "/system/deviceModel/lookgroups",
-          {},
-          {
-            params: {
-              ...x,
-            },
-          }
-        )
-        .then((x) => {
-          this.groupmsgdata = x.data;
-          this.groupmsg = true;
-          console.log(x);
-        });
-    },
-    // 新增分类保存
-    versionaddclasssave() {
-      this.addclassbutton = true;
-      if (this.isaddfromno) {
-        if (
-          this.fireversionConditionIds1.length < 1 ||
-          this.fireversionConditionIds2.length < 1
-        ) {
-          this.msgError("从无新增同时需要地区和序列号");
-          this.addclassbutton = false;
-          return;
-        }
-      }
-
-      let data = {
-        firmVsion: this.addclasstemp.version,
-        modelCode: this.addclasstemp.modelCode,
-        firmwareVersionId: this.addclasstemp.id,
-        isApplytoAll: this.isApplytoAll,
-        fireversionConditionIds: [
-          ...this.fireversionConditionIds1,
-          ...this.fireversionConditionIds2,
-        ].toString(),
-      };
-
-      request
-        .post(
-          "/system/deviceModel/addgroup",
-          {},
-          {
-            params: data,
-          }
-        )
-        .then((x) => {
-          this.addclassbutton = false;
-          this.msgSuccess("保存成功");
-          this.addclassshow = false;
-        })
-        .catch((x) => {
-          this.addclassbutton = false;
-        });
-    },
-    //  强制升级
-    forceupdate(x) {
-      request.put("/system/deviceModel/enforcement/" + x.id).then((x) => {
-        console.log(x);
-      });
     },
   },
 };
