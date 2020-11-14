@@ -81,16 +81,19 @@ export default {
       let a = []
       let b = []
       let c = []
+      let d = []
+      console.log(x.data);
       x.data.forEach((y, index) => {
         a[index] = y.interval.slice(5).replace('_', '-')
         b[index] = y.count
         c[index] = y.proportion
+        d[index] = parseFloat(y.proportion)
       })
       a[a.length - 1] = '大于2000'
       this.xdatainit = [a, b, c]
       this.option.xAxis[0].data = a
-      this.option.series[0].data = b
-      this.echartsupdata()
+      this.option.series[0].data = d
+       this.echartsupdata()
       //   右侧表格数据
       let tabledata = []
       this.xdatainit[0].map((x, y) => {
