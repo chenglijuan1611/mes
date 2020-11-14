@@ -1,6 +1,11 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" :inline="true" label-width="auto">
+    <el-form
+      :model="queryParams"
+      ref="queryForm"
+      :inline="true"
+      label-width="auto"
+    >
       <el-form-item label="产品型号名称" prop="modelName">
         <el-input
           style="width: 240px"
@@ -99,20 +104,22 @@
       </el-form-item>-->
       <el-form-item>
         <el-button
-          style="margin-left:100px"
+          style="margin-left: 100px"
           class="filter-item"
           type="primary"
           icon="el-icon-search"
           size="mini"
           @click="handleQuery"
-        >搜索</el-button>
+          >搜索</el-button
+        >
         <el-button
           class="filter-item"
           type="primary"
           icon="el-icon-search"
           size="mini"
           @click="resetQuery"
-        >重置</el-button>
+          >重置</el-button
+        >
         <el-button
           class="filter-item"
           type="primary"
@@ -120,7 +127,8 @@
           size="mini"
           @click="handleAdd"
           v-hasPermi="['system:deviceModel:add']"
-        >新增</el-button>
+          >新增</el-button
+        >
       </el-form-item>
     </el-form>
 
@@ -129,16 +137,20 @@
       :data="deviceModelList"
       row-key="deviceModelId"
       default-expand-all
-      :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
+      :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
     >
       <el-table-column label="产品型号名称" align="center" prop="modelName" />
       <el-table-column label="设备图片" align="center" prop="picUrl">
         <template slot-scope="scope">
-          <img style="width:80px" :src="imgurl(scope)" alt />
+          <img style="width: 80px" :src="imgurl(scope)" alt />
         </template>
       </el-table-column>
       <!-- <el-table-column label="所属公司/经销商" align="center" prop="companyCode" /> -->
-      <el-table-column label="产品型号英文编码" align="center" prop="modelEcode" />
+      <el-table-column
+        label="产品型号英文编码"
+        align="center"
+        prop="modelEcode"
+      />
       <el-table-column label="产品型号编码" align="center" prop="modelCode" />
       <el-table-column label="设备描述" align="center" prop="describe" />
       <el-table-column label="耗材" align="center" prop="consumables" />
@@ -159,24 +171,27 @@
       <el-table-column label="上传" align="center">
         <template slot-scope="scope">
           <el-button
-            style="margin-left:10px"
+            style="margin-left: 10px"
             size="mini"
             type="text"
             @click="upimgclick(scope.row)"
             v-hasPermi="['system:deviceModel:edit']"
-          >上传图片</el-button>
+            >上传图片</el-button
+          >
           <el-button
             size="mini"
             type="text"
             @click="clickupfirmware(scope.row)"
             v-hasPermi="['system:deviceModel:edit']"
-          >上传固件</el-button>
+            >上传固件</el-button
+          >
           <el-button
             size="mini"
             type="text"
             @click="showversionmanage(scope.row)"
             v-hasPermi="['system:deviceModel:edit']"
-          >版本管理</el-button>
+            >版本管理</el-button
+          >
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center">
@@ -187,7 +202,8 @@
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['system:deviceModel:edit']"
-          >修改</el-button>
+            >修改</el-button
+          >
 
           <el-button
             size="mini"
@@ -195,8 +211,14 @@
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
             v-hasPermi="['system:deviceModel:remove']"
-          >删除</el-button>
-          <el-button size="mini" type="text" @click="serialnumbergroupmanage(scope.row)">分组管理</el-button>
+            >删除</el-button
+          >
+          <el-button
+            size="mini"
+            type="text"
+            @click="serialnumbergroupmanage(scope.row)"
+            >分组管理</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
@@ -217,10 +239,18 @@
           <el-input v-model="form.modelName" placeholder="请输入产品型号" />
         </el-form-item>
         <el-form-item label="产品型号编码" prop="modelCode">
-          <el-input :disabled="editcode" v-model="form.modelCode" placeholder="请输入型号编码" />
+          <el-input
+            :disabled="editcode"
+            v-model="form.modelCode"
+            placeholder="请输入型号编码"
+          />
         </el-form-item>
         <el-form-item label="产品型号英文编码" prop="modelEcode">
-          <el-input :disabled="editcode" v-model="form.modelEcode" placeholder="请输入英文型号编码" />
+          <el-input
+            :disabled="editcode"
+            v-model="form.modelEcode"
+            placeholder="请输入英文型号编码"
+          />
         </el-form-item>
         <el-form-item label="设备描述" prop="describe">
           <el-input v-model="form.describe" placeholder="请输入设备描述" />
@@ -252,13 +282,18 @@
     <el-dialog title="上传固件" :visible.sync="upfirmwareshow">
       <el-form :rules="rules" label-width="auto">
         <el-form-item label="固件的版本号" prop="versionchange">
-          <el-input v-model="firmVsion" placeholder="请输入版本号 N.N.N" clearable style="width: 240px" />
+          <el-input
+            v-model="firmVsion"
+            placeholder="请输入版本号 N.N.N"
+            clearable
+            style="width: 240px"
+          />
         </el-form-item>
         <el-form-item label="固件的版本描述">
           <el-input
             autosize
             v-model="vsionDescrip"
-            :placeholder="'请输入版本描述  ' "
+            :placeholder="'请输入版本描述  '"
             clearable
             type="textarea"
             style="width: 240px"
@@ -271,26 +306,34 @@
           </div>
 
           <el-cascader
-            v-show="allAreaFlag==0"
+            v-show="allAreaFlag == 0"
             filterable
             v-model="areas"
             :options="citydata"
             :props="{
-            multiple:true
-          }"
+              multiple: true,
+            }"
           ></el-cascader>
         </el-form-item>
         <el-form-item label="序列号选择">
           <div>
-            <el-radio v-model="allSerialNumFlag" :label="0">限定序列号</el-radio>
-            <el-radio v-model="allSerialNumFlag" :label="1">不限定序列号</el-radio>
+            <el-radio v-model="allSerialNumFlag" :label="0"
+              >限定序列号</el-radio
+            >
+            <el-radio v-model="allSerialNumFlag" :label="1"
+              >不限定序列号</el-radio
+            >
           </div>
-          <el-checkbox-group v-show="allSerialNumFlag==0" v-model="serialNumScopeIds">
+          <el-checkbox-group
+            v-show="allSerialNumFlag == 0"
+            v-model="fireversionConditionIds"
+          >
             <el-checkbox
               v-for="i in serialnumbergroup"
               :key="i.id"
               :label="i.id"
-            >{{i.serialNumStart+"--"+i.serialNumEnd}}</el-checkbox>
+              >{{ i.serialNumStart + "--" + i.serialNumEnd }}</el-checkbox
+            >
           </el-checkbox-group>
         </el-form-item>
         <el-form-item label="固件选择">
@@ -301,13 +344,16 @@
             :auto-upload="false"
             :http-request="upfun"
           >
-            <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+            <el-button slot="trigger" size="small" type="primary"
+              >选取文件</el-button
+            >
             <el-button
-              style="margin-left: 10px;"
+              style="margin-left: 10px"
               size="small"
               type="success"
               @click="versionuploadstart"
-            >上传到服务器</el-button>
+              >上传到服务器</el-button
+            >
           </el-upload>
         </el-form-item>
       </el-form>
@@ -315,58 +361,116 @@
     <!-- 版本管理 -->
     <el-dialog title="版本管理" :visible.sync="versionmanageshow">
       <el-table :data="versionmanagelist" border stripe>
-        <el-table-column align="center" prop="modelCode" label="modelCode"></el-table-column>
-        <el-table-column align="center" prop="version" label="version"></el-table-column>
-        <el-table-column align="center" prop="gmtCreatetime" label="上传时间"></el-table-column>
-        <el-table-column align="center" prop="forbidTime" label="禁用时间"></el-table-column>
+        <el-table-column
+          align="center"
+          prop="modelCode"
+          label="modelCode"
+        ></el-table-column>
+        <el-table-column align="center" prop="version" label="version">
+          <template slot-scope="scope">
+            <div>{{ scope.row.version }}</div>
+            <el-button
+              type="text"
+              size="small"
+              @click="downloadfirmware(scope.row, 1)"
+              >下载固件</el-button
+            >
+            <el-button
+              type="text"
+              size="small"
+              @click="downloadfirmware(scope.row, 2)"
+              >下载字库</el-button
+            >
+            <el-button
+              type="text"
+              size="small"
+              @click="downloadfirmware(scope.row, 3)"
+              >下载完整文件</el-button
+            >
+          </template>
+        </el-table-column>
+        <el-table-column
+          align="center"
+          prop="gmtCreatetime"
+          label="上传时间"
+        ></el-table-column>
+        <el-table-column
+          align="center"
+          prop="forbidTime"
+          label="禁用时间"
+        ></el-table-column>
 
         <el-table-column align="center" label="版本状态">
           <template slot-scope="scope">
-            <span v-show="scope.row.flag==1" style="color:green">正常</span>
-            <span v-show="scope.row.flag==0" style="color:red">禁用</span>
+            <span v-show="scope.row.flag == 1" style="color: green">正常</span>
+            <span v-show="scope.row.flag == 0" style="color: red">禁用</span>
           </template>
         </el-table-column>
         <el-table-column align="center" label="分组信息">
           <template slot-scope="scope">
-            <el-button type="text" style="color:green" @click="getgroupdata(scope.row)">分组信息</el-button>
+            <el-button
+              type="text"
+              style="color: green"
+              @click="getgroupdata(scope.row)"
+              >分组信息</el-button
+            >
           </template>
         </el-table-column>
         <el-table-column align="center" label="版本描述">
           <template slot-scope="scope">
-            <el-button type="text" size="default" @click="showversiondes(scope.row)">查看</el-button>
+            <el-button
+              type="text"
+              size="default"
+              @click="showversiondes(scope.row)"
+              >查看</el-button
+            >
           </template>
         </el-table-column>
         <el-table-column align="center" label="操作">
           <template slot-scope="scope">
             <el-button
-              :disabled="scope.row.flag==0"
+              :disabled="scope.row.flag == 0"
               type="text"
               size="default"
               @click="versiontono(scope.row)"
-            >禁用此版本</el-button>
+              >禁用此版本</el-button
+            >
             <el-button
-              style="margin:0"
-              :disabled="scope.row.flag!=0"
+              style="margin: 0"
+              :disabled="scope.row.flag != 0"
               type="text"
               size="default"
               @click="versiontook(scope.row)"
-            >启用此版本</el-button>
+              >启用此版本</el-button
+            >
             <el-button
-              style="margin:0"
-              :disabled="scope.row.flag==0"
+              style="margin: 0"
+              :disabled="scope.row.flag == 0"
               type="text"
               size="default"
               @click="forceupdate(scope.row)"
-            >强制升级</el-button>
+              >强制升级</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
     </el-dialog>
     <!-- 版本管理内的版本描述 -->
     <el-dialog title="版本描述" :visible.sync="versiondesshow">
-      <el-input autosize v-model="versiondesdata.description" clearable type="textarea" />
+      <el-input
+        autosize
+        v-model="versiondesdata.description"
+        clearable
+        type="textarea"
+      />
       <span slot="footer">
-        <el-button style="margin:20px" type="success" @click="editFirmVerDesc" size="small">更新描述</el-button>
+        <el-button
+          style="margin: 20px"
+          type="success"
+          @click="editFirmVerDesc"
+          size="small"
+          >更新描述</el-button
+        >
       </span>
     </el-dialog>
     <!-- 分组管理 -->
@@ -375,31 +479,56 @@
         <el-form-item label="选择序列号">
           <el-row>
             <el-col :span="6" :offset="0">
-              <el-input v-model="serialNumStart" placeholder="序列号起始位置" clearable></el-input>
+              <el-input
+                v-model="serialNumStart"
+                placeholder="序列号起始位置"
+                clearable
+              ></el-input>
             </el-col>
 
-            <el-col style="display:flex;justify-content:center" :span="1" :offset="0">
+            <el-col
+              style="display: flex; justify-content: center"
+              :span="1"
+              :offset="0"
+            >
               <span>—</span>
             </el-col>
 
             <el-col :span="6" :offset="0">
-              <el-input v-model="serialNumEnd" placeholder="序列号起始位置" clearable></el-input>
+              <el-input
+                v-model="serialNumEnd"
+                placeholder="序列号起始位置"
+                clearable
+              ></el-input>
             </el-col>
           </el-row>
         </el-form-item>
 
         <el-form-item label="操作">
-          <el-button @click=" serialnumbergroupsave" size="small">保存此分组</el-button>
+          <el-button @click="serialnumbergroupsave" size="small"
+            >保存此分组</el-button
+          >
         </el-form-item>
         <el-form-item label="分组信息">
           <template>
             <div v-for="i in serialnumbergroup" :key="i.id">
               <div
-                v-show="i.serialNumStart && i.serialNumStart!='' && i.serialNumEnd && i.serialNumEnd!=''? true:false"
+                v-show="
+                  i.serialNumStart &&
+                  i.serialNumStart != '' &&
+                  i.serialNumEnd &&
+                  i.serialNumEnd != ''
+                    ? true
+                    : false
+                "
               >
-                {{i.serialNumStart}} -- {{i.serialNumEnd}}
-                <a style="margin-left:8px;">
-                  <i @click="delserilagroup(i.id)" style="color:red" class="el-icon-delete"></i>
+                {{ i.serialNumStart }} -- {{ i.serialNumEnd }}
+                <a style="margin-left: 8px">
+                  <i
+                    @click="delserilagroup(i.id)"
+                    style="color: red"
+                    class="el-icon-delete"
+                  ></i>
                 </a>
               </div>
             </div>
@@ -408,7 +537,7 @@
       </el-form>
     </el-dialog>
     <!-- 版本管理内的分组信息 -->
-    <el-dialog title="分组信息" :visible.sync="groupinformationshow">
+    <el-dialog title="当前分组" :visible.sync="groupinformationshow">
       <!-- <el-form :rules="rules" label-width="auto">
         <el-form-item label="区域选择">
           <div>
@@ -440,50 +569,74 @@
           </el-checkbox-group>
         </el-form-item>
       </el-form>-->
-      <el-form>
+      <el-form v-loading="groupinformationloading">
         <el-form-item label="区域分组">
-          <span v-show="groupinformation.allAreaFlag==1">适用于所有区域</span>
-          <span style="margin-left:10px" v-for="i in groupinformation.arealist" :key="i">{{i}}</span>
+          <span v-show="groupinformation.allAreaFlag == 1">适用于所有区域</span>
+          <span
+            style="margin-left: 10px"
+            v-for="i in groupinformation.arealist"
+            :key="i"
+            >{{ i }}</span
+          >
         </el-form-item>
         <el-form-item label="序列号分组">
-          <span v-show="groupinformation.allSerialNumFlag==1">适用于所有序列号</span>
-          <span style="margin-left:10px" v-for="i in groupinformation.serialNumlist" :key="i">{{i}}</span>
+          <span v-show="groupinformation.allSerialNumFlag == 1"
+            >适用于所有序列号</span
+          >
+          <span
+            style="margin-left: 10px"
+            v-for="i in groupinformation.serialNumlist"
+            :key="i"
+            >{{ serialnumbergrouptransform(i) }}</span
+          >
         </el-form-item>
-        <h2>修改分组</h2>
-        <el-form>
-          <el-form-item label="区域选择">
-            <div>
-              <el-radio v-model="allAreaFlag" :label="0">限定区域</el-radio>
-              <el-radio v-model="allAreaFlag" :label="1">不限定区域</el-radio>
-            </div>
+        <h3 style="color: #F56C6C">修改分组</h3>
+        <div style="box-shadow: 5px 5px 20px #88888888; padding: 10px">
+          <el-form>
+            <el-form-item label="区域选择">
+              <div>
+                <el-radio v-model="allAreaFlag" :label="0">限定区域</el-radio>
+                <el-radio v-model="allAreaFlag" :label="1">不限定区域</el-radio>
+              </div>
 
-            <el-cascader
-              v-show="allAreaFlag==0"
-              filterable
-              v-model="areas"
-              :options="citydata"
-              :props="{
-            multiple:true
-          }"
-            ></el-cascader>
-          </el-form-item>
-          <el-form-item label="序列号选择">
-            <div>
-              <el-radio v-model="allSerialNumFlag" :label="0">限定序列号</el-radio>
-              <el-radio v-model="allSerialNumFlag" :label="1">不限定序列号</el-radio>
-            </div>
-            <el-checkbox-group v-show="allSerialNumFlag==0" v-model="serialNumScopeIds">
-              <el-checkbox
-                v-for="i in serialnumbergroup"
-                :key="i.id"
-                :label="i.id"
-              >{{i.serialNumStart+"--"+i.serialNumEnd}}</el-checkbox>
-            </el-checkbox-group>
-          </el-form-item>
-          <el-form-item label="修改分组">
-            <el-button @click="editgroup">修改分组</el-button>
-          </el-form-item>
-        </el-form>
+              <el-cascader
+                v-show="allAreaFlag == 0"
+                filterable
+                v-model="areas"
+                :options="citydata"
+                :props="{
+                  multiple: true,
+                }"
+              ></el-cascader>
+            </el-form-item>
+            <el-form-item label="序列号选择">
+              <div>
+                <el-radio v-model="allSerialNumFlag" :label="0"
+                  >限定序列号</el-radio
+                >
+                <el-radio v-model="allSerialNumFlag" :label="1"
+                  >不限定序列号</el-radio
+                >
+              </div>
+              <el-checkbox-group
+                v-show="allSerialNumFlag == 0"
+                v-model="serialNumScopeIds"
+              >
+                <el-checkbox
+                  v-for="i in serialnumbergroup"
+                  :key="i.id"
+                  :label="i.id"
+                  >{{ i.serialNumStart + "--" + i.serialNumEnd }}</el-checkbox
+                >
+              </el-checkbox-group>
+            </el-form-item>
+            <el-form-item label="操作">
+              <el-button size="small" type="info" @click="editgroup"
+                >保存修改分组</el-button
+              >
+            </el-form-item>
+          </el-form>
+        </div>
       </el-form>
     </el-dialog>
   </div>
@@ -590,6 +743,7 @@ export default {
       serialNumEnd: "",
       serialnumbergrouptemp: {},
       // 版本管理内的分组信息
+      groupinformationloading: false,
       groupinformationshow: false,
       groupinformation: {},
       opengroupinformationtemp: {},
@@ -674,7 +828,7 @@ export default {
         .post("/system/deviceModel/editFirmVerDesc", this.versiondesdata)
         .then((x) => {
           console.log(x);
-          this.msgSuccess(x.msg)
+          this.msgSuccess(x.msg);
         });
     },
     // 打开版本管理
@@ -686,6 +840,23 @@ export default {
         )
         .then((z) => {
           this.versionmanagelist = z.data;
+        });
+    },
+    // 下载固件
+    downloadfirmware(x, y) {
+      request
+        .post(
+          "/system/deviceModel/downloadBin",
+
+          {
+            modelCode: x.modelCode,
+            version: x.version,
+            flag: y,
+          }
+        )
+        .then((x) => {
+          console.log(x.data.location);
+          window.open(x.data.location);
         });
     },
     // 点击打开分组信息
@@ -715,6 +886,7 @@ export default {
           this.groupinformation = y.data;
         });
     },
+    // 修改版本管理内的分组信息
     editgroup() {
       let reqdata = {};
       reqdata.id = this.opengroupinformationtemp.id;
@@ -723,6 +895,10 @@ export default {
 
       if (this.allAreaFlag == 0) {
         let data = [];
+        if (this.areas.length == 0) {
+          this.msgError("区域选择：限定区域状态下需输入区域信息");
+          return;
+        }
         this.areas.forEach((x) => {
           data.push({ province: CodeToText[x[0]], city: CodeToText[x[1]] });
         });
@@ -731,8 +907,13 @@ export default {
         reqdata.areaStr = "[]";
       }
       if (this.allSerialNumFlag == 0) {
+        if (this.serialNumScopeIds.length == 0) {
+          this.msgError("序列号选择：限定序列号状态下需输入序列号信息");
+          return;
+        }
         reqdata.serialNumScopeIds = this.serialNumScopeIds.toString();
       }
+      this.groupinformationloading = true;
       request
         .post("/system/deviceModel/editgroup", qs.stringify(reqdata), {
           headers: {
@@ -741,6 +922,7 @@ export default {
         })
         .then((x) => {
           console.log(x);
+          this.groupinformationloading = true;
           request
             .post(
               "/system/deviceModel/lookgroups",
@@ -753,8 +935,16 @@ export default {
             )
             .then((y) => {
               this.groupinformation = y.data;
+              this.groupinformationloading = false;
+            })
+            .catch((x) => {
+              this.groupinformationloading = false;
             });
           this.msgSuccess("修改成功");
+        })
+        .catch((x) => {
+          console.log(x);
+          this.groupinformationloading = false;
         });
     },
     // 禁用此版本
@@ -824,6 +1014,11 @@ export default {
           this.serialnumbergroup = x.rows;
         });
     },
+    // 序列号分组信息显示转换
+    serialnumbergrouptransform(i) {
+      let j = i.split(",");
+      return j[0] + "--" + j[1];
+    },
     // 自定义固件上传实现
     upfun(x) {
       let formData = new FormData();
@@ -836,6 +1031,10 @@ export default {
 
       if (this.allAreaFlag == 0) {
         let data = [];
+        if (this.areas.length == 0) {
+          this.msgError("区域选择：限定区域状态下需输入区域信息");
+          return;
+        }
         this.areas.forEach((x) => {
           data.push({ province: CodeToText[x[0]], city: CodeToText[x[1]] });
         });
@@ -844,6 +1043,10 @@ export default {
         formData.append("areaStr", JSON.stringify([]));
       }
       if (this.allSerialNumFlag == 0) {
+        if (this.fireversionConditionIds.length == 0) {
+          this.msgError("序列号选择：限定序列号状态下需输入序列号信息");
+          return;
+        }
         formData.append(
           "fireversionConditionIds",
           this.fireversionConditionIds.toString()

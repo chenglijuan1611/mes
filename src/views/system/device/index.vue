@@ -37,17 +37,6 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-
-      <!-- <el-form-item label="手机号" prop="phone">
-        <el-input
-          v-model="queryParams.phone"
-          placeholder="请输入手机号"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>-->
-
       <el-form-item label="省份" prop="province">
         <el-input
           v-model="queryParams.province"
@@ -77,20 +66,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-
-      <!-- <el-form-item label="添加时间" prop="gmtCreatetime">
-        <el-date-picker
-          clearable
-          size="small"
-          style="width: 200px"
-          v-model="queryParams.gmtCreatetime"
-          type="date"
-          value-format="yyyy-MM-dd"
-          placeholder="选择添加时间"
-        ></el-date-picker>
-      </el-form-item>-->
-
-      <el-form-item label="购买时间" prop="purchaseTime">
+      <el-form-item label="创建时间" prop="gmtCreatetime">
         <el-date-picker
           clearable
           v-model="dateRange"
@@ -103,17 +79,6 @@
           end-placeholder="结束日期"
         ></el-date-picker>
       </el-form-item>
-      <!-- <el-form-item label="保修时间" prop="warrantyTime">
-        <el-date-picker
-          clearable
-          size="small"
-          style="width: 200px"
-          v-model="queryParams.warrantyTime"
-          type="date"
-          value-format="yyyy-MM-dd"
-          placeholder="选择保修时间"
-        ></el-date-picker>
-      </el-form-item>-->
       <el-form-item>
         <el-button
           style="margin-left:30px"
@@ -137,29 +102,17 @@
       <el-table-column label="名称" align="center" prop="name" />
       <el-table-column label="设备型号" align="center" prop="modelCode" />
       <el-table-column label="设备mac地址" align="center" prop="mac" />
-
       <el-table-column label="序列号" align="center" prop="serialNumber" />
-      <!-- <el-table-column label="手机号" align="center" prop="phone" /> -->
       <el-table-column label="省份(ip)" align="center" prop="province" />
       <el-table-column label="城市(ip)" align="center" prop="city" />
-      <!-- <el-table-column label="地址" align="center" prop="address" /> -->
       <el-table-column label="固件版本" align="center" prop="firmwareVersion" />
+      <el-table-column label="待升级版本" align="center" prop="firmwareVersionNew" />
+      <el-table-column label="底板程序版本号" align="center" prop="floorVersion" />
+      <el-table-column label="wifi模块程序版本号" align="center" prop="wifiVersion" />
       <el-table-column label="是否在线" align="center">
         <template slot-scope="scope">
           <span v-if="scope.row.isOnline==1">在线</span>
           <span v-if="!scope.row.isOnline==1">不在线</span>
-        </template>
-      </el-table-column>
-
-      <!-- <el-table-column label="添加时间" align="center" prop="gmtCreatetime" width="180">
-        <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.gmtCreatetime) }}</span>
-        </template>
-      </el-table-column>-->
-
-      <el-table-column label="购买时间" align="center" prop="purchaseTime">
-        <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.purchaseTime) }}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center">
