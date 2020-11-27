@@ -137,15 +137,20 @@
       <!-- <el-table-column type="selection" width="55" align="center" /> -->
       <el-table-column label="客户账号" align="center" prop="customer" />
       <el-table-column label="性别" align="center" prop="sex" />
-      <el-table-column label="设备名称" align="center" prop="name" />
+      <el-table-column label="客户昵称" align="center" prop="name" />
       <el-table-column label="手机号" align="center" prop="phone" />
       <!-- <el-table-column label="是否是维修" align="center" prop="isRepair" /> -->
-      <el-table-column label="省" align="center" prop="province" />
-      <el-table-column label="市" align="center" prop="city" />
+      <!--<el-table-column label="省" align="center" prop="province" />-->
+      <!--<el-table-column label="市" align="center" prop="city" />-->
       <!-- <el-table-column label="区" align="center" prop="district" /> -->
       <!-- <el-table-column label="详细地址" align="center" prop="address" /> -->
       <!-- <el-table-column label="头像" align="center" prop="avatar" /> -->
-      <!-- <el-table-column label="是否是测试" align="center" prop="isTest" /> -->
+      <el-table-column label="是否是测试" align="center" prop="isTest" />
+      <el-table-column label="微信公众号故障通知" align="center" prop="isWeChatPublic" />
+      <el-table-column label="邮件故障通知" align="center" prop="isEmail" />
+      <el-table-column label="是否登录" align="center" prop="isLogin" />
+      <el-table-column label="年龄分组" align="center" prop="ageGroups" />
+      <el-table-column label="故障提醒邮箱" align="center" prop="emailFault" />
       <el-table-column label="创建时间" align="center" prop="gmtCreatetime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.gmtCreatetime) }}</span>
@@ -341,10 +346,13 @@ export default {
 
         let list = x.data.map(y => {
           return h('p', null, [
+
+            h('p', null, '设备mac地址：' + y.mac),
             h('p', null, '设备型号：' + y.modelCode),
             h('p', null, '设备名称：' + y.name),
+            h('p', null, '设备固件版本：' + y.firmwareVersion),
             h('p', null, '设备序列号：' + y.serialNumber),
-            h('p', null, '设备mac地址：' + y.mac),
+            
             h('br', null, ' ')
           ])
         })

@@ -324,13 +324,7 @@ export default {
         title: '详细信息',
         message: h('div', null, [
          
-          h('p', null, '告警持续时长：'+time),
-          h('p', null, '保修时间: '),
-          h('p', null, '保修时间: '),
-          h('p', null, '保修时间: '),
-          h('p', null, '保修时间: '),
-          h('p', null, '保修时间: '),
-          h('p', null, '保修时间: ')
+          h('p', null, '告警持续时长：'+time)
         ]) // type: 'info'
       })
     },

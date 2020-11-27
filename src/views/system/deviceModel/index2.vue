@@ -359,51 +359,55 @@
       </el-form>
     </el-dialog>
     <!-- 版本管理 -->
-    <el-dialog title="版本管理" :visible.sync="versionmanageshow">
+    <el-dialog
+      width="1000px"
+      title="版本管理"
+      :visible.sync="versionmanageshow"
+    >
       <el-table :data="versionmanagelist" border stripe>
         <el-table-column
           align="center"
           prop="modelCode"
-          label="modelCode"
+          label="设备型号"
         ></el-table-column>
-        <el-table-column align="center" prop="version" label="version">
+        <el-table-column align="center" prop="version" label="版本">
           <template slot-scope="scope">
             <div>{{ scope.row.version }}</div>
-            <el-button
-              type="text"
-              size="small"
-              @click="downloadfirmware(scope.row, 1)"
-              >下载固件</el-button
-            >
-            <el-button
-              type="text"
-              size="small"
-              @click="downloadfirmware(scope.row, 2)"
-              >下载字库</el-button
-            >
-            <el-button
-              type="text"
-              size="small"
-              @click="downloadfirmware(scope.row, 3)"
-              >下载完整文件</el-button
-            >
           </template>
         </el-table-column>
         <el-table-column
           align="center"
           prop="gmtCreatetime"
           label="上传时间"
-        ></el-table-column>
+          width="100"
+        >
+        </el-table-column>
         <el-table-column
           align="center"
           prop="forbidTime"
           label="禁用时间"
+          width="100"
         ></el-table-column>
-
+        <el-table-column
+          align="center"
+          prop="removeForbidTime"
+          label="启用时间"
+          width="100"
+        ></el-table-column>
         <el-table-column align="center" label="版本状态">
           <template slot-scope="scope">
             <span v-show="scope.row.flag == 1" style="color: green">正常</span>
             <span v-show="scope.row.flag == 0" style="color: red">禁用</span>
+          </template>
+        </el-table-column>
+        <el-table-column align="center" label="升级模式">
+          <template slot-scope="scope">
+            <span v-show="scope.row.isForced == 1" style="color: red"
+              >强制升级</span
+            >
+            <span v-show="scope.row.isForced == 0" style="color: blue"
+              >手动升级</span
+            >
           </template>
         </el-table-column>
         <el-table-column align="center" label="分组信息">
@@ -429,15 +433,16 @@
         <el-table-column align="center" label="操作">
           <template slot-scope="scope">
             <el-button
-              :disabled="scope.row.flag == 0"
+              v-show="scope.row.flag != 0"
               type="text"
               size="default"
               @click="versiontono(scope.row)"
+              style="color: #F56C6C"
               >禁用此版本</el-button
             >
             <el-button
               style="margin: 0"
-              :disabled="scope.row.flag != 0"
+              v-show="scope.row.flag == 0"
               type="text"
               size="default"
               @click="versiontook(scope.row)"
@@ -445,12 +450,48 @@
             >
             <el-button
               style="margin: 0"
-              :disabled="scope.row.flag == 0"
+              v-show="scope.row.flag != 0"
               type="text"
               size="default"
               @click="forceupdate(scope.row)"
+              :disabled="scope.row.isForced != 0"
               >强制升级</el-button
             >
+            <el-popover
+              placement="right-end"
+              title="下载固件"
+              width="200"
+              trigger="hover"
+            >
+              <div>
+                <el-button
+                  type="text"
+                  size="small"
+                  @click="downloadfirmware(scope.row, 1)"
+                  >下载固件</el-button
+                >
+              </div>
+              <div>
+                <el-button
+                  type="text"
+                  size="small"
+                  @click="downloadfirmware(scope.row, 2)"
+                  >下载字库</el-button
+                >
+              </div>
+              <div>
+                <el-button
+                  type="text"
+                  size="small"
+                  @click="downloadfirmware(scope.row, 3)"
+                  >下载完整文件</el-button
+                >
+              </div>
+
+              <el-button style="color: #67C23A" type="text" slot="reference"
+                >下载固件</el-button
+              >
+            </el-popover>
           </template>
         </el-table-column>
       </el-table>
@@ -983,9 +1024,33 @@ export default {
     },
     // 强制升级
     forceupdate(x) {
-      request.put("/system/deviceModel/enforcement/" + x.id).then((x) => {
-        console.log(x);
-      });
+      this.$confirm("即将开始强制升级, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          if (x.isForced == 1) {
+            this.msgError("此型号设备已是强制升级状态");
+            return;
+          }
+          request
+            .put("/system/deviceModel/enforcement/" + x.id)
+            .then((x) => {
+              this.showversionmanage(x);
+              this.msgSuccess("操作成功");
+            })
+            .catch((x) => {
+              this.showversionmanage(x);
+              this.msgError(x);
+            });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消操作",
+          });
+        });
     },
     // 打开上传固件模态框
     clickupfirmware(x) {
