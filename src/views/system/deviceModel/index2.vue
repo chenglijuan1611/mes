@@ -186,6 +186,7 @@
             >上传固件</el-button
           >
           <el-button
+            v-show="scope.row.isChild"
             size="mini"
             type="text"
             @click="showversionmanage(scope.row)"
@@ -214,6 +215,7 @@
             >删除</el-button
           >
           <el-button
+            v-show="scope.row.isChild"
             size="mini"
             type="text"
             @click="serialnumbergroupmanage(scope.row)"
@@ -825,6 +827,7 @@ export default {
       this.serialNumStart = "";
       this.serialNumEnd = "";
       this.serialnumbergroup = [];
+      this.modelCodetemp = x.modelCode;
       this.getserialnumbergroup();
       this.serialnumbergroupmanageshow = true;
     },
@@ -1159,7 +1162,7 @@ export default {
           this.fireversionConditionIds.toString()
         );
       }
-      
+
       if (this.uploadWayFlag == 2) {
         formData.append("modelCodes", [this.modelCodetemp]);
         formData.append("uploadWayFlag", 2);
