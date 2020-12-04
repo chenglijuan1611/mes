@@ -3,25 +3,25 @@
     <chartsname chartsname="每小时内用水次数占总用水次数的比例" />
     <div class="chartsbgbox">
       <div id="deviceuseanalysis3" />
-      <xytable :ydata="ydata" :xdata="xdatainit" style="width:90%"></xytable>
+      <xytable :ydata="ydata" :xdata="xdatainit" style="width: 90%"></xytable>
     </div>
   </div>
 </template>
 <script>
-import echarts from 'echarts'
-import chartsname from '@/components/chartsname'
-import xytable from '@/components/Charts/xytabletest'
-import { usewater } from '@/api/deviceuseanalysis/index'
+import echarts from "echarts";
+import chartsname from "@/components/chartsname";
+import xytable from "@/components/Charts/xytabletest";
+import { usewater } from "@/api/deviceuseanalysis/index";
 export default {
   components: {
     chartsname,
-    xytable
+    xytable,
   },
 
   created() {
-    usewater().then(x => {
-      let a = x.data.perHourTotal
-       let temp = [
+    usewater().then((x) => {
+      let a = x.data.perHourTotal;
+      let temp = [
         a.clock0,
         a.clock1,
         a.clock2,
@@ -45,8 +45,8 @@ export default {
         a.clock20,
         a.clock21,
         a.clock22,
-        a.clock23
-      ]
+        a.clock23,
+      ];
       let scale = [
         x.data.clock_0,
         x.data.clock_1,
@@ -71,128 +71,161 @@ export default {
         x.data.clock_20,
         x.data.clock_21,
         x.data.clock_22,
-        x.data.clock_23
-      ].map(x => {
+        x.data.clock_23,
+      ].map((x) => {
         if (x === 0) {
-          return x
+          return x;
         }
-        let x100 = x * 100
-        return x100.toFixed(2) + '%'
-      })
+        let x100 = x * 100;
+        return x100.toFixed(2) + "%";
+      });
+      let scale2 = [
+        x.data.clock_0,
+        x.data.clock_1,
+        x.data.clock_2,
+        x.data.clock_3,
+        x.data.clock_4,
+        x.data.clock_5,
+        x.data.clock_6,
+        x.data.clock_7,
+        x.data.clock_8,
+        x.data.clock_9,
+        x.data.clock_10,
+        x.data.clock_11,
+        x.data.clock_12,
+        x.data.clock_13,
+        x.data.clock_14,
+        x.data.clock_15,
+        x.data.clock_16,
+        x.data.clock_17,
+        x.data.clock_18,
+        x.data.clock_19,
+        x.data.clock_20,
+        x.data.clock_21,
+        x.data.clock_22,
+        x.data.clock_23,
+      ].map((x) => {
+        if (x === 0) {
+          return x;
+        }
+        let x100 = x * 100;
+        return x100.toFixed(2) 
+      });
 
-      this.option.series[0].data = temp
-      this.echartsupdated()
-      this.xdatainit[1] = temp
-      this.xdatainit[2] = scale
-      this.xdatainit = Object.assign({}, this.xdatainit)
-    })
+      this.option.series[0].data = scale2;
+      console.log(temp);
+      this.echartsupdated();
+      this.xdatainit[1] = temp;
+      this.xdatainit[2] = scale;
+      this.xdatainit = Object.assign({}, this.xdatainit);
+    });
   },
   data() {
     return {
       option: {
-        color: ['#80adf8'],
+        color: ["#80adf8"],
         tooltip: {
-          trigger: 'axis'
+          trigger: "axis",
         },
         xAxis: [
           {
-            type: 'category',
+            type: "category",
             data: [
-              '00:00',
-              '01:00',
-              '02:00',
-              '03:00',
-              '04:00',
-              '05:00',
-              '06:00',
-              '07:00',
-              '08:00',
-              '09:00',
-              '10:00',
-              '11:00',
-              '12:00',
-              '13:00',
-              '14:00',
-              '15:00',
-              '16:00',
-              '17:00',
-              '18:00',
-              '19:00',
-              '20:00',
-              '21:00',
-              '22:00',
-              '23:00'
-            ]
-          }
+              "00:00",
+              "01:00",
+              "02:00",
+              "03:00",
+              "04:00",
+              "05:00",
+              "06:00",
+              "07:00",
+              "08:00",
+              "09:00",
+              "10:00",
+              "11:00",
+              "12:00",
+              "13:00",
+              "14:00",
+              "15:00",
+              "16:00",
+              "17:00",
+              "18:00",
+              "19:00",
+              "20:00",
+              "21:00",
+              "22:00",
+              "23:00",
+            ],
+          },
         ],
         yAxis: [
           {
             min: 0,
             max: 100,
-            type: 'value',
+            type: "value",
             interval: 25,
             axisLabel: {
-              formatter: '{value} %'
-            }
-          }
+              formatter: "{value} %",
+            },
+          },
         ],
         series: [
           {
-            color: '#3484fc',
-            name: '数据',
-            type: 'bar',
+            color: "#3484fc",
+            name: "数据",
+            type: "bar",
             barWidth: 10,
             itemStyle: { barBorderRadius: 5 },
-            data: []
-          }
-        ]
+            data: [],
+          },
+        ],
       },
-      ydata: ['时间', '次数', '次数占比'],
+      ydata: ["时间", "次数", "次数占比"],
       xdatainit: [
         [
-          '00.00',
-          '01.00',
-          '02.00',
-          '03.00',
-          '04.00',
-          '05.00',
-          '06.00',
-          '07.00',
-          '08.00',
-          '09.00',
-          '10.00',
-          '11.00',
-          '12.00',
-          '13.00',
-          '14.00',
-          '15.00',
-          '16.00',
-          '17.00',
-          '18.00',
-          '19.00',
-          '20.00',
-          '21.00',
-          '22.00',
-          '23.00'
+          "00.00",
+          "01.00",
+          "02.00",
+          "03.00",
+          "04.00",
+          "05.00",
+          "06.00",
+          "07.00",
+          "08.00",
+          "09.00",
+          "10.00",
+          "11.00",
+          "12.00",
+          "13.00",
+          "14.00",
+          "15.00",
+          "16.00",
+          "17.00",
+          "18.00",
+          "19.00",
+          "20.00",
+          "21.00",
+          "22.00",
+          "23.00",
         ],
         [],
-        []
-      ]
-    }
+        [],
+      ],
+    };
   },
   mounted() {},
   methods: {
     echartsupdated() {
       this.$nextTick(() => {
         let myChart = echarts.init(
-          document.getElementById('deviceuseanalysis3')
-        )
+          document.getElementById("deviceuseanalysis3")
+        );
 
-        myChart.setOption(this.option)
-      })
-    }
-  }
-}
+        myChart.setOption(this.option);
+      });
+    },
+  },
+};
 </script>
 <style scoped>
 #deviceuseanalysis3 {

@@ -299,7 +299,26 @@
             style="width: 240px"
           />
         </el-form-item>
-        <el-form-item label="区域选择">
+
+        <el-form-item v-show="uploadWayFlag == 1" label="选择子设备">
+          <el-checkbox-group v-model="modelCodes">
+            <el-checkbox
+              v-for="i in modelCodesAll"
+              :key="i"
+              :label="i"
+            ></el-checkbox>
+          </el-checkbox-group>
+          <el-cascader
+            v-show="allAreaFlag == 0"
+            filterable
+            v-model="areas"
+            :options="citydata"
+            :props="{
+              multiple: true,
+            }"
+          ></el-cascader>
+        </el-form-item>
+        <el-form-item v-show="uploadWayFlag == 2" label="区域选择">
           <div>
             <el-radio v-model="allAreaFlag" :label="0">限定区域</el-radio>
             <el-radio v-model="allAreaFlag" :label="1">不限定区域</el-radio>
@@ -315,7 +334,7 @@
             }"
           ></el-cascader>
         </el-form-item>
-        <el-form-item label="序列号选择">
+        <el-form-item v-show="uploadWayFlag == 2" label="序列号选择">
           <div>
             <el-radio v-model="allSerialNumFlag" :label="0"
               >限定序列号</el-radio
@@ -437,7 +456,7 @@
               type="text"
               size="default"
               @click="versiontono(scope.row)"
-              style="color: #F56C6C"
+              style="color: #f56c6c"
               >禁用此版本</el-button
             >
             <el-button
@@ -488,7 +507,7 @@
                 >
               </div>
 
-              <el-button style="color: #67C23A" type="text" slot="reference"
+              <el-button style="color: #67c23a" type="text" slot="reference"
                 >下载固件</el-button
               >
             </el-popover>
@@ -631,7 +650,7 @@
             >{{ serialnumbergrouptransform(i) }}</span
           >
         </el-form-item>
-        <h3 style="color: #F56C6C">修改分组</h3>
+        <h3 style="color: #f56c6c">修改分组</h3>
         <div style="box-shadow: 5px 5px 20px #88888888; padding: 10px">
           <el-form>
             <el-form-item label="区域选择">
@@ -769,6 +788,9 @@ export default {
       allSerialNumFlag: 1,
       areas: [],
       serialNumScopeIds: [],
+      uploadWayFlag: 0,
+      modelCodes: [],
+      modelCodesAll: [],
       // 序列号分组列表
       serialnumbergroup: [],
 
@@ -907,7 +929,6 @@ export default {
       this.areas = [];
       this.allSerialNumFlag = 1;
       this.allAreaFlag = 1;
-
       this.opengroupinformationtemp = x;
       this.modelCodetemp = x.modelCode;
       this.getserialnumbergroup();
@@ -1053,7 +1074,27 @@ export default {
         });
     },
     // 打开上传固件模态框
-    clickupfirmware(x) {
+    async clickupfirmware(x) {
+      this.loading = true;
+      this.modelCodesAll = [];
+      this.modelCodes = [];
+      let req = await request.get(
+        "/system/deviceModel/findChild/" + x.deviceModelId
+      );
+      console.log(x);
+      console.log(req);
+      if (req.code != 200) {
+        return;
+      }
+      this.modelCodesAll = req.data;
+
+      if (req.data.length != 0) {
+        // 选择父节点
+        this.uploadWayFlag = 1;
+      } else {
+        this.uploadWayFlag = 2;
+      }
+      this.loading = false;
       this.upfirmwareshow = true;
       this.modelCodetemp = x.modelCode;
 
@@ -1088,11 +1129,11 @@ export default {
     upfun(x) {
       let formData = new FormData();
       formData.append("firmwareFile", x.file);
-      formData.append("modelCode", this.modelCodetemp);
       formData.append("vsionDescrip", this.vsionDescrip);
       formData.append("firmVsion", "v" + this.firmVsion);
       formData.append("allAreaFlag", this.allAreaFlag);
       formData.append("allSerialNumFlag ", this.allSerialNumFlag);
+      formData.append("modelCodeParent", this.modelCodetemp);
 
       if (this.allAreaFlag == 0) {
         let data = [];
@@ -1116,6 +1157,12 @@ export default {
           "fireversionConditionIds",
           this.fireversionConditionIds.toString()
         );
+      }
+      if (this.uploadWayFlag == 2) {
+        formData.append("modelCodes", [this.modelCodetemp]);
+      }
+      if (this.uploadWayFlag == 1) {
+        formData.append("modelCodes", this.modelCodes);
       }
 
       upfile("/system/deviceModel/uploadFirmware2", formData, (z) => {

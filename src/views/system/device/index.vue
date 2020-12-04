@@ -101,6 +101,7 @@
     <el-table v-loading="loading" :data="deviceList" @selection-change="handleSelectionChange">
       <el-table-column label="名称" align="center" prop="name" />
       <el-table-column label="设备型号" align="center" prop="modelCode" />
+      <el-table-column label="设备英文型号" align="center" prop="modelEcode" />
       <el-table-column label="设备mac地址" align="center" prop="mac" />
       <el-table-column label="序列号" align="center" prop="serialNumber" />
       <el-table-column label="省份(ip)" align="center" prop="province" />
@@ -115,11 +116,13 @@
           <span v-if="!scope.row.isOnline==1">不在线</span>
         </template>
       </el-table-column>
+      <!---->
       <el-table-column label="操作" align="center">
         <template slot-scope="scope">
           <el-button size="mini" type="text" icon="el-icon-more" @click="more(scope.row)">其他信息</el-button>
         </template>
       </el-table-column>
+     
     </el-table>
 
     <pagination
@@ -466,9 +469,9 @@ export default {
       this.$msgbox({
         title: "其他信息",
         message: h("p", null, [
-          h("p", null, "详细地址:" + x.address),
+          //h("p", null, "详细地址:" + x.address),
           h("p", null, "添加时间:" + this.parseTime(x.gmtCreatetime)),
-          h("p", null, "保修时间: " + this.parseTime(x.warrantyTime)),
+          //h("p", null, "保修时间: " + this.parseTime(x.warrantyTime)),
         ]), // type: 'info'
       });
     },
