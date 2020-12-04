@@ -1148,6 +1148,7 @@ export default {
       } else {
         formData.append("areaStr", JSON.stringify([]));
       }
+
       if (this.allSerialNumFlag == 0) {
         if (this.fireversionConditionIds.length == 0) {
           this.msgError("序列号选择：限定序列号状态下需输入序列号信息");
@@ -1158,10 +1159,21 @@ export default {
           this.fireversionConditionIds.toString()
         );
       }
+      
       if (this.uploadWayFlag == 2) {
         formData.append("modelCodes", [this.modelCodetemp]);
+        formData.append("uploadWayFlag", 2);
       }
       if (this.uploadWayFlag == 1) {
+        if (this.modelCodes.length == 0) {
+          this.$notify.error({
+            title: "错误",
+            message: "需为此分类选择子设备进行固件上传",
+          });
+          return;
+        }
+
+        formData.append("uploadWayFlag", 1);
         formData.append("modelCodes", this.modelCodes);
       }
 
