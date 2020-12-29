@@ -50,7 +50,11 @@
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery"
           >重置</el-button
         >
-        <el-button icon="el-icon-aim" size="mini" @click="countcilck"
+        <el-button
+          type="warning"
+          icon="el-icon-aim"
+          size="mini"
+          @click="countcilck"
           >统计</el-button
         >
       </el-form-item>
@@ -100,42 +104,44 @@
       </table>
     </div> -->
     <el-dialog title="统计分析" :visible.sync="analysisshow">
-      <div style="color: black">
-        <h3 class="titlecolor">设备信息</h3>
-        <h3>
-          mac:{{ this.queryParams.mac }} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;时间:{{
-            this.queryParams.openTime
-          }}
-        </h3>
-      </div>
-      <h3 class="titlecolor">当日用水量详情</h3>
-      <div class="daily">
-        <div
-          class="dailyitem"
-          v-for="(i, index) in info.daily"
-          :key="index + 'h'"
-        >
-          {{ index + 1 }}时:<span> {{ i }}</span>
+      <div v-loading="dialogloading">
+        <div style="color: black">
+          <h3 class="titlecolor">设备信息</h3>
+          <h3>
+            mac:{{ this.queryParams.mac }} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;时间:{{
+              this.queryParams.openTime
+            }}
+          </h3>
         </div>
-      </div>
-      <h3 class="titlecolor">本周用水量详情</h3>
-      <div class="daily">
-        <div
-          class="weekitem"
-          v-for="(i, index) in info.week"
-          :key="index + 'w'"
-        >
-          {{ weekshow(index + 1) }}:<span> {{ i }}</span>
+        <h3 class="titlecolor">当日用水量详情</h3>
+        <div class="daily">
+          <div
+            class="dailyitem"
+            v-for="(i, index) in info.daily"
+            :key="index + 'h'"
+          >
+            {{ index + 1 }}时:<span> {{ i }}</span>
+          </div>
         </div>
-      </div>
-      <h3 class="titlecolor">当月用水量详情</h3>
-      <div class="daily">
-        <div
-          class="monthitem"
-          v-for="(i, index) in info.month"
-          :key="index + 'm'"
-        >
-          {{ index + 1 }}天:<span> {{ i }}</span>
+        <h3 class="titlecolor">七日内水量详情</h3>
+        <div class="daily">
+          <div
+            class="weekitem"
+            v-for="(i, index) in info.week"
+            :key="index + 'w'"
+          >
+            {{ weekshow(index + 1) }}: {{ i }}
+          </div>
+        </div>
+        <h3 class="titlecolor">当月用水量详情</h3>
+        <div class="daily">
+          <div
+            class="monthitem"
+            v-for="(i, index) in info.month"
+            :key="index + 'm'"
+          >
+            {{ index + 1 }}日:<span> {{ i }}</span>
+          </div>
         </div>
       </div>
     </el-dialog>
@@ -151,7 +157,8 @@ export default {
   data() {
     return {
       // 遮罩层
-      loading: true,
+      loading: false,
+      dialogloading: false,
       durationList: [],
       total: 0,
       // 用户用水统计表格数据
@@ -165,7 +172,11 @@ export default {
         openTime: "",
         closeTime: undefined,
       },
-      info: {},
+      info: {
+        week: [],
+        daily: [],
+        month: [],
+      },
       analysisshow: false,
     };
   },
@@ -177,16 +188,14 @@ export default {
     /** 查询用户用水统计列表 */
     getList() {
       this.loading = true;
-      this.info = {};
       listDuration(this.queryParams).then((response) => {
         this.durationList = response.rows;
         this.total = response.total;
         this.loading = false;
       });
-      this.getdetail();
     },
 
-    // 点击统计
+    // 点击统计按钮
     countcilck() {
       if (
         this.queryParams.mac == "" ||
@@ -196,19 +205,18 @@ export default {
       ) {
         this.$notify({
           title: "错误",
-          message: "需要Mac地址于开始时间作为统计参数",
+          message: "需要 Mac地址 与 开始时间 作为统计参数",
           type: "error",
-
           showClose: "true",
         });
         return;
       }
-
-      this.analysisshow = true;
+      this.getdetail();
     },
 
-    // 日
+    // 显示统计信息 弹框
     getdetail() {
+      //  判断参数
       if (
         this.queryParams.mac == "" ||
         this.queryParams.mac == undefined ||
@@ -217,59 +225,81 @@ export default {
       ) {
         return;
       }
-      requestnoau
-        .get("/app/statiscal/daily", {
+      // 重置信息
+      this.info = {
+        week: [],
+        daily: [],
+        month: [],
+      };
+      this.dialogloading = true;
+      Promise.all([
+        requestnoau.get("/app/statiscal/daily", {
           params: {
             mac: this.queryParams.mac,
             currentDay: this.queryParams.openTime,
           },
-        })
-        .then((x) => {
-          this.info.daily = x.data.own;
-        });
-      requestnoau
-        .get("/app/statiscal/week", {
+        }),
+        requestnoau.get("/app/statiscal/week", {
           params: {
             mac: this.queryParams.mac,
             endTime: this.queryParams.openTime,
           },
-        })
-        .then((x) => {
-          this.info.week = x.data.own;
-        });
-      requestnoau
-        .get("/app/statiscal/month", {
+        }),
+        requestnoau.get("/app/statiscal/month", {
           params: {
             mac: this.queryParams.mac,
             whichyear: this.queryParams.openTime.slice(0, 4),
             monthInYear: this.queryParams.openTime.slice(5, 7),
           },
-        })
+        }),
+      ])
         .then((x) => {
-          this.info.month = x.data.own;
+          let a, b, c;
+          [a, b, c] = x;
+          this.info.daily = a.data.own;
+          this.info.week = b.data.own;
+          this.info.month = c.data.own;
+        })
+        .finally((x) => {
+          this.dialogloading = false;
         });
+      this.analysisshow = true;
+    },
+    //  时间格式化
+    format(date) {
+      var date = new Date(date);
+      var YY = date.getFullYear();
+      var MM =
+        date.getMonth() + 1 < 10
+          ? "0" + (date.getMonth() + 1)
+          : date.getMonth() + 1;
+      var DD = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+
+      return YY + "年" + MM + "月" + DD + "日";
     },
     weekshow(x) {
+      let n = new Date(this.queryParams.openTime).getTime();
+
       if (x == "1") {
-        return "周一";
+        return this.format(n - 86400000 * 6);
       }
       if (x == "2") {
-        return "周二";
+        return this.format(n - 86400000 * 5);
       }
       if (x == "3") {
-        return "周三";
+        return this.format(n - 86400000 * 4);
       }
       if (x == "4") {
-        return "周四";
+        return this.format(n - 86400000 * 3);
       }
       if (x == "5") {
-        return "周五";
+        return this.format(n - 86400000 * 2);
       }
       if (x == "6") {
-        return "周六";
+        return this.format(n - 86400000 * 1);
       }
       if (x == "7") {
-        return "周日";
+        return this.format(n);
       }
     },
     // 表单重置
@@ -322,17 +352,17 @@ export default {
   flex-wrap: wrap;
 }
 .dailyitem {
-  width: 70px;
+  width: 80px;
   font-weight: bold;
   text-align: start;
 }
 .weekitem {
-  width: 70px;
   font-weight: bold;
-  text-align: center;
+  text-align: start;
+  margin-right: 20px;
 }
 .monthitem {
-  width: 70px;
+  width: 80px;
   font-weight: bold;
   text-align: start;
 }
