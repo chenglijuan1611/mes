@@ -19,13 +19,13 @@
       <div class="dashboardchart">
         <deviceuseanalysis2 />
       </div>
-      <div class="dashboardchartbig">
+      <!-- <div class="dashboardchartbig">
         <deviceuseanalysis1 />
       </div>
 
       <div class="dashboardchartbig">
         <deviceuseanalysis3 />
-      </div>
+      </div> -->
     </div>
   </div>
 </template>
@@ -34,11 +34,11 @@
 import devicedistribution from '../components/Charts/devicedistribution'
 import userdistribution from '../components/Charts/userdistribution'
 import usercount from '../components/Charts/usercount'
-import deviceslist from '../components/Charts/deviceslist'
-import usernumberchartline from '../components/Charts/usernumberchartline'
-import deviceuseanalysis1 from '../components/Charts/deviceuseanalysis/charts1'
-import deviceuseanalysis2 from '../components/Charts/deviceuseanalysis/charts2'
-import deviceuseanalysis3 from '../components/Charts/deviceuseanalysis/charts3'
+import deviceslist from '../components/Charts/deviceslist.vue'
+import usernumberchartline from '../components/Charts/usernumberchartline.vue'
+// import deviceuseanalysis1 from '../components/Charts/deviceuseanalysis/charts1'
+import deviceuseanalysis2 from '../components/Charts/deviceuseanalysis/charts2.vue'
+// import deviceuseanalysis3 from '../components/Charts/deviceuseanalysis/charts3'
 import xytable from '../components/Charts/xytable'
 
 export default {
@@ -49,9 +49,9 @@ export default {
     usercount,
     deviceslist,
     usernumberchartline,
-    deviceuseanalysis1,
+    // deviceuseanalysis1,
     deviceuseanalysis2,
-    deviceuseanalysis3,
+    // deviceuseanalysis3,
     xytable
   }
 }
