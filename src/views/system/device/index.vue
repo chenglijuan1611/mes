@@ -1,6 +1,11 @@
 <template>
   <div class="app-container">
-    <el-form label-width="auto" :model="queryParams" ref="queryForm" :inline="true">
+    <el-form
+      ref="queryForm"
+      :inline="true"
+      :model="queryParams"
+      label-width="auto"
+    >
       <el-form-item label="名称" prop="name">
         <el-input
           v-model="queryParams.name"
@@ -81,57 +86,171 @@
       </el-form-item>
       <el-form-item>
         <el-button
-          style="margin-left:30px"
+          style="margin-left: 30px"
           type="primary"
           icon="el-icon-search"
           size="mini"
           @click="handleQuery"
-        >搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+        >搜索
+        </el-button
+        >
+        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery"
+        >重置
+        </el-button
+        >
         <el-button
           type="warning"
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
           v-hasPermi="['system:device:export']"
-        >导出</el-button>
+        >导出
+        </el-button
+        >
       </el-form-item>
     </el-form>
 
-    <el-table v-loading="loading" :data="deviceList" @selection-change="handleSelectionChange">
-      <el-table-column label="名称" align="center" prop="name" />
-      <el-table-column label="设备型号" align="center" prop="modelCode" />
-      <el-table-column label="设备英文型号" align="center" prop="modelEcode" />
-      <el-table-column label="设备mac地址" align="center" prop="mac" />
-      <el-table-column label="序列号" align="center" prop="serialNumber" />
-      <el-table-column label="省份(ip)" align="center" prop="province" />
-      <el-table-column label="城市(ip)" align="center" prop="city" />
-      <el-table-column label="固件版本" align="center" prop="firmwareVersion" />
-      <el-table-column label="待升级版本" align="center" prop="firmwareVersionNew" />
-      <el-table-column label="底板程序版本号" align="center" prop="floorVersion" />
-      <el-table-column label="wifi模块程序版本号" align="center" prop="wifiVersion" />
-      <el-table-column label="是否在线" align="center">
+    <el-table
+      v-loading="loading"
+      :data="deviceList"
+      @selection-change="handleSelectionChange"
+    >
+      <el-table-column align="center" label="名称" prop="name"/>
+      <el-table-column align="center" label="设备型号" prop="modelCode"/>
+      <el-table-column align="center" label="设备英文型号" prop="modelEcode"/>
+      <el-table-column align="center" label="设备mac地址" prop="mac"/>
+      <el-table-column align="center" label="序列号" prop="serialNumber"/>
+      <el-table-column align="center" label="省份(ip)" prop="province"/>
+      <el-table-column align="center" label="城市(ip)" prop="city"/>
+      <el-table-column align="center" label="固件版本" prop="firmwareVersion"/>
+      <el-table-column
+        align="center"
+        label="创建时间"
+        prop="gmtCreatetime"
+        width="180"
+      >
         <template slot-scope="scope">
-          <span v-if="scope.row.isOnline==1">在线</span>
-          <span v-if="!scope.row.isOnline==1">不在线</span>
+          <span>{{ parseTime(scope.row.gmtCreatetime) }}</span>
         </template>
-      </el-table-column>
+      </el-table-column
+      >
+      <el-table-column
+        align="center"
+        label="待升级版本"
+        prop="firmwareVersionNew"
+      />
+      <!-- <el-table-column
+        label="底板程序版本号"
+        align="center"
+        prop="floorVersion"
+      />
+      <el-table-column
+        label="wifi模块程序版本号"
+        align="center"
+        prop="wifiVersion"
+      /> -->
+      <!-- <el-table-column label="是否在线" align="center">
+        <template slot-scope="scope">
+          <span v-if="scope.row.isOnline == 1">在线</span>
+          <span v-if="!scope.row.isOnline == 1">不在线</span>
+        </template>
+      </el-table-column> -->
       <!---->
       <el-table-column label="操作" align="center">
         <template slot-scope="scope">
-          <el-button size="mini" type="text" icon="el-icon-more" @click="more(scope.row)">其他信息</el-button>
+          <el-button size="mini" type="text" @click="more(scope.row)"
+          >查询设备状态
+          </el-button
+          >
         </template>
       </el-table-column>
-     
     </el-table>
 
     <pagination
-      v-show="total>0"
+      v-show="total > 0"
       :total="total"
       :page.sync="queryParams.pageNum"
       :limit.sync="queryParams.pageSize"
       @pagination="getList"
     />
+
+    <el-dialog :visible.sync="devicestatusshow" title="设备状态">
+      <div v-loading="statusload" style="font-size: 1vw; font-weight: 500">
+        <div style="margin: 0.3vw">
+          联网状态 : {{ devicestatus.onlineState }}
+        </div>
+        <div style="margin: 0.3vw">语言 : {{ devicestatus.language }}</div>
+        <div style="margin: 0.3vw">
+          wifi信号强度 : {{ devicestatus.wifiStrong }}
+        </div>
+        <div style="margin: 0.3vw">智能提醒 : {{ devicestatus.smartWarn }}</div>
+
+        <div style="margin: 0.3vw">
+          97%功能 : {{ devicestatus["97%Feature"] }}
+        </div>
+        <div style="margin: 0.3vw">
+          设备启用天数 : {{ devicestatus.startUsingDays }}
+        </div>
+        <div style="margin: 0.3vw">
+          时间格式 : {{ devicestatus.timeFormat }}
+        </div>
+        <div style="margin: 0.3vw">
+          开机运行时间 : {{ devicestatus.bootRunningTime }}
+        </div>
+        <div style="margin: 0.3vw">
+          系统当前时间 : {{ devicestatus.systemTime }}
+        </div>
+        <div style="margin: 0.3vw">
+          再生状态 : {{ devicestatus.rebirthState }}
+        </div>
+        <div style="margin: 0.3vw">
+          最近再生时间 : {{ devicestatus.rebirthRecentTime }}
+        </div>
+        <div style="margin: 0.3vw">
+          再生开始时间 : {{ devicestatus.rebirthStatrTime }}
+        </div>
+        <div style="margin: 0.3vw">
+          再生结束时间 : {{ devicestatus.rebirthEndTime }}
+        </div>
+        <div style="margin: 0.3vw">
+          再生次数 : {{ devicestatus.rebirthNum }}
+        </div>
+        <div style="margin: 0.3vw">
+          最大再生间隔 : {{ devicestatus.rebirthInterval }}
+        </div>
+        <div style="margin: 0.3vw">
+          容量单位 : {{ devicestatus.capacityUnit }}
+        </div>
+        <div style="margin: 0.3vw">
+          今日用水量 : {{ devicestatus.todayConsume }}
+        </div>
+        <div style="margin: 0.3vw">
+          软水总用量 : {{ devicestatus.historyConsume }}
+        </div>
+        <div style="margin: 0.3vw">
+          平均用水量 : {{ devicestatus.averageConsume }}
+        </div>
+        <div style="margin: 0.3vw">
+          剩余用水量 : {{ devicestatus.remainConsume }}
+        </div>
+        <div style="margin: 0.3vw">
+          盐可用天数 : {{ devicestatus.saltAvailableDays }}
+        </div>
+        <div style="margin: 0.3vw">
+          盐传感器读数 : {{ devicestatus.saltSensorData }}
+        </div>
+        <div style="margin: 0.3vw">
+          铁离子浓度 : {{ devicestatus.ironConcentration }}
+        </div>
+
+        <div style="margin: 0.3vw">盐状态 : {{ devicestatus.saltState }}</div>
+        <div style="margin: 0.3vw">水硬度 : {{ devicestatus.hardness }}</div>
+        <div style="margin: 0.3vw">
+          低盐报警天数设置 : {{ devicestatus.lowSaltPolice }}
+        </div>
+      </div>
+    </el-dialog>
+
     <!-- 添加或修改设备信息表对话框 -->
     <!-- <el-dialog :title="title" :visible.sync="open" width="500px" :close-on-click-modal="false">
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
@@ -260,7 +379,7 @@ import {
   updateDevice,
   exportDevice,
 } from "@/api/system/device";
-
+import request from "@/utils/request";
 export default {
   name: "Device",
   data() {
@@ -311,6 +430,9 @@ export default {
       // 表单校验
       rules: {},
       dateRange: [],
+      devicestatusshow: false,
+      devicestatus: {},
+      statusload: false,
     };
   },
   created() {
@@ -465,14 +587,12 @@ export default {
     },
     //  详细信息
     more(x) {
-      const h = this.$createElement;
-      this.$msgbox({
-        title: "其他信息",
-        message: h("p", null, [
-          //h("p", null, "详细地址:" + x.address),
-          h("p", null, "添加时间:" + this.parseTime(x.gmtCreatetime)),
-          //h("p", null, "保修时间: " + this.parseTime(x.warrantyTime)),
-        ]), // type: 'info'
+      this.devicestatus = {};
+      this.statusload = true;
+      this.devicestatusshow = true;
+      request.get("/system/device/getDetailo/" + x.mac).then((x) => {
+        this.devicestatus = x.data;
+        this.statusload = false;
       });
     },
   },
