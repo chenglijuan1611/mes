@@ -7,9 +7,21 @@
       <div class="righttable">
         <div>
           <el-table height="250" :data="tableData">
-            <el-table-column width="100" prop="time" label="日期"></el-table-column>
-            <el-table-column width="80" prop="count" label="姓名"></el-table-column>
-            <el-table-column width="100" prop="scale" label="地址"></el-table-column>
+            <el-table-column
+              label="日期"
+              prop="time"
+              width="100"
+            />
+            <el-table-column
+              label="姓名"
+              prop="count"
+              width="80"
+            />
+            <el-table-column
+              label="地址"
+              prop="scale"
+              width="100"
+            />
           </el-table>
         </div>
       </div>
@@ -19,94 +31,11 @@
 <script>
 import echarts from 'echarts'
 import chartsname from '@/components/chartsname'
-import xytable from '@/components/Charts/xytabletest'
 import { usewater } from '@/api/deviceuseanalysis/index'
 export default {
   components: {
-    chartsname,
-    xytable
-  },
+    chartsname
 
-  created() {
-    usewater().then(x => {
-      let a = x.data.perHourTotal
-      console.log(x)
-
-      let temp = [
-        a.clock0,
-        a.clock1,
-        a.clock2,
-        a.clock3,
-        a.clock4,
-        a.clock5,
-        a.clock6,
-        a.clock7,
-        a.clock8,
-        a.clock9,
-        a.clock10,
-        a.clock11,
-        a.clock12,
-        a.clock13,
-        a.clock14,
-        a.clock15,
-        a.clock16,
-        a.clock17,
-        a.clock18,
-        a.clock19,
-        a.clock20,
-        a.clock21,
-        a.clock22,
-        a.clock23
-      ]
-      let scale = [
-        x.data.clock_0,
-        x.data.clock_1,
-        x.data.clock_2,
-        x.data.clock_3,
-        x.data.clock_4,
-        x.data.clock_5,
-        x.data.clock_6,
-        x.data.clock_7,
-        x.data.clock_8,
-        x.data.clock_9,
-        x.data.clock_10,
-        x.data.clock_11,
-        x.data.clock_12,
-        x.data.clock_13,
-        x.data.clock_14,
-        x.data.clock_15,
-        x.data.clock_16,
-        x.data.clock_17,
-        x.data.clock_18,
-        x.data.clock_19,
-        x.data.clock_20,
-        x.data.clock_21,
-        x.data.clock_22,
-        x.data.clock_23
-      ].map(x => {
-        if (x === 0) {
-          return x
-        }
-        let x100 = x * 100
-        return x100.toFixed(2) + '%'
-      })
-
-      this.option.series[0].data = temp
-
-      this.xdatainit[1] = temp
-      this.xdatainit[2] = scale
-
-      this.echartsupdated()
-      let tabledata = []
-      this.xdatainit[0].map((x, y) => {
-        let temp = Object.create(null)
-        temp.time = this.xdatainit[0][y]
-        temp.count = this.xdatainit[1][y]
-        temp.scale = this.xdatainit[2][y]
-        tabledata[y] = temp
-      })
-      this.tableData = tabledata
-    })
   },
   data() {
     return {
@@ -202,11 +131,122 @@ export default {
       ]
     }
   },
+
+  created() {
+    usewater().then((x) => {
+      const a = x.data.perHourTotal
+      const temp = [
+        a.clock0,
+        a.clock1,
+        a.clock2,
+        a.clock3,
+        a.clock4,
+        a.clock5,
+        a.clock6,
+        a.clock7,
+        a.clock8,
+        a.clock9,
+        a.clock10,
+        a.clock11,
+        a.clock12,
+        a.clock13,
+        a.clock14,
+        a.clock15,
+        a.clock16,
+        a.clock17,
+        a.clock18,
+        a.clock19,
+        a.clock20,
+        a.clock21,
+        a.clock22,
+        a.clock23
+      ]
+      const scale = [
+        x.data.clock_0,
+        x.data.clock_1,
+        x.data.clock_2,
+        x.data.clock_3,
+        x.data.clock_4,
+        x.data.clock_5,
+        x.data.clock_6,
+        x.data.clock_7,
+        x.data.clock_8,
+        x.data.clock_9,
+        x.data.clock_10,
+        x.data.clock_11,
+        x.data.clock_12,
+        x.data.clock_13,
+        x.data.clock_14,
+        x.data.clock_15,
+        x.data.clock_16,
+        x.data.clock_17,
+        x.data.clock_18,
+        x.data.clock_19,
+        x.data.clock_20,
+        x.data.clock_21,
+        x.data.clock_22,
+        x.data.clock_23
+      ].map((x) => {
+        if (x === 0) {
+          return x
+        }
+        const x100 = x * 100
+        return x100.toFixed(2) + '%'
+      })
+      const scale2 = [
+        x.data.clock_0,
+        x.data.clock_1,
+        x.data.clock_2,
+        x.data.clock_3,
+        x.data.clock_4,
+        x.data.clock_5,
+        x.data.clock_6,
+        x.data.clock_7,
+        x.data.clock_8,
+        x.data.clock_9,
+        x.data.clock_10,
+        x.data.clock_11,
+        x.data.clock_12,
+        x.data.clock_13,
+        x.data.clock_14,
+        x.data.clock_15,
+        x.data.clock_16,
+        x.data.clock_17,
+        x.data.clock_18,
+        x.data.clock_19,
+        x.data.clock_20,
+        x.data.clock_21,
+        x.data.clock_22,
+        x.data.clock_23
+      ].map((x) => {
+        if (x === 0) {
+          return x
+        }
+        const x100 = x * 100
+        return x100.toFixed(2)
+      })
+
+      this.option.series[0].data = scale2
+      this.xdatainit[1] = temp
+      this.xdatainit[2] = scale
+
+      this.echartsupdated()
+      const tabledata = []
+      this.xdatainit[0].map((x, y) => {
+        const temp = Object.create(null)
+        temp.time = this.xdatainit[0][y]
+        temp.count = this.xdatainit[1][y]
+        temp.scale = this.xdatainit[2][y]
+        tabledata[y] = temp
+      })
+      this.tableData = tabledata
+    })
+  },
   mounted() {},
   methods: {
     echartsupdated() {
       this.$nextTick(() => {
-        let myChart = echarts.init(
+        const myChart = echarts.init(
           document.getElementById('deviceuseanalysisw3')
         )
 

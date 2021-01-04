@@ -6,9 +6,21 @@
       <div class="righttable">
         <div>
           <el-table height="250" :data="tableData">
-            <el-table-column width="100" prop="time" label="日均用水量"></el-table-column>
-            <el-table-column width="80" prop="count" label="用户数量"></el-table-column>
-            <el-table-column width="100" prop="scale" label="数量占比"></el-table-column>
+            <el-table-column
+              label="日均用水量"
+              prop="time"
+              width="100"
+            />
+            <el-table-column
+              label="用户数量"
+              prop="count"
+              width="80"
+            />
+            <el-table-column
+              label="数量占比"
+              prop="scale"
+              width="100"
+            />
           </el-table>
         </div>
       </div>
@@ -19,12 +31,11 @@
 import echarts from 'echarts'
 import chartsname from '@/components/chartsname'
 import { dayAverageWater } from '@/api/deviceuseanalysis/index'
-import xytable from '@/components/Charts/xytabletest'
 
 export default {
   components: {
-    chartsname,
-    xytable
+    chartsname
+
   },
   data() {
     return {
@@ -77,27 +88,27 @@ export default {
     }
   },
   created() {
-    dayAverageWater().then(x => {
-      let a = []
-      let b = []
-      let c = []
-      let d = []
-      console.log(x.data);
+    dayAverageWater().then((x) => {
+      console.log(x)
+      const a = []
+      const b = []
+      const c = []
+      const d = []
       x.data.forEach((y, index) => {
         a[index] = y.interval.slice(5).replace('_', '-')
         b[index] = y.count
         c[index] = y.proportion
         d[index] = parseFloat(y.proportion)
       })
-      a[a.length - 1] = '大于2000'
+      a[a.length - 1] = '大于400'
       this.xdatainit = [a, b, c]
       this.option.xAxis[0].data = a
       this.option.series[0].data = d
-       this.echartsupdata()
+      this.echartsupdata()
       //   右侧表格数据
-      let tabledata = []
+      const tabledata = []
       this.xdatainit[0].map((x, y) => {
-        let temp = Object.create(null)
+        const temp = Object.create(null)
         temp.time = this.xdatainit[0][y]
         temp.count = this.xdatainit[1][y]
         temp.scale = this.xdatainit[2][y]

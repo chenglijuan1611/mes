@@ -37,7 +37,7 @@ export default {
             }
           },
           {
-            text: '销售总量',
+            text: '总用水次数',
             left: 'center',
             top: '55%',
             textStyle: {
@@ -76,7 +76,7 @@ export default {
   },
   created() {
     request('/statistical/customer/waterRatio').then(x => {
-      let temp = x.data.map((y, index) => {
+      const temp = x.data.map((y, index) => {
         let name
         this.count = this.count + y.counts
         if (index == 0) name = '90分钟以上'
@@ -97,7 +97,7 @@ export default {
   methods: {
     echartsupdated() {
       this.$nextTick(() => {
-        let myChart = echarts.init(
+        const myChart = echarts.init(
           document.getElementById('deviceuseanalysis2')
         )
 

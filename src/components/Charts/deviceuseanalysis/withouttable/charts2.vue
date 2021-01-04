@@ -6,9 +6,21 @@
       <div class="righttable">
         <div>
           <el-table height="235" :data="tableData">
-            <el-table-column width="100" prop="name" label="用户单次时长"></el-table-column>
-            <el-table-column width="80" prop="value" label="次数"></el-table-column>
-            <el-table-column width="100" prop="ratioOfWater" label="用水次数占比"></el-table-column>
+            <el-table-column
+              label="用户单次时长"
+              prop="name"
+              width="100"
+            />
+            <el-table-column
+              label="次数"
+              prop="value"
+              width="80"
+            />
+            <el-table-column
+              label="用水次数占比"
+              prop="ratioOfWater"
+              width="100"
+            />
           </el-table>
         </div>
       </div>
@@ -47,7 +59,7 @@ export default {
             }
           },
           {
-            text: '销售总量',
+            text: '总用水次数',
             left: 'center',
             top: '55%',
             textStyle: {
@@ -85,16 +97,11 @@ export default {
     }
   },
   created() {
-    request('/statistical/customer/waterRatio').then(x => {
-      let temp = x.data.map((y, index) => {
-        let name
+    request('/statistical/customer/waterRatio').then((x) => {
+      const temp = x.data.map((y) => {
         this.count = this.count + y.counts
-        if (index == 0) name = '90分钟以上'
-        if (index == 1) name = '0-30分钟'
-        if (index == 2) name = '30-60分钟'
-        if (index == 3) name = '60-90分钟'
         return {
-          name,
+          name: y.scoreLevel,
           value: y.counts,
           ratioOfWater: y.ratioOfWater
         }
@@ -112,7 +119,7 @@ export default {
   methods: {
     echartsupdated() {
       this.$nextTick(() => {
-        let myChart = echarts.init(
+        const myChart = echarts.init(
           document.getElementById('deviceuseanalysis2')
         )
 
