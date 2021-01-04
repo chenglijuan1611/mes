@@ -3,7 +3,11 @@
     <chartsname chartsname="设备分布图" />
     <div class="chartsbgbox">
       <div id="devicedistribution" />
-      <i @click="provincedata" style="opacity:0.5" class="el-icon-arrow-left iconar"></i>
+      <i
+        class="el-icon-arrow-left iconar"
+        style="opacity: 0.5"
+        @click="provincedata"
+      />
     </div>
   </div>
 </template>
@@ -12,7 +16,9 @@ import echarts from 'echarts'
 import 'echarts/map/js/china'
 import chartsname from '@/components/chartsname'
 import { devicedistributionapi } from '@/api/devicedistribution'
-const requireAll = requireContext => requireContext.keys().map(requireContext)
+
+const requireAll = (requireContext) =>
+  requireContext.keys().map(requireContext)
 const req = require.context('echarts/map/js/province', true, /\.js$/)
 requireAll(req)
 
@@ -28,7 +34,9 @@ export default {
             let temp
             try {
               temp = `${a.name} <br />设备数量：${a.data.value} <br />当前联网数量：${a.data.online}`
-            } catch (error) {}
+            } catch (error) {
+              console.log(error)
+            }
             return temp
           }
         },
@@ -39,7 +47,7 @@ export default {
               borderColor: 'rgba(0, 0, 0, 0.2)'
             },
             emphasis: {
-              areaColor: '#F3B329', //鼠标选择区域颜色
+              areaColor: '#F3B329', // 鼠标选择区域颜色
               shadowOffsetX: 0,
               shadowOffsetY: 0,
               shadowBlur: 20,
@@ -49,6 +57,15 @@ export default {
           }
         },
         visualMap: {
+          pieces: [
+            { min: 1000 }, // 不指定 max，表示 max 为无限大（Infinity）。
+            { min: 500, max: 999 },
+            { min: 100, max: 499 },
+            { min: 10, max: 99 },
+            { min: 1, max: 9 },
+            { value: 0 } // 表示 value 等于 123 的情况。
+            // { max: 5 } // 不指定 min，表示 min 为无限大（-Infinity）。
+          ],
           realtime: false,
           calculable: true,
           type: 'piecewise',
@@ -76,34 +93,33 @@ export default {
   },
   methods: {
     provincedata() {
-      devicedistributionapi().then(x => {
-        let temp = x.data.map(y => {
+      devicedistributionapi().then((x) => {
+        this.option.series[0].data = x.data.map((y) => {
           return {
             name: y.province,
             value: y.specificCount,
             online: y.onlineCount
           }
         })
-        this.option.series[0].data = temp
         this.option.geo.map = 'china'
         this.echartsupdated()
       })
     },
     echartsupdated() {
       this.$nextTick(() => {
-        let myChart = echarts.init(
+        const myChart = echarts.init(
           document.getElementById('devicedistribution')
         )
         myChart.setOption(this.option, true)
 
-        myChart.on('click', params => {
+        myChart.on('click', (params) => {
           this.city(params.name)
         })
       })
     },
     echartsupdated2() {
       this.$nextTick(() => {
-        let myChart = echarts.init(
+        const myChart = echarts.init(
           document.getElementById('devicedistribution')
         )
         myChart.off('click')
@@ -111,8 +127,8 @@ export default {
       })
     },
     city(p) {
-      devicedistributionapi({ province: p }).then(x => {
-        let temp = x.data.map(y => {
+      devicedistributionapi({ province: p }).then((x) => {
+        const temp = x.data.map((y) => {
           return {
             name: y.city,
             value: y.specificCount,
@@ -138,6 +154,7 @@ export default {
   justify-content: center;
   background-color: #fff;
 }
+
 .iconar {
   font-size: 40px;
   color: #909090;
